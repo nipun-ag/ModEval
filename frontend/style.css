@@ -366,13 +366,15 @@ option {
   top: calc(100% + 8px);
   left: 0;
   right: 0;
-  z-index: 100;
+  z-index: 200;
+  max-height: 240px;
+  overflow-y: auto;
   padding: 6px 0;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-strong);
   border-radius: 8px;
   background: var(--surface2);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(20px) saturate(150%);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
   opacity: 1;
   transform: translateY(0);
   transition: opacity 150ms ease, transform 150ms ease;
@@ -416,10 +418,11 @@ option {
 
 .custom-select-description {
   display: block;
-  margin-top: 2px;
-  color: var(--muted);
-  font-size: 11px;
-  font-style: italic;
+  margin-top: 3px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-style: normal;
+  line-height: 1.4;
 }
 
 textarea {
