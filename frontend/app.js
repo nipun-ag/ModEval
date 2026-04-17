@@ -183,6 +183,14 @@ const EXAMPLE_LIBRARY = {
 const lastExampleByCategory = {};
 let activeTab = "analysis";
 let selectedPlatform = "Social Media";
+let selectedContentType = "Original Post";
+let selectedStrictness = "Balanced";
+
+const STATE_MAP = {
+  platform_context: (v) => { selectedPlatform = v; },
+  content_type:     (v) => { selectedContentType = v; },
+  strictness:       (v) => { selectedStrictness = v; },
+};
 
 function escapeHtml(value) {
   return String(value)
@@ -233,11 +241,14 @@ function initializeCustomSelects() {
 
     options.forEach((option) => {
       option.addEventListener("click", () => {
-        hiddenInput.value = option.dataset.value;
+        const val = option.dataset.value;
+        hiddenInput.value = val;
         const nameNode = option.querySelector(".custom-select-name");
         triggerLabel.textContent = nameNode ? nameNode.textContent : option.textContent.trim();
-        
         options.forEach((opt) => opt.classList.toggle("selected", opt === option));
+        // Update global state variable if this select has a known name
+        const inputName = hiddenInput.name;
+        if (STATE_MAP[inputName]) STATE_MAP[inputName](val);
         setOpen(false);
       });
     });
