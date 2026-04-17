@@ -1,23 +1,23 @@
 :root {
-  --bg: #000000;
-  --surface: #0a0a0a;
-  --surface2: #111111;
-  --surface3: #171717;
-  --border: rgba(255, 255, 255, 0.06);
-  --border-strong: rgba(255, 255, 255, 0.12);
-  --accent: #ffffff;
-  --accent-light: rgba(255, 255, 255, 0.1);
-  --green: #4ade80;
-  --green-light: rgba(74, 222, 128, 0.1);
-  --amber: #fbbf24;
-  --amber-light: rgba(251, 191, 36, 0.1);
-  --red: #f87171;
-  --red-light: rgba(248, 113, 113, 0.1);
-  --purple: #c084fc;
-  --purple-light: rgba(192, 132, 252, 0.1);
-  --text: #ffffff;
-  --text-secondary: #a3a3a3;
-  --muted: #737373;
+  --bg: #030008;
+  --surface: rgba(15, 10, 25, 0.6);
+  --surface2: rgba(22, 15, 38, 0.7);
+  --surface3: rgba(30, 20, 50, 0.8);
+  --border: rgba(200, 150, 255, 0.08);
+  --border-strong: rgba(200, 150, 255, 0.15);
+  --accent: #a855f7;
+  --accent-light: rgba(168, 85, 247, 0.15);
+  --green: #10b981;
+  --green-light: rgba(16, 185, 129, 0.15);
+  --amber: #f59e0b;
+  --amber-light: rgba(245, 158, 11, 0.15);
+  --red: #ef4444;
+  --red-light: rgba(239, 68, 68, 0.15);
+  --purple: #8b5cf6;
+  --purple-light: rgba(139, 92, 246, 0.15);
+  --text: #fdfcff;
+  --text-secondary: #a79fbb;
+  --muted: #6e6587;
   --white: #ffffff;
 }
 
@@ -60,14 +60,15 @@ button {
 .app-shell::before {
   content: "";
   position: absolute;
-  top: 0;
+  top: -100px;
   left: 50%;
   transform: translateX(-50%);
-  width: 1000px;
-  height: 600px;
-  background: radial-gradient(ellipse at top center, rgba(255,255,255,0.06) 0%, transparent 70%);
+  width: 1200px;
+  height: 800px;
+  background: radial-gradient(ellipse at top center, rgba(168, 85, 247, 0.18) 0%, rgba(59, 130, 246, 0.08) 40%, transparent 70%);
   pointer-events: none;
   z-index: -1;
+  filter: blur(40px);
 }
 
 .topbar {
@@ -168,10 +169,11 @@ button {
   align-items: center;
   gap: 8px;
   padding: 6px;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid rgba(200, 150, 255, 0.15);
   border-radius: 999px;
-  background: rgba(0,0,0,0.2);
-  backdrop-filter: blur(12px);
+  background: rgba(10, 5, 20, 0.4);
+  backdrop-filter: blur(24px) saturate(150%);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
 .results-tab {
@@ -188,13 +190,17 @@ button {
 }
 
 .results-tab:hover {
-  color: #999999;
+  color: #e2d8ff;
+}
+
+.results-tab:active {
+  transform: scale(0.95);
 }
 
 .results-tab.active {
-  color: var(--bg);
-  background: var(--text);
-  box-shadow: 0 2px 8px rgba(255,255,255,0.15);
+  color: var(--white);
+  background: var(--accent);
+  box-shadow: 0 2px 12px var(--accent-glow);
 }
 
 .results-tab.active::after {
@@ -255,20 +261,42 @@ th,
   color: var(--text);
 }
 
+.example-pill:active {
+  transform: scale(0.95);
+}
+
 .example-pill.toxicity:hover,
-.example-pill.hate-speech:hover,
 .example-pill.violent-threats:hover,
-.example-pill.doxxing:hover,
+.example-pill.hate-speech:hover {
+  background: var(--red-light);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ffb3b3;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.3);
+}
+
 .example-pill.harassment:hover,
 .example-pill.misinformation:hover,
+.example-pill.doxxing:hover {
+  background: var(--amber-light);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #fcd34d;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.3);
+}
+
 .example-pill.spam:hover,
-.example-pill.impersonation:hover,
+.example-pill.impersonation:hover {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #93c5fd;
+  box-shadow: 0 0 16px rgba(59, 130, 246, 0.3);
+}
+
 .example-pill.bias:hover,
 .example-pill.radicalization:hover {
-  background: var(--text);
-  border-color: var(--text);
-  color: var(--bg);
-  box-shadow: 0 4px 12px rgba(255,255,255,0.15);
+  background: var(--accent-light);
+  border-color: var(--accent-glow);
+  color: #e9d5ff;
+  box-shadow: 0 0 16px var(--accent-glow);
 }
 
 .input-form,
@@ -502,16 +530,21 @@ select:focus,
 .primary-button {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: var(--text);
-  color: var(--bg);
-  box-shadow: 0 4px 16px rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  background: linear-gradient(135deg, var(--accent) 0%, #6d28d9 100%);
+  color: var(--white);
+  box-shadow: 0 4px 16px var(--accent-light), inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
 .primary-button:hover {
-  background: #e5e5e5;
-  box-shadow: 0 4px 24px rgba(255,255,255,0.15);
+  background: linear-gradient(135deg, #b065fc 0%, #7c3aed 100%);
+  box-shadow: 0 6px 24px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.3);
   transform: translateY(-1px);
+}
+
+.primary-button:active,
+.secondary-button:active {
+  transform: scale(0.97);
 }
 
 .primary-button.loading {
