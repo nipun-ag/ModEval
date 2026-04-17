@@ -191,7 +191,8 @@ button:hover {
 .batch-summary,
 .table-card,
 .explainability-card,
-.insight-card {
+.insight-card,
+.policy-card {
   background: var(--panel-strong);
   border: 1px solid var(--border);
   border-radius: 20px;
@@ -294,6 +295,37 @@ td {
 .accordion-list {
   display: grid;
   gap: 12px;
+}
+
+.policy-card {
+  overflow: hidden;
+}
+
+.policy-toggle {
+  width: 100%;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: transparent;
+  color: var(--text);
+  padding: 16px 18px;
+  font-weight: 700;
+}
+
+.policy-content {
+  padding: 0 18px 18px;
+}
+
+.policy-guidelines {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.policy-guidelines li + li {
+  margin-top: 8px;
 }
 
 .accordion-item {

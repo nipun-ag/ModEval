@@ -13,6 +13,48 @@ const consensusAction = document.getElementById("consensus-action");
 const batchButton = document.getElementById("batch-button");
 const batchFileInput = document.getElementById("batch-file");
 const batchSummary = document.getElementById("batch-summary");
+const policyToggle = document.getElementById("policy-toggle");
+const policyContent = document.getElementById("policy-content");
+const policyGuidelines = document.getElementById("policy-guidelines");
+const policyToggleIndicator = document.getElementById("policy-toggle-indicator");
+
+const POLICY_GUIDELINES = {
+  "Reddit": [
+    "Do not post content that encourages or incites violence",
+    "Do not harass, bully, or threaten individuals",
+    "Do not post personal information of others without consent",
+    "Do not sexualize minors in any way",
+    "Do not post content that promotes hate based on identity or vulnerability",
+    "Spam and vote manipulation are prohibited",
+  ],
+  "Discord": [
+    "Do not make threats of violence against people or animals",
+    "Do not harass or bully other users",
+    "Do not share content that sexualizes minors",
+    "Do not promote or glorify self-harm or suicide",
+    "Do not coordinate hate speech or discriminatory content",
+    "Do not share false or misleading information that causes harm",
+  ],
+  "Facebook": [
+    "Do not post content that incites violence or hate against protected groups",
+    "Do not bully, harass, or threaten private individuals",
+    "Do not share content that exploits or sexualizes children",
+    "Do not post graphic violence meant to shock or disgust",
+    "Do not create fake accounts or impersonate others",
+    "Do not coordinate harm or promote terrorist organizations",
+  ],
+  "Instagram": [
+    "Do not post content that promotes violence or hate speech",
+    "Do not bully or harass individuals, especially minors",
+    "Do not share content that sexualizes anyone, especially minors",
+    "Do not post graphic or gory content",
+    "Do not share misinformation that could cause real-world harm",
+    "Do not impersonate other people or organizations",
+  ],
+  "Custom": [
+    "No predefined guidelines — your custom policy rules apply",
+  ],
+};
 
 function setStatus(message, state) {
   statusPill.textContent = message;
@@ -25,6 +67,17 @@ function updateCounter() {
 
 function toggleCustomPolicy() {
   customPolicyWrap.classList.toggle("hidden", policySelect.value !== "Custom");
+}
+
+function renderPolicyGuidelines() {
+  const guidelines = POLICY_GUIDELINES[policySelect.value] || [];
+  policyGuidelines.innerHTML = guidelines.map((guideline) => `<li>${guideline}</li>`).join("");
+}
+
+function setPolicyCardExpanded(expanded) {
+  policyToggle.setAttribute("aria-expanded", String(expanded));
+  policyContent.classList.toggle("hidden", !expanded);
+  policyToggleIndicator.textContent = expanded ? "−" : "+";
 }
 
 function badge(label, variant) {
@@ -171,6 +224,13 @@ batchFileInput.addEventListener("change", async () => {
 
 textInput.addEventListener("input", updateCounter);
 policySelect.addEventListener("change", toggleCustomPolicy);
+policySelect.addEventListener("change", renderPolicyGuidelines);
+policyToggle.addEventListener("click", () => {
+  const expanded = policyToggle.getAttribute("aria-expanded") === "true";
+  setPolicyCardExpanded(!expanded);
+});
 
 updateCounter();
 toggleCustomPolicy();
+renderPolicyGuidelines();
+setPolicyCardExpanded(false);

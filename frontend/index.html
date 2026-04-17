@@ -60,6 +60,16 @@
           <option>Custom</option>
         </select>
 
+        <section class="policy-card">
+          <button type="button" id="policy-toggle" class="policy-toggle" aria-expanded="false">
+            <span>View Policy Guidelines</span>
+            <span id="policy-toggle-indicator">+</span>
+          </button>
+          <div id="policy-content" class="policy-content hidden">
+            <ul id="policy-guidelines" class="policy-guidelines"></ul>
+          </div>
+        </section>
+
         <div id="custom-policy-wrap" class="hidden">
           <label for="custom_policy_text">Custom Policy</label>
           <textarea id="custom_policy_text" name="custom_policy_text" rows="4" placeholder="Describe your policy rules in plain English..."></textarea>
