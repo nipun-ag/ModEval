@@ -488,6 +488,7 @@ select:focus,
 }
 
 .section-content.expanded {
+  overflow: visible;
   opacity: 1;
 }
 
