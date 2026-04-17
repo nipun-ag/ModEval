@@ -483,6 +483,28 @@ textarea:focus {
   line-height: 1.2;
 }
 
+.insight-card em {
+  display: block;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.model-title {
+  display: block;
+  color: var(--white);
+}
+
+.model-subtitle {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
 .insight-card[data-tone="allow"] {
   border-left-color: var(--green);
 }

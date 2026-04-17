@@ -27,6 +27,21 @@ const strictestCard = document.getElementById("strictest-card");
 const lenientCard = document.getElementById("lenient-card");
 const consensusCard = document.getElementById("consensus-card");
 
+const MODEL_DISPLAY = {
+  "HuggingFace toxic-bert": {
+    name: "Toxicity Classifier",
+    subtitle: "unitary/toxic-bert",
+  },
+  "HuggingFace RoBERTa offensive": {
+    name: "Offensive Language Detector",
+    subtitle: "cardiffnlp/roberta-offensive",
+  },
+  "HuggingFace Hate Speech": {
+    name: "Hate Speech Detector",
+    subtitle: "facebook/roberta-hate-speech",
+  },
+};
+
 const POLICY_GUIDELINES = {
   Reddit: [
     "Do not post content that incites or glorifies violence against people or animals",
@@ -138,6 +153,18 @@ function badge(label, variant) {
   return `<span class="badge ${variant}">${label}</span>`;
 }
 
+function modelDisplay(modelName) {
+  return MODEL_DISPLAY[modelName] || { name: modelName, subtitle: "" };
+}
+
+function renderModelDisplay(modelName) {
+  const display = modelDisplay(modelName);
+  const subtitle = display.subtitle
+    ? `<span class="model-subtitle mono">${escapeHtml(display.subtitle)}</span>`
+    : "";
+  return `<span class="model-title">${escapeHtml(display.name)}</span>${subtitle}`;
+}
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -179,7 +206,7 @@ function renderResults(results) {
   resultsBody.innerHTML = results.map((result, index) => `
     <tr data-action="${escapeHtml(result.action)}" style="animation-delay:${index * 90}ms">
       <td data-label="Model" class="model-cell">
-        <strong>${escapeHtml(result.model)}</strong>
+        <strong>${renderModelDisplay(result.model)}</strong>
         <span class="metric-soft">${result.error ? "Model unavailable" : "Live inference"}</span>
       </td>
       <td data-label="Top Category">
@@ -225,17 +252,30 @@ function renderDisagreements(disagreements) {
     "Category Mismatch": "Category mismatch detected - models flagged different primary risks",
   };
 
+  const displayType = mostCritical.type === "Action Mismatch"
+    ? "final recommendation"
+    : mostCritical.type === "Severity Gap"
+      ? "severity assessment"
+      : "primary risk category";
+
+  const mentionedModels = Array.from(new Set(
+    Object.keys(MODEL_DISPLAY).filter((model) => mostCritical.description.includes(model))
+  ));
+  const modelSummary = mentionedModels.length
+    ? ` <span class="metric-soft">${mentionedModels.map((model) => modelDisplay(model).name).join(" vs ")}</span>`
+    : "";
+
   disagreementBanner.innerHTML = `
     <span class="warning-icon">⚠</span>
-    <span>${messages[mostCritical.type] || escapeHtml(mostCritical.description)}</span>
+    <span>${messages[mostCritical.type] || escapeHtml(mostCritical.description)}${modelSummary ? ` - ${displayType}` : ""}${modelSummary}</span>
   `;
   disagreementBanner.classList.remove("hidden");
   requestAnimationFrame(() => disagreementBanner.classList.add("visible"));
 }
 
 function renderInsights(insights, results) {
-  strictestModel.textContent = insights.strictest_model || "-";
-  mostLenientModel.textContent = insights.most_lenient_model || "-";
+  strictestModel.innerHTML = insights.strictest_model ? renderModelDisplay(insights.strictest_model) : "-";
+  mostLenientModel.innerHTML = insights.most_lenient_model ? renderModelDisplay(insights.most_lenient_model) : "-";
   consensusAction.textContent = insights.consensus_action || "-";
 
   const strictestResult = results.find((result) => result.model === insights.strictest_model);
@@ -250,7 +290,7 @@ function renderExplainability(results) {
   explainabilityList.innerHTML = results.map((result) => `
     <article class="explanation-card">
       <div class="explanation-head">
-        <h4>${escapeHtml(result.model)}</h4>
+        <h4>${renderModelDisplay(result.model)}</h4>
         ${badge(result.action, actionTone(result.action))}
       </div>
       <p class="explanation-text">${escapeHtml(result.explanation || "No explanation available.")}</p>
