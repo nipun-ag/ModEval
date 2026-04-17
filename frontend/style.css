@@ -1,12 +1,13 @@
 :root {
-  --bg: #030008;
-  --surface: rgba(15, 10, 25, 0.6);
-  --surface2: rgba(22, 15, 38, 0.7);
-  --surface3: rgba(30, 20, 50, 0.8);
-  --border: rgba(200, 150, 255, 0.08);
-  --border-strong: rgba(200, 150, 255, 0.15);
-  --accent: #a855f7;
-  --accent-light: rgba(168, 85, 247, 0.15);
+  --bg: #00030a;
+  --surface: rgba(10, 15, 30, 0.6);
+  --surface2: rgba(15, 20, 45, 0.7);
+  --surface3: rgba(20, 30, 60, 0.8);
+  --border: rgba(150, 200, 255, 0.08);
+  --border-strong: rgba(150, 200, 255, 0.15);
+  --accent: #3b82f6;
+  --accent-light: rgba(59, 130, 246, 0.15);
+  --accent-glow: rgba(59, 130, 246, 0.4);
   --green: #10b981;
   --green-light: rgba(16, 185, 129, 0.15);
   --amber: #f59e0b;
@@ -16,8 +17,8 @@
   --purple: #8b5cf6;
   --purple-light: rgba(139, 92, 246, 0.15);
   --text: #fdfcff;
-  --text-secondary: #a79fbb;
-  --muted: #6e6587;
+  --text-secondary: #94a3b8;
+  --muted: #64748b;
   --white: #ffffff;
 }
 
@@ -65,7 +66,7 @@ button {
   transform: translateX(-50%);
   width: 1200px;
   height: 800px;
-  background: radial-gradient(ellipse at top center, rgba(168, 85, 247, 0.18) 0%, rgba(59, 130, 246, 0.08) 40%, transparent 70%);
+  background: radial-gradient(ellipse at top center, rgba(59, 130, 246, 0.12) 0%, rgba(14, 165, 233, 0.06) 40%, transparent 70%);
   pointer-events: none;
   z-index: -1;
   filter: blur(40px);
@@ -169,9 +170,9 @@ button {
   align-items: center;
   gap: 8px;
   padding: 6px;
-  border: 1px solid rgba(200, 150, 255, 0.15);
+  border: 1px solid rgba(150, 200, 255, 0.15);
   border-radius: 999px;
-  background: rgba(10, 5, 20, 0.4);
+  background: rgba(5, 10, 25, 0.4);
   backdrop-filter: blur(24px) saturate(150%);
   box-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
 }
@@ -190,7 +191,7 @@ button {
 }
 
 .results-tab:hover {
-  color: #e2d8ff;
+  color: #bfdbfe;
 }
 
 .results-tab:active {
@@ -531,13 +532,13 @@ select:focus,
   position: relative;
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.15);
-  background: linear-gradient(135deg, var(--accent) 0%, #6d28d9 100%);
+  background: linear-gradient(135deg, var(--accent) 0%, #2563eb 100%);
   color: var(--white);
   box-shadow: 0 4px 16px var(--accent-light), inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
 .primary-button:hover {
-  background: linear-gradient(135deg, #b065fc 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
   box-shadow: 0 6px 24px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.3);
   transform: translateY(-1px);
 }
