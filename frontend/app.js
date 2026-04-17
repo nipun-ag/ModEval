@@ -20,8 +20,8 @@ const policyCitation = document.getElementById("policy-citation");
 const contextToggle = document.getElementById("context-toggle");
 const contextContent = document.getElementById("context-content");
 const analyzeButton = document.getElementById("analyze-button");
-const analyzeSpinner = document.getElementById("analyze-spinner");
 const resultsEmpty = document.getElementById("results-empty");
+const skeletonState = document.getElementById("skeleton-state");
 const resultsContent = document.getElementById("results-content");
 const strictestCard = document.getElementById("strictest-card");
 const lenientCard = document.getElementById("lenient-card");
@@ -32,22 +32,27 @@ const MODEL_DISPLAY = {
   "HuggingFace toxic-bert": {
     name: "Toxicity Classifier",
     subtitle: "unitary/toxic-bert",
+    chip: "BERT",
   },
   "HuggingFace RoBERTa offensive": {
     name: "Offensive Language Detector",
     subtitle: "cardiffnlp/roberta-offensive",
+    chip: "RoBERTa",
   },
   "HuggingFace Hate Speech": {
     name: "Hate Speech Detector",
     subtitle: "facebook/roberta-hate-speech",
+    chip: "facebook",
   },
   "HuggingFace Spam Detector": {
     name: "Spam Detector",
     subtitle: "mrm8488/bert-tiny",
+    chip: "mrm8488",
   },
   "HuggingFace Bias Detector": {
     name: "Bias Detector",
     subtitle: "valurank/distilroberta-bias",
+    chip: "valurank",
   },
 };
 
@@ -174,8 +179,6 @@ const EXAMPLE_LIBRARY = {
   ],
 };
 
-const lastExampleByCategory = {};
-
 const POLICY_GUIDELINES = {
   Reddit: [
     "Do not post content that incites or glorifies violence against people or animals",
@@ -245,6 +248,17 @@ const POLICY_CITATIONS = {
   },
 };
 
+const lastExampleByCategory = {};
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
 function setStatus(message, state) {
   statusPill.textContent = message;
   statusPill.className = `status-pill ${state}`;
@@ -252,12 +266,89 @@ function setStatus(message, state) {
 
 function setAnalyzeLoading(isLoading) {
   analyzeButton.disabled = isLoading;
-  analyzeSpinner.classList.toggle("hidden", !isLoading);
-  analyzeButton.querySelector(".button-label").textContent = isLoading ? "Analyzing" : "Analyze";
+  analyzeButton.classList.toggle("loading", isLoading);
+  analyzeButton.querySelector(".button-label").textContent = isLoading ? "Analyzing..." : "Execute Analysis";
 }
 
 function updateCounter() {
   charCounter.textContent = `${textInput.value.length} / 500`;
+}
+
+function modelDisplay(modelName) {
+  return MODEL_DISPLAY[modelName] || { name: modelName, subtitle: "", chip: "model" };
+}
+
+function renderModelDisplay(modelName, includeChip = false) {
+  const display = modelDisplay(modelName);
+  const chip = includeChip ? `<span class="model-chip">${escapeHtml(display.chip)}</span>` : "";
+  const primary = includeChip
+    ? `<div class="model-primary"><span class="model-title">${escapeHtml(display.name)}</span>${chip}</div>`
+    : `<span class="model-title">${escapeHtml(display.name)}</span>`;
+  const subtitle = display.subtitle
+    ? `<span class="model-subtitle">${escapeHtml(display.subtitle)}</span>`
+    : "";
+  return `${primary}${subtitle}`;
+}
+
+function actionTone(action) {
+  const normalized = String(action || "").toLowerCase();
+  if (normalized === "allow") {
+    return "allow";
+  }
+  if (normalized === "remove") {
+    return "remove";
+  }
+  if (normalized === "review") {
+    return "review";
+  }
+  return "neutral";
+}
+
+function severityTone(severity) {
+  if (severity >= 8) {
+    return "high";
+  }
+  if (severity >= 4) {
+    return "medium";
+  }
+  return "low";
+}
+
+function badge(label, variant) {
+  return `<span class="badge ${variant}">${escapeHtml(label)}</span>`;
+}
+
+function setSectionExpanded(toggle, content, expanded) {
+  toggle.setAttribute("aria-expanded", String(expanded));
+  content.setAttribute("aria-hidden", String(!expanded));
+  content.classList.toggle("expanded", expanded);
+  if (expanded) {
+    content.style.maxHeight = `${content.scrollHeight}px`;
+  } else {
+    content.style.maxHeight = "0px";
+  }
+}
+
+function toggleCustomPolicy() {
+  customPolicyWrap.classList.toggle("hidden", policySelect.value !== "Custom");
+}
+
+function renderPolicyGuidelines() {
+  const guidelines = POLICY_GUIDELINES[policySelect.value] || [];
+  const citation = POLICY_CITATIONS[policySelect.value];
+  policyGuidelines.innerHTML = guidelines.map((guideline) => `<li>${escapeHtml(guideline)}</li>`).join("");
+
+  if (citation) {
+    policyCitation.classList.remove("hidden");
+    policyCitation.innerHTML = `${citation.label} - <a href="${citation.url}" target="_blank" rel="noreferrer">${citation.suffix}</a>`;
+  } else {
+    policyCitation.classList.add("hidden");
+    policyCitation.innerHTML = "";
+  }
+
+  if (policyContent.classList.contains("expanded")) {
+    policyContent.style.maxHeight = `${policyContent.scrollHeight}px`;
+  }
 }
 
 function applyExample(category, button) {
@@ -283,74 +374,13 @@ function applyExample(category, button) {
 
   exampleButtons.forEach((pill) => pill.classList.remove("active"));
   button.classList.add("active");
-  window.setTimeout(() => button.classList.remove("active"), 650);
+  window.setTimeout(() => button.classList.remove("active"), 450);
 }
 
-function toggleCustomPolicy() {
-  customPolicyWrap.classList.toggle("hidden", policySelect.value !== "Custom");
-}
-
-function setSectionExpanded(toggle, content, expanded) {
-  toggle.setAttribute("aria-expanded", String(expanded));
-  content.classList.toggle("hidden", !expanded);
-}
-
-function renderPolicyGuidelines() {
-  const guidelines = POLICY_GUIDELINES[policySelect.value] || [];
-  const citation = POLICY_CITATIONS[policySelect.value];
-  policyGuidelines.innerHTML = guidelines.map((guideline) => `<li>${guideline}</li>`).join("");
-
-  if (citation) {
-    policyCitation.classList.remove("hidden");
-    policyCitation.innerHTML = `${citation.label} - <a href="${citation.url}" target="_blank" rel="noreferrer">${citation.suffix}</a>`;
-  } else {
-    policyCitation.classList.add("hidden");
-    policyCitation.innerHTML = "";
-  }
-}
-
-function badge(label, variant) {
-  return `<span class="badge ${variant}">${label}</span>`;
-}
-
-function modelDisplay(modelName) {
-  return MODEL_DISPLAY[modelName] || { name: modelName, subtitle: "" };
-}
-
-function renderModelDisplay(modelName) {
-  const display = modelDisplay(modelName);
-  const subtitle = display.subtitle
-    ? `<span class="model-subtitle mono">${escapeHtml(display.subtitle)}</span>`
-    : "";
-  return `<span class="model-title">${escapeHtml(display.name)}</span>${subtitle}`;
-}
-
-function escapeHtml(value) {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
-function actionTone(action) {
-  const normalized = String(action || "").toLowerCase();
-  if (normalized === "allow") {
-    return "allow";
-  }
-  if (normalized === "remove") {
-    return "remove";
-  }
-  if (normalized === "review") {
-    return "review";
-  }
-  return "neutral";
-}
-
-function showResults(hasResults) {
-  resultsEmpty.classList.toggle("hidden", hasResults);
-  resultsContent.classList.toggle("hidden", !hasResults);
+function showPanelState(state) {
+  resultsEmpty.classList.toggle("hidden", state !== "empty");
+  skeletonState.classList.toggle("hidden", state !== "loading");
+  resultsContent.classList.toggle("hidden", state !== "results");
 }
 
 function renderResults(results) {
@@ -364,30 +394,30 @@ function renderResults(results) {
   }
 
   resultsBody.innerHTML = results.map((result, index) => `
-    <tr data-action="${escapeHtml(result.action)}" style="animation-delay:${index * 90}ms">
-      <td data-label="Model" class="model-cell">
-        <strong>${renderModelDisplay(result.model)}</strong>
+    <tr style="animation-delay:${index * 50}ms">
+      <td>
+        ${renderModelDisplay(result.model, true)}
         <span class="metric-soft">${result.error ? "Model unavailable" : "Live inference"}</span>
       </td>
-      <td data-label="Top Category">
+      <td>
         <span class="metric-strong">${escapeHtml(result.top_category)}</span>
       </td>
-      <td data-label="Severity">
-        <span class="metric-strong mono">${escapeHtml(result.severity)}</span>
+      <td>
+        <span class="severity-value mono ${severityTone(Number(result.severity))}">${escapeHtml(result.severity)}</span>
       </td>
-      <td data-label="Confidence">
-        <span class="metric-strong mono">${Number(result.confidence).toFixed(2)}</span>
+      <td>
+        <span class="mono">${Number(result.confidence).toFixed(2)}</span>
       </td>
-      <td data-label="Action" class="action-cell">
+      <td class="action-cell">
         ${badge(result.action, actionTone(result.action))}
       </td>
-      <td data-label="Policy Alignment">
-        <div class="metric-inline">
+      <td class="alignment-cell">
+        <div class="alignment-inline">
+          <span class="alignment-icon ${result.aligned ? "aligned" : "misaligned"}">${result.aligned ? "✓" : "×"}</span>
           ${badge(result.aligned ? "Aligned" : "Misaligned", result.aligned ? "aligned" : "misaligned")}
-          <span class="separator">/</span>
           <span class="mono">${Number(result.alignment_score || 0).toFixed(2)}</span>
         </div>
-        ${result.error ? `<div class="metric-soft error-text">${escapeHtml(result.error)}</div>` : ""}
+        ${result.error ? `<span class="metric-soft error-text">${escapeHtml(result.error)}</span>` : ""}
       </td>
     </tr>
   `).join("");
@@ -412,16 +442,9 @@ function renderDisagreements(disagreements) {
     "Category Mismatch": "Category mismatch detected - models flagged different primary risks",
   };
 
-  const mentionedModels = Array.from(new Set(
-    Object.keys(MODEL_DISPLAY).filter((model) => mostCritical.description.includes(model))
-  ));
-  const modelSummary = mentionedModels.length
-    ? ` <span class="metric-soft">${mentionedModels.map((model) => modelDisplay(model).name).join(" vs ")}</span>`
-    : "";
-
   disagreementBanner.innerHTML = `
     <span class="warning-icon">⚠</span>
-    <span>${messages[mostCritical.type] || escapeHtml(mostCritical.description)}${modelSummary}</span>
+    <span>${messages[mostCritical.type] || escapeHtml(mostCritical.description)}</span>
   `;
   disagreementBanner.classList.remove("hidden");
   requestAnimationFrame(() => disagreementBanner.classList.add("visible"));
@@ -435,8 +458,8 @@ function renderInsights(insights, results) {
   const strictestResult = results.find((result) => result.model === insights.strictest_model);
   const lenientResult = results.find((result) => result.model === insights.most_lenient_model);
 
-  strictestCard.dataset.tone = actionTone(strictestResult?.action || "Review");
-  lenientCard.dataset.tone = actionTone(lenientResult?.action || "Allow");
+  strictestCard.dataset.tone = actionTone(strictestResult?.action || "review");
+  lenientCard.dataset.tone = actionTone(lenientResult?.action || "allow");
   consensusCard.dataset.tone = actionTone(insights.consensus_action || "neutral");
 }
 
@@ -469,26 +492,27 @@ async function postJson(url, payload) {
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
-  setStatus("Analyzing", "loading");
+  setStatus("Waiting for input", "loading");
   setAnalyzeLoading(true);
   batchSummary.classList.add("hidden");
+  renderDisagreements([]);
+  showPanelState("loading");
 
   const payload = Object.fromEntries(new FormData(form).entries());
 
   try {
     const data = await postJson("/analyze", payload);
-    showResults(true);
     renderResults(data.results || []);
     renderDisagreements(data.disagreements || []);
     renderInsights(data.insights || {}, data.results || []);
     renderExplainability(data.results || []);
+    showPanelState("results");
     setStatus("Analysis complete", "success");
   } catch (error) {
-    showResults(true);
     renderResults([]);
-    renderDisagreements([]);
     renderInsights({}, []);
     explainabilityList.innerHTML = `<p class="error-text">${escapeHtml(error.message)}</p>`;
+    showPanelState("results");
     setStatus("Request failed", "error");
   } finally {
     setAnalyzeLoading(false);
@@ -506,7 +530,7 @@ batchFileInput.addEventListener("change", async () => {
     return;
   }
 
-  setStatus("Running batch analysis", "loading");
+  setStatus("Waiting for input", "loading");
 
   try {
     const csvText = await file.text();
@@ -526,17 +550,18 @@ batchFileInput.addEventListener("change", async () => {
       <strong>Batch Summary</strong>
       <p>Total inputs: ${data.total} | Flagged inputs: ${data.flagged_count} | Flag rate: ${(data.flag_rate * 100).toFixed(1)}%</p>
     `;
-    setStatus("Batch analysis complete", "success");
+    setStatus("Analysis complete", "success");
   } catch (error) {
     batchSummary.classList.remove("hidden");
     batchSummary.innerHTML = `<p class="error-text">${escapeHtml(error.message)}</p>`;
-    setStatus("Batch request failed", "error");
+    setStatus("Request failed", "error");
   } finally {
     batchFileInput.value = "";
   }
 });
 
 textInput.addEventListener("input", updateCounter);
+textInput.addEventListener("animationend", () => textInput.classList.remove("example-loaded"));
 policySelect.addEventListener("change", toggleCustomPolicy);
 policySelect.addEventListener("change", renderPolicyGuidelines);
 policyToggle.addEventListener("click", () => {
@@ -547,11 +572,18 @@ contextToggle.addEventListener("click", () => {
   const expanded = contextToggle.getAttribute("aria-expanded") === "true";
   setSectionExpanded(contextToggle, contextContent, !expanded);
 });
-textInput.addEventListener("animationend", () => textInput.classList.remove("example-loaded"));
+
+window.addEventListener("resize", () => {
+  [policyContent, contextContent].forEach((content) => {
+    if (content.classList.contains("expanded")) {
+      content.style.maxHeight = `${content.scrollHeight}px`;
+    }
+  });
+});
 
 updateCounter();
 toggleCustomPolicy();
 renderPolicyGuidelines();
 setSectionExpanded(policyToggle, policyContent, false);
 setSectionExpanded(contextToggle, contextContent, false);
-showResults(false);
+showPanelState("empty");

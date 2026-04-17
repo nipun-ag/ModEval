@@ -6,34 +6,32 @@
   <title>ModEval</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <div class="brand-lockup">
-        <div class="brand-mark"></div>
+      <div class="topbar-inner">
         <div class="brand-wordmark">Mod<span>Eval</span></div>
-      </div>
-      <div class="topbar-status">
-        <span class="status-dot"></span>
-        <span>5 Models Active</span>
+        <div class="topbar-status">
+          <span class="status-dot"></span>
+          <span>5 Models Active</span>
+        </div>
       </div>
     </header>
 
-    <div class="workspace">
+    <main class="workspace">
       <aside class="input-panel">
-        <div class="panel-accent"></div>
-        <div class="panel-frame">
+        <div class="panel-inner">
           <h1 class="hero-title">Mod<span>Eval</span></h1>
           <p class="hero-copy">
             Compare how AI moderation models interpret content across platform contexts
           </p>
 
           <section class="example-section">
-            <p class="example-label">Try an Example</p>
-            <div class="example-row" id="example-row">
+            <p class="section-label">Try an Example</p>
+            <div class="example-row">
               <button type="button" class="example-pill toxicity" data-category="Toxicity">Toxicity</button>
               <button type="button" class="example-pill harassment" data-category="Harassment">Harassment</button>
               <button type="button" class="example-pill hate-speech" data-category="Hate Speech">Hate Speech</button>
@@ -50,19 +48,18 @@
           <form id="analyze-form" class="input-form">
             <div class="field-block">
               <label for="text">Content Input</label>
-              <textarea id="text" name="text" rows="8" maxlength="500" placeholder="Paste the content you want to evaluate..." required></textarea>
+              <textarea id="text" name="text" rows="10" maxlength="500" placeholder="Paste the content you want to evaluate..." required></textarea>
               <div class="counter-wrap">
-                <span>Max 500 Characters</span>
                 <span id="char-counter" class="mono">0 / 500</span>
               </div>
             </div>
 
-            <section class="context-card">
+            <section class="collapsible">
               <button type="button" id="context-toggle" class="section-toggle" aria-expanded="false">
                 <span>Analysis Context</span>
-                <span id="context-toggle-indicator" class="chevron">⌄</span>
+                <span class="chevron">⌄</span>
               </button>
-              <div id="context-content" class="context-content hidden">
+              <div id="context-content" class="section-content" aria-hidden="true">
                 <div class="context-grid">
                   <div class="field-block">
                     <label for="platform_context">Platform Context</label>
@@ -109,12 +106,12 @@
               </select>
             </div>
 
-            <section class="policy-card">
-              <button type="button" id="policy-toggle" class="section-toggle policy-toggle" aria-expanded="false">
+            <section class="collapsible">
+              <button type="button" id="policy-toggle" class="section-toggle" aria-expanded="false">
                 <span>View Policy Guidelines</span>
-                <span id="policy-toggle-indicator" class="chevron">⌄</span>
+                <span class="chevron">⌄</span>
               </button>
-              <div id="policy-content" class="policy-content hidden">
+              <div id="policy-content" class="section-content" aria-hidden="true">
                 <ul id="policy-guidelines" class="policy-guidelines"></ul>
                 <p id="policy-citation" class="policy-citation hidden"></p>
               </div>
@@ -127,8 +124,7 @@
 
             <div class="button-row">
               <button type="submit" id="analyze-button" class="primary-button">
-                <span class="button-label">Analyze</span>
-                <span id="analyze-spinner" class="button-spinner hidden" aria-hidden="true"></span>
+                <span class="button-label">Execute Analysis</span>
               </button>
               <button type="button" id="batch-button" class="secondary-button">Batch Upload</button>
               <input type="file" id="batch-file" accept=".csv,text/csv" hidden>
@@ -137,11 +133,11 @@
         </div>
       </aside>
 
-      <main class="results-panel">
-        <section class="results-frame">
+      <section class="results-panel">
+        <div class="panel-inner">
           <div class="results-header">
             <div>
-              <p class="section-kicker">Analysis Output</p>
+              <p class="section-label">Analysis Output</p>
               <h2>Model Comparison</h2>
             </div>
             <div id="status-pill" class="status-pill idle">Waiting for input</div>
@@ -152,11 +148,25 @@
 
           <section id="results-empty" class="empty-state">
             <h3>Run your first analysis</h3>
-            <p>ModEval will compare model decisions, policy alignment, and disagreement signals here.</p>
+            <p>ModEval will compare model decisions, policy alignment, and disagreement signals here</p>
+          </section>
+
+          <section id="skeleton-state" class="skeleton-state hidden" aria-hidden="true">
+            <div class="skeleton-heading">
+              <div class="skeleton-line large"></div>
+              <div class="skeleton-line short"></div>
+            </div>
+            <div class="skeleton-table">
+              <div class="skeleton-row"></div>
+              <div class="skeleton-row"></div>
+              <div class="skeleton-row"></div>
+              <div class="skeleton-row"></div>
+              <div class="skeleton-row"></div>
+            </div>
           </section>
 
           <div id="results-content" class="results-content hidden">
-            <section class="insights-strip" id="insights-strip">
+            <section class="insights-strip">
               <article id="strictest-card" class="insight-card" data-tone="review">
                 <span>Strictest Model</span>
                 <em>The model that flagged this content most aggressively</em>
@@ -167,50 +177,45 @@
                 <em>The model most likely to allow this content through</em>
                 <strong id="most-lenient-model">-</strong>
               </article>
-              <article id="consensus-card" class="insight-card" data-tone="neutral">
+              <article id="consensus-card" class="insight-card consensus-card" data-tone="neutral">
                 <span>Consensus</span>
                 <em>What the majority of models recommend</em>
                 <strong id="consensus-action">-</strong>
               </article>
             </section>
 
-            <section class="table-card">
+            <section class="matrix-section">
               <div class="section-heading">
-                <div>
-                  <p class="section-kicker">Decision Matrix</p>
-                  <h3>Comparison Table</h3>
-                </div>
+                <p class="section-label mono-label">Decision Matrix</p>
               </div>
-              <div class="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Model</th>
-                      <th>Top Category</th>
-                      <th>Severity</th>
-                      <th>Confidence</th>
-                      <th>Action</th>
-                      <th>Policy Alignment</th>
-                    </tr>
-                  </thead>
-                  <tbody id="results-body"></tbody>
-                </table>
-              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Model</th>
+                    <th>Top Category</th>
+                    <th>Severity</th>
+                    <th>Confidence</th>
+                    <th>Action</th>
+                    <th>Policy Alignment</th>
+                  </tr>
+                </thead>
+                <tbody id="results-body"></tbody>
+              </table>
             </section>
 
-            <section class="explainability-card">
-              <div class="section-heading">
+            <section class="explainability-section">
+              <div class="section-heading stacked">
                 <div>
-                  <p class="section-kicker">Interpretation Layer</p>
+                  <p class="section-label mono-label">Interpretation Layer</p>
                   <h3>Explainability</h3>
                 </div>
               </div>
               <div id="explainability-list" class="explainability-grid"></div>
             </section>
           </div>
-        </section>
-      </main>
-    </div>
+        </div>
+      </section>
+    </main>
   </div>
 
   <script src="/app.js"></script>
