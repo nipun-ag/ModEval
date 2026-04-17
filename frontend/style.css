@@ -328,6 +328,16 @@ td {
   margin-top: 8px;
 }
 
+.policy-citation {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.policy-citation a {
+  color: inherit;
+}
+
 .accordion-item {
   border: 1px solid rgba(153, 173, 255, 0.14);
   border-radius: 16px;
