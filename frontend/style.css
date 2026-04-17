@@ -331,6 +331,12 @@ select {
   transition: all 150ms ease;
 }
 
+option {
+  background: #0f172a;
+  background: var(--surface2);
+  color: #ffffff;
+}
+
 .custom-select-trigger {
   width: 100%;
   min-height: 40px;
