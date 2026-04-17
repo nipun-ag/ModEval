@@ -1,8 +1,6 @@
 const form = document.getElementById("analyze-form");
 const textInput = document.getElementById("text");
 const charCounter = document.getElementById("char-counter");
-const policySelect = document.getElementById("policy");
-const customPolicyWrap = document.getElementById("custom-policy-wrap");
 const statusPill = document.getElementById("status-pill");
 const resultsBody = document.getElementById("results-body");
 const disagreementBanner = document.getElementById("disagreement-banner");
@@ -17,10 +15,6 @@ const analysisTab = document.getElementById("analysis-tab");
 const methodologyTab = document.getElementById("methodology-tab");
 const analysisView = document.getElementById("analysis-view");
 const methodologyView = document.getElementById("methodology-view");
-const policyToggle = document.getElementById("policy-toggle");
-const policyContent = document.getElementById("policy-content");
-const policyGuidelines = document.getElementById("policy-guidelines");
-const policyCitation = document.getElementById("policy-citation");
 const contextToggle = document.getElementById("context-toggle");
 const contextContent = document.getElementById("context-content");
 const analyzeButton = document.getElementById("analyze-button");
@@ -183,75 +177,6 @@ const EXAMPLE_LIBRARY = {
   ],
 };
 
-const POLICY_GUIDELINES = {
-  Reddit: [
-    "Do not post content that incites or glorifies violence against people or animals",
-    "Do not harass, bully, threaten, or intimidate other users",
-    "Do not share or encourage sexual or suggestive content involving minors",
-    "Do not reveal personal information of others without their consent (doxxing)",
-    "Do not impersonate individuals, organizations, or Reddit itself",
-    "Do not post illegal content or facilitate illegal transactions",
-    "Do not manipulate votes or engage in spam",
-    "Abide by the rules of each community you participate in",
-  ],
-  Discord: [
-    "Do not promote, coordinate, or engage in harassment or sexual harassment",
-    "Do not threaten to harm another individual or group of people",
-    "Do not share or threaten to share personally identifiable information without consent (doxxing)",
-    "Do not use hate speech or engage in hateful conduct based on protected characteristics",
-    "Do not organize, promote, or support violent extremism",
-    "Do not share content that sexually exploits or endangers minors",
-    "Do not promote, glorify, or provide instructions for self-harm or suicide",
-    "Do not share false or misleading information that causes real-world harm",
-  ],
-  Facebook: [
-    "Do not post content that incites or facilitates violence against people or animals",
-    "Do not bully, harass, or threaten private individuals",
-    "Do not post content that sexually exploits or endangers children",
-    "Do not post graphic violence intended to shock or glorify harm",
-    "Do not engage in hate speech targeting people based on protected characteristics",
-    "Do not create fake accounts or impersonate others",
-    "Do not coordinate inauthentic behavior or run influence operations",
-    "Do not facilitate or promote terrorism or organized crime",
-  ],
-  Instagram: [
-    "Do not post content that promotes violence or incites harm against others",
-    "Do not bully or harass individuals, with extra protection for minors",
-    "Do not share content that sexually exploits or endangers children",
-    "Do not post graphic or gory content intended to shock",
-    "Do not engage in hate speech based on protected characteristics",
-    "Do not share health misinformation or content that causes real-world harm",
-    "Do not impersonate other people or organizations",
-    "Authentic identity is not required but coordinated inauthentic behavior is prohibited",
-  ],
-  Custom: [
-    "No predefined guidelines - your custom policy rules apply",
-  ],
-};
-
-const POLICY_CITATIONS = {
-  Reddit: {
-    label: "Source: Reddit Content Policy",
-    url: "https://redditinc.com/policies/content-policy",
-    suffix: "redditinc.com/policies/content-policy",
-  },
-  Discord: {
-    label: "Source: Discord Community Guidelines",
-    url: "https://discord.com/guidelines",
-    suffix: "discord.com/guidelines (Effective September 29, 2025)",
-  },
-  Facebook: {
-    label: "Source: Meta Community Standards",
-    url: "https://transparency.meta.com/policies/community-standards",
-    suffix: "transparency.meta.com/policies/community-standards",
-  },
-  Instagram: {
-    label: "Source: Meta Community Standards (unified)",
-    url: "https://transparency.meta.com/policies/community-standards",
-    suffix: "transparency.meta.com/policies/community-standards",
-  },
-};
-
 const lastExampleByCategory = {};
 let activeTab = "analysis";
 
@@ -360,28 +285,6 @@ function setSectionExpanded(toggle, content, expanded) {
     content.style.maxHeight = `${content.scrollHeight}px`;
   } else {
     content.style.maxHeight = "0px";
-  }
-}
-
-function toggleCustomPolicy() {
-  customPolicyWrap.classList.toggle("hidden", policySelect.value !== "Custom");
-}
-
-function renderPolicyGuidelines() {
-  const guidelines = POLICY_GUIDELINES[policySelect.value] || [];
-  const citation = POLICY_CITATIONS[policySelect.value];
-  policyGuidelines.innerHTML = guidelines.map((guideline) => `<li>${escapeHtml(guideline)}</li>`).join("");
-
-  if (citation) {
-    policyCitation.classList.remove("hidden");
-    policyCitation.innerHTML = `${citation.label} - <a href="${citation.url}" target="_blank" rel="noreferrer">${citation.suffix}</a>`;
-  } else {
-    policyCitation.classList.add("hidden");
-    policyCitation.innerHTML = "";
-  }
-
-  if (policyContent.classList.contains("expanded")) {
-    policyContent.style.maxHeight = `${policyContent.scrollHeight}px`;
   }
 }
 
@@ -598,19 +501,13 @@ batchFileInput.addEventListener("change", async () => {
 
 textInput.addEventListener("input", updateCounter);
 textInput.addEventListener("animationend", () => textInput.classList.remove("example-loaded"));
-policySelect.addEventListener("change", toggleCustomPolicy);
-policySelect.addEventListener("change", renderPolicyGuidelines);
-policyToggle.addEventListener("click", () => {
-  const expanded = policyToggle.getAttribute("aria-expanded") === "true";
-  setSectionExpanded(policyToggle, policyContent, !expanded);
-});
 contextToggle.addEventListener("click", () => {
   const expanded = contextToggle.getAttribute("aria-expanded") === "true";
   setSectionExpanded(contextToggle, contextContent, !expanded);
 });
 
 window.addEventListener("resize", () => {
-  [policyContent, contextContent].forEach((content) => {
+  [contextContent].forEach((content) => {
     if (content.classList.contains("expanded")) {
       content.style.maxHeight = `${content.scrollHeight}px`;
     }
@@ -618,8 +515,5 @@ window.addEventListener("resize", () => {
 });
 
 updateCounter();
-toggleCustomPolicy();
-renderPolicyGuidelines();
-setSectionExpanded(policyToggle, policyContent, false);
 setSectionExpanded(contextToggle, contextContent, false);
 showPanelState("empty");
