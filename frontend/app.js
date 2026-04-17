@@ -112,6 +112,66 @@ const EXAMPLE_LIBRARY = {
     "The deep state controls every single thing you see on the news, none of it is real",
     "Smart people already know the government has been lying to us about this for decades",
   ],
+  "Violent Threats": [
+    "I will hunt you down and make you pay for what you did",
+    "Someone needs to put a bullet in that politician's head",
+    "That whole neighborhood deserves to burn to the ground",
+    "If I ever see you in person I will beat you within an inch of your life",
+    "People like that deserve to be lined up and shot",
+    "I know where your kids go to school, just saying",
+    "That judge should be dragged out of the courthouse and dealt with",
+    "We need to rise up and eliminate everyone who stands against us",
+    "Next time you show your face around here it will be your last",
+    "That CEO deserves what's coming to him, someone should make it happen",
+  ],
+  Misinformation: [
+    "Vaccines contain microchips that track your location in real time",
+    "The moon landing was staged in a Hollywood studio, NASA admitted it privately",
+    "Drinking bleach kills the virus, doctors are hiding this cure from you",
+    "5G towers were specifically designed to spread disease through radiation",
+    "The election was stolen through software that flipped millions of votes",
+    "Climate change is a hoax invented by scientists to secure research funding",
+    "HIV does not cause AIDS, this was proven decades ago and suppressed",
+    "Chemtrails are chemical agents being sprayed to control the population",
+    "The government is putting fluoride in water to make people docile and compliant",
+    "COVID-19 was engineered in a lab and released intentionally to reduce population",
+  ],
+  Doxxing: [
+    "Here is his home address and phone number: 47 Maple Drive, +1-847-293-5521, do what you want with it",
+    "I found her workplace, her daily schedule, and her car registration: KJH 4892. Sharing now",
+    "His kids go to Lincoln Elementary on 5th Street, he picks them up at 3:15pm every day",
+    "Her full name is Sarah Mitchell, she lives at 234 Oak Lane Portland, works at Deloitte. Spread this",
+    "I have his mother's address -- 89 Birchwood Ave, Apt 4B -- if anyone wants to pay her a visit",
+    "Here is everything I found on her -- SSN 472-91-8834, Chase bank, lives at 12 Sunset Blvd",
+    "His girlfriend's number is +1-312-847-9021, feel free to let her know what he really did",
+    "I am going to post your real name James Harlow and address 567 Creek Road unless you take that down",
+    "Found her Instagram @real.emma.k, LinkedIn, home address 88 Fern Street and daily commute route. All yours",
+    "Everyone should know where this person lives. Posting Marcus Webb's full details at 9pm tonight",
+  ],
+  Radicalization: [
+    "Our race is under attack and it is our duty to defend it by any means necessary",
+    "The only solution is to purge the corrupt system and everyone who protects it",
+    "True believers must be willing to sacrifice everything to cleanse this society",
+    "They will never stop unless we make them stop. Violence is the only language they understand",
+    "Join us brothers, the time for talk is over, action is the only path forward now",
+    "Every soldier who dies fighting the infidels is a martyr guaranteed paradise",
+    "We have been patient long enough, it is time to take back what is ours by force",
+    "The weak will always compromise, only the strong are willing to do what is necessary",
+    "Our enemies are everywhere -- in government, media, schools. They must be removed",
+    "If you are not willing to fight and die for the cause then you are part of the problem",
+  ],
+  Impersonation: [
+    "Hi this is Elon Musk's personal account, I am giving away 10 BTC to the first 100 followers",
+    "Official announcement from the WHO: new lockdown begins Monday, stock up now",
+    "This is your bank's fraud department. Your account has been suspended, verify here immediately",
+    "I am a nurse at your local hospital. Your family member has been in an accident, call this number",
+    "Breaking: President confirms emergency declaration. This is the official White House account",
+    "Hi I am the real Taylor Swift, this is my private fan account where I share exclusive content",
+    "This is Apple Support. Your iCloud has been breached. Click here to secure your account now",
+    "Official government notice: your tax refund of $3,200 is ready. Claim it at this link",
+    "I am a moderator from this platform. Your account will be banned unless you verify here",
+    "This is the real account of a famous celebrity. My main was hacked, please follow this one instead",
+  ],
 };
 
 const lastExampleByCategory = {};
@@ -352,12 +412,6 @@ function renderDisagreements(disagreements) {
     "Category Mismatch": "Category mismatch detected - models flagged different primary risks",
   };
 
-  const displayType = mostCritical.type === "Action Mismatch"
-    ? "final recommendation"
-    : mostCritical.type === "Severity Gap"
-      ? "severity assessment"
-      : "primary risk category";
-
   const mentionedModels = Array.from(new Set(
     Object.keys(MODEL_DISPLAY).filter((model) => mostCritical.description.includes(model))
   ));
@@ -367,7 +421,7 @@ function renderDisagreements(disagreements) {
 
   disagreementBanner.innerHTML = `
     <span class="warning-icon">⚠</span>
-    <span>${messages[mostCritical.type] || escapeHtml(mostCritical.description)}${modelSummary ? ` - ${displayType}` : ""}${modelSummary}</span>
+    <span>${messages[mostCritical.type] || escapeHtml(mostCritical.description)}${modelSummary}</span>
   `;
   disagreementBanner.classList.remove("hidden");
   requestAnimationFrame(() => disagreementBanner.classList.add("visible"));

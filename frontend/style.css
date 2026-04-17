@@ -65,8 +65,7 @@ button {
   gap: 14px;
 }
 
-.brand-mark,
-.empty-mark {
+.brand-mark {
   width: 14px;
   height: 14px;
   border-radius: 3px;
@@ -205,25 +204,30 @@ button {
 }
 
 .example-pill.toxicity,
-.example-pill.hate-speech {
+.example-pill.hate-speech,
+.example-pill.violent-threats,
+.example-pill.doxxing {
   color: var(--red);
   border-color: rgba(255, 77, 106, 0.28);
   background: rgba(255, 77, 106, 0.1);
 }
 
-.example-pill.harassment {
+.example-pill.harassment,
+.example-pill.misinformation {
   color: var(--amber);
   border-color: rgba(255, 181, 71, 0.28);
   background: rgba(255, 181, 71, 0.1);
 }
 
-.example-pill.spam {
+.example-pill.spam,
+.example-pill.impersonation {
   color: var(--accent);
   border-color: rgba(79, 124, 255, 0.28);
   background: rgba(79, 124, 255, 0.1);
 }
 
-.example-pill.bias {
+.example-pill.bias,
+.example-pill.radicalization {
   color: #9b8afc;
   border-color: rgba(155, 138, 252, 0.28);
   background: rgba(155, 138, 252, 0.1);
@@ -524,12 +528,6 @@ textarea:focus {
   line-height: 1.75;
 }
 
-.empty-mark {
-  width: 24px;
-  height: 24px;
-  animation: pulse 2.2s ease-in-out infinite;
-}
-
 .results-content {
   animation: fadeIn 280ms ease;
 }
@@ -716,7 +714,7 @@ tr[data-action="Remove"] td:first-child {
 }
 
 .explainability-grid {
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .explanation-card {
@@ -856,7 +854,10 @@ tr[data-action="Remove"] td:first-child {
     gap: 8px;
   }
 
-  .insights-strip,
+  .insights-strip {
+    grid-template-columns: 1fr;
+  }
+
   .explainability-grid {
     grid-template-columns: 1fr;
   }
