@@ -135,82 +135,323 @@
 
       <section class="results-panel">
         <div class="panel-inner">
-          <div class="results-header">
-            <div>
-              <p class="section-label">Analysis Output</p>
-              <h2>Model Comparison</h2>
+          <div class="results-tabs-wrap">
+            <div class="results-tabs" role="tablist" aria-label="Results navigation">
+              <button type="button" id="analysis-tab" class="results-tab active" role="tab" aria-selected="true" aria-controls="analysis-view"><span>Analysis</span></button>
+              <button type="button" id="methodology-tab" class="results-tab" role="tab" aria-selected="false" aria-controls="methodology-view"><span>How It Works</span></button>
             </div>
-            <div id="status-pill" class="status-pill idle">Waiting for input</div>
           </div>
 
-          <section id="batch-summary" class="batch-summary hidden"></section>
-          <section id="disagreement-banner" class="disagreement-banner hidden"></section>
-
-          <section id="results-empty" class="empty-state">
-            <h3>Run your first analysis</h3>
-            <p>ModEval will compare model decisions, policy alignment, and disagreement signals here</p>
-          </section>
-
-          <section id="skeleton-state" class="skeleton-state hidden" aria-hidden="true">
-            <div class="skeleton-heading">
-              <div class="skeleton-line large"></div>
-              <div class="skeleton-line short"></div>
-            </div>
-            <div class="skeleton-table">
-              <div class="skeleton-row"></div>
-              <div class="skeleton-row"></div>
-              <div class="skeleton-row"></div>
-              <div class="skeleton-row"></div>
-              <div class="skeleton-row"></div>
-            </div>
-          </section>
-
-          <div id="results-content" class="results-content hidden">
-            <section class="insights-strip">
-              <article id="strictest-card" class="insight-card" data-tone="review">
-                <span>Strictest Model</span>
-                <em>The model that flagged this content most aggressively</em>
-                <strong id="strictest-model">-</strong>
-              </article>
-              <article id="lenient-card" class="insight-card" data-tone="allow">
-                <span>Most Lenient</span>
-                <em>The model most likely to allow this content through</em>
-                <strong id="most-lenient-model">-</strong>
-              </article>
-              <article id="consensus-card" class="insight-card consensus-card" data-tone="neutral">
-                <span>Consensus</span>
-                <em>What the majority of models recommend</em>
-                <strong id="consensus-action">-</strong>
-              </article>
-            </section>
-
-            <section class="matrix-section">
-              <div class="section-heading">
-                <p class="section-label mono-label">Decision Matrix</p>
+          <div id="analysis-view" class="results-view active" role="tabpanel" aria-labelledby="analysis-tab">
+            <div class="results-header">
+              <div>
+                <p class="section-label">Analysis Output</p>
+                <h2>Model Comparison</h2>
               </div>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Model</th>
-                    <th>Top Category</th>
-                    <th>Severity</th>
-                    <th>Confidence</th>
-                    <th>Action</th>
-                    <th>Policy Alignment</th>
-                  </tr>
-                </thead>
-                <tbody id="results-body"></tbody>
-              </table>
+              <div id="status-pill" class="status-pill idle">Waiting for input</div>
+            </div>
+
+            <section id="batch-summary" class="batch-summary hidden"></section>
+            <section id="disagreement-banner" class="disagreement-banner hidden"></section>
+
+            <section id="results-empty" class="empty-state">
+              <h3>Run your first analysis</h3>
+              <p>ModEval will compare model decisions, policy alignment, and disagreement signals here</p>
             </section>
 
-            <section class="explainability-section">
+            <section id="skeleton-state" class="skeleton-state hidden" aria-hidden="true">
+              <div class="skeleton-heading">
+                <div class="skeleton-line large"></div>
+                <div class="skeleton-line short"></div>
+              </div>
+              <div class="skeleton-table">
+                <div class="skeleton-row"></div>
+                <div class="skeleton-row"></div>
+                <div class="skeleton-row"></div>
+                <div class="skeleton-row"></div>
+                <div class="skeleton-row"></div>
+              </div>
+            </section>
+
+            <div id="results-content" class="results-content hidden">
+              <section class="insights-strip">
+                <article id="strictest-card" class="insight-card" data-tone="review">
+                  <span>Strictest Model</span>
+                  <em>The model that flagged this content most aggressively</em>
+                  <strong id="strictest-model">-</strong>
+                </article>
+                <article id="lenient-card" class="insight-card" data-tone="allow">
+                  <span>Most Lenient</span>
+                  <em>The model most likely to allow this content through</em>
+                  <strong id="most-lenient-model">-</strong>
+                </article>
+                <article id="consensus-card" class="insight-card consensus-card" data-tone="neutral">
+                  <span>Consensus</span>
+                  <em>What the majority of models recommend</em>
+                  <strong id="consensus-action">-</strong>
+                </article>
+              </section>
+
+              <section class="matrix-section">
+                <div class="section-heading">
+                  <p class="section-label mono-label">Decision Matrix</p>
+                </div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Model</th>
+                      <th>Top Category</th>
+                      <th>Severity</th>
+                      <th>Confidence</th>
+                      <th>Action</th>
+                      <th>Policy Alignment</th>
+                    </tr>
+                  </thead>
+                  <tbody id="results-body"></tbody>
+                </table>
+              </section>
+
+              <section class="explainability-section">
+                <div class="section-heading stacked">
+                  <div>
+                    <p class="section-label mono-label">Interpretation Layer</p>
+                    <h3>Explainability</h3>
+                  </div>
+                </div>
+                <div id="explainability-list" class="explainability-grid"></div>
+              </section>
+            </div>
+          </div>
+
+          <div id="methodology-view" class="results-view hidden" role="tabpanel" aria-labelledby="methodology-tab">
+            <section class="methodology-hero">
+              <p class="section-label">System Methodology</p>
+              <h2>How It Works</h2>
+              <p class="methodology-intro">
+                ModEval combines independent model outputs, threshold adjustment, and policy scoring to make moderation tradeoffs explicit instead of hiding them.
+              </p>
+            </section>
+
+            <section class="methodology-section methodology-card">
               <div class="section-heading stacked">
                 <div>
-                  <p class="section-label mono-label">Interpretation Layer</p>
-                  <h3>Explainability</h3>
+                  <p class="section-label mono-label">Section 1</p>
+                  <h3>System Architecture</h3>
                 </div>
               </div>
-              <div id="explainability-list" class="explainability-grid"></div>
+              <p class="methodology-copy">
+                ModEval runs five independent AI moderation models in parallel on every analysis request. Each model was trained on different datasets and detects a different safety dimension. No single model sees the outputs of another -- they evaluate content independently, which is intentional. The value of running multiple models simultaneously is that disagreements between them are signal, not noise. When two models reach different conclusions about the same content, that tells you something important about the content's ambiguity.
+              </p>
+              <div class="architecture-flow">
+                <div class="flow-node">User Input</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">Parallel API Calls</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">5 Models</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">Normalizer</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">Context Engine</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">Policy Engine</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">Comparison Engine</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">Results</div>
+              </div>
+            </section>
+
+            <section class="methodology-section methodology-card">
+              <div class="section-heading stacked">
+                <div>
+                  <p class="section-label mono-label">Section 2</p>
+                  <h3>Output Normalization</h3>
+                </div>
+              </div>
+              <p class="methodology-copy">
+                Each model returns data in a different format. toxic-bert returns multi-label probabilities. roberta-offensive returns a binary offensive/not-offensive score. The hate speech model returns hate/not-hate. The spam model returns spam/ham. The bias model returns biased/neutral. Raw outputs are incompatible for direct comparison.
+              </p>
+              <p class="methodology-copy">
+                The Normalizer converts every model's output into a unified schema:
+              </p>
+              <pre class="methodology-code"><code><span class="code-punctuation">{</span>
+  <span class="code-key">model</span><span class="code-punctuation">:</span> <span class="code-type">string</span><span class="code-punctuation">,</span>
+  <span class="code-key">top_category</span><span class="code-punctuation">:</span> <span class="code-type">string</span><span class="code-punctuation">,</span>
+  <span class="code-key">severity</span><span class="code-punctuation">:</span> <span class="code-type">number</span> <span class="code-comment">(1-10)</span><span class="code-punctuation">,</span>
+  <span class="code-key">confidence</span><span class="code-punctuation">:</span> <span class="code-type">number</span> <span class="code-comment">(0-1)</span><span class="code-punctuation">,</span>
+  <span class="code-key">action</span><span class="code-punctuation">:</span> <span class="code-string">"Allow"</span> <span class="code-punctuation">|</span> <span class="code-string">"Review"</span> <span class="code-punctuation">|</span> <span class="code-string">"Remove"</span><span class="code-punctuation">,</span>
+  <span class="code-key">flagged</span><span class="code-punctuation">:</span> <span class="code-type">boolean</span>
+<span class="code-punctuation">}</span></code></pre>
+              <p class="methodology-copy">
+                Severity is derived by scaling the highest raw score linearly from 0-1 to 1-10. Confidence is the raw highest score preserved directly. Action is determined by comparing confidence against the context-adjusted threshold.
+              </p>
+            </section>
+
+            <section class="methodology-section methodology-card">
+              <div class="section-heading stacked">
+                <div>
+                  <p class="section-label mono-label">Section 3</p>
+                  <h3>Context Engine</h3>
+                </div>
+              </div>
+              <p class="methodology-copy">
+                The models themselves are frozen -- thresholds adjust, not models. This mirrors how real Trust &amp; Safety pipelines work. A high-confidence toxicity score on a gaming platform may result in Review. The same score on a professional platform results in Remove. The model's output is identical -- the interpretation changes based on context.
+              </p>
+              <div class="formula-hero">adjusted_threshold = base_threshold + platform_modifier + content_type_modifier + strictness_modifier</div>
+              <div class="methodology-grid">
+                <div class="methodology-subcard">
+                  <p class="section-label mono-label">Default Action Thresholds</p>
+                  <table class="methodology-table">
+                    <tbody>
+                      <tr><td>0.00 - 0.39</td><td>Allow</td></tr>
+                      <tr><td>0.40 - 0.69</td><td>Review</td></tr>
+                      <tr><td>0.70 - 1.00</td><td>Remove</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="methodology-subcard">
+                  <p class="section-label mono-label">Platform Modifiers</p>
+                  <table class="methodology-table">
+                    <tbody>
+                      <tr><td>Gaming</td><td class="modifier-negative">-0.10</td><td>Higher tolerance for competitive language</td></tr>
+                      <tr><td>Social Media</td><td>0.00</td><td>Baseline</td></tr>
+                      <tr><td>Professional</td><td class="modifier-positive">+0.15</td><td>Lower tolerance, reputational risk</td></tr>
+                      <tr><td>Forum</td><td class="modifier-negative">-0.05</td><td>Slightly higher tolerance for debate</td></tr>
+                      <tr><td>VR/Metaverse</td><td class="modifier-negative">-0.15</td><td>Evolving norms, higher tolerance</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="methodology-subcard">
+                  <p class="section-label mono-label">Content Type Modifiers</p>
+                  <table class="methodology-table">
+                    <tbody>
+                      <tr><td>Original Post</td><td>0.00</td><td>Baseline</td></tr>
+                      <tr><td>Comment/Reply</td><td>-0.05</td><td>Reactive content, slight tolerance</td></tr>
+                      <tr><td>Username</td><td>+0.20</td><td>Permanent identity-linked content</td></tr>
+                      <tr><td>Bio</td><td>+0.15</td><td>Persistent public-facing content</td></tr>
+                      <tr><td>UGC</td><td>-0.05</td><td>Creative content, some leeway</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="methodology-subcard">
+                  <p class="section-label mono-label">Strictness Modifiers</p>
+                  <table class="methodology-table">
+                    <tbody>
+                      <tr><td>Strict</td><td>+0.15</td></tr>
+                      <tr><td>Balanced</td><td>0.00</td></tr>
+                      <tr><td>Lenient</td><td>-0.15</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <p class="methodology-copy">
+                All thresholds are clamped between 0.10 and 0.90 to prevent extreme values.
+              </p>
+            </section>
+
+            <section class="methodology-section methodology-card">
+              <div class="section-heading stacked">
+                <div>
+                  <p class="section-label mono-label">Section 4</p>
+                  <h3>Policy Alignment Scoring</h3>
+                </div>
+              </div>
+              <p class="methodology-copy">
+                After a model produces a context-adjusted action, ModEval scores how well that output aligns with the selected platform's known policy. Each platform has predefined zero-tolerance categories (always Remove regardless of score) and deprioritized categories (threshold raised by +0.20).
+              </p>
+              <table class="methodology-table">
+                <tbody>
+                  <tr><td>Reddit</td><td>🛡 violence, self-harm, sexual/minors</td><td>Deprioritized: profanity, insult</td></tr>
+                  <tr><td>Discord</td><td>🛡 harassment/threatening, sexual/minors, hate</td><td>Deprioritized: profanity</td></tr>
+                  <tr><td>Facebook</td><td>🛡 hate, violence, sexual, self-harm</td><td>Deprioritized: none</td></tr>
+                  <tr><td>Instagram</td><td>🛡 sexual/minors, harassment, identity_attack</td><td>Deprioritized: profanity, insult</td></tr>
+                </tbody>
+              </table>
+              <pre class="methodology-code"><code><span class="code-key">alignment_score</span> <span class="code-punctuation">=</span> <span class="code-type">1</span> <span class="code-punctuation">-</span> <span class="code-type">abs</span><span class="code-punctuation">(</span><span class="code-key">model_confidence</span> <span class="code-punctuation">-</span> <span class="code-key">policy_expected_threshold</span><span class="code-punctuation">)</span></code></pre>
+              <p class="methodology-copy">
+                Displayed as 0-1 with Aligned / Misaligned binary label.
+              </p>
+            </section>
+
+            <section class="methodology-section methodology-card">
+              <div class="section-heading stacked">
+                <div>
+                  <p class="section-label mono-label">Section 5</p>
+                  <h3>Disagreement Detection</h3>
+                </div>
+              </div>
+              <p class="methodology-copy">
+                A disagreement is flagged when two or more models produce different final actions after context adjustment. Three types of disagreement are detected:
+              </p>
+              <table class="methodology-table">
+                <tbody>
+                  <tr><td>Action Mismatch</td><td>Models recommend different actions (Allow vs Remove)</td></tr>
+                  <tr><td>Category Mismatch</td><td>Models flag different top violation categories</td></tr>
+                  <tr><td>Severity Gap</td><td>Severity scores differ by 3 or more points</td></tr>
+                </tbody>
+              </table>
+              <blockquote class="editorial-quote">"Disagreements are not errors — they are the most analytically interesting output ModEval produces."</blockquote>
+              <p class="methodology-copy">
+                Content that triggers a disagreement is content that sits in an ambiguous zone, which is exactly the content that requires human review in a real T&amp;S pipeline.
+              </p>
+            </section>
+
+            <section class="methodology-section methodology-card">
+              <div class="section-heading stacked">
+                <div>
+                  <p class="section-label mono-label">Section 6</p>
+                  <h3>Why These Models</h3>
+                </div>
+              </div>
+              <p class="methodology-copy">
+                Each model was chosen to cover a distinct safety dimension with a different architecture and training dataset. Using models that all do the same thing would produce correlated outputs and defeat the purpose of comparison.
+              </p>
+              <table class="methodology-table model-rationale-table">
+                <tbody>
+                  <tr class="dimension-toxic"><td>Toxicity Classifier</td><td><span class="mono">unitary/toxic-bert</span></td><td>BERT</td><td>Jigsaw Toxic Comments dataset</td><td><strong>General toxicity baseline</strong></td></tr>
+                  <tr class="dimension-offensive"><td>Offensive Language Detector</td><td><span class="mono">cardiffnlp/roberta-offensive</span></td><td>RoBERTa</td><td>Twitter data</td><td><strong>Social media offensive language</strong></td></tr>
+                  <tr class="dimension-hate"><td>Hate Speech Detector</td><td><span class="mono">facebook/roberta-hate-speech</span></td><td>RoBERTa</td><td>DynaBench R4</td><td><strong>Adversarially collected hate speech</strong></td></tr>
+                  <tr class="dimension-spam"><td>Spam Detector</td><td><span class="mono">mrm8488/bert-tiny</span></td><td>BERT-tiny</td><td>SMS Spam Collection</td><td><strong>Manipulation and unsolicited content</strong></td></tr>
+                  <tr class="dimension-bias"><td>Bias Detector</td><td><span class="mono">valurank/distilroberta-bias</span></td><td>DistilRoBERTa</td><td>Wikipedia revisions</td><td><strong>Non-neutral language detection</strong></td></tr>
+                </tbody>
+              </table>
+              <p class="methodology-copy">
+                All models are accessed via the HuggingFace Inference API using a single read-access token. No model weights are downloaded or run locally.
+              </p>
+            </section>
+
+            <section class="methodology-section methodology-card">
+              <div class="section-heading stacked">
+                <div>
+                  <p class="section-label mono-label">Section 7</p>
+                  <h3>Known Limitations</h3>
+                </div>
+              </div>
+              <p class="methodology-copy">
+                ModEval is a transparent tool and transparency includes acknowledging what it cannot do.
+              </p>
+              <div class="limitations-grid">
+                <article class="limitation-card">
+                  <h4>Models Are Frozen</h4>
+                  <p>The five models cannot be retrained, and novel slang may score incorrectly. The Context Engine adjusts thresholds rather than changing model knowledge.</p>
+                </article>
+                <article class="limitation-card">
+                  <h4>Platform Policies Are Approximations</h4>
+                  <p>Guidelines are simplified from official pages. Real enforcement also depends on account history, human judgment, and community rules.</p>
+                </article>
+                <article class="limitation-card">
+                  <h4>English Only</h4>
+                  <p>All five models were trained primarily on English data. Non-English content produces unreliable scores and multilingual support is planned.</p>
+                </article>
+                <article class="limitation-card">
+                  <h4>Text Only</h4>
+                  <p>Images, video, audio, and multimodal content are outside the scope of the current system.</p>
+                </article>
+                <article class="limitation-card">
+                  <h4>Free Tier Rate Limits</h4>
+                  <p>HuggingFace free inference may rate-limit under high traffic. The system surfaces these errors transparently rather than silently failing.</p>
+                </article>
+              </div>
             </section>
           </div>
         </div>

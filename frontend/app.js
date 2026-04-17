@@ -13,6 +13,10 @@ const consensusAction = document.getElementById("consensus-action");
 const batchButton = document.getElementById("batch-button");
 const batchFileInput = document.getElementById("batch-file");
 const batchSummary = document.getElementById("batch-summary");
+const analysisTab = document.getElementById("analysis-tab");
+const methodologyTab = document.getElementById("methodology-tab");
+const analysisView = document.getElementById("analysis-view");
+const methodologyView = document.getElementById("methodology-view");
 const policyToggle = document.getElementById("policy-toggle");
 const policyContent = document.getElementById("policy-content");
 const policyGuidelines = document.getElementById("policy-guidelines");
@@ -249,6 +253,7 @@ const POLICY_CITATIONS = {
 };
 
 const lastExampleByCategory = {};
+let activeTab = "analysis";
 
 function escapeHtml(value) {
   return String(value)
@@ -268,6 +273,35 @@ function setAnalyzeLoading(isLoading) {
   analyzeButton.disabled = isLoading;
   analyzeButton.classList.toggle("loading", isLoading);
   analyzeButton.querySelector(".button-label").textContent = isLoading ? "Analyzing..." : "Execute Analysis";
+}
+
+function switchTab(nextTab) {
+  if (activeTab === nextTab) {
+    return;
+  }
+
+  const currentView = activeTab === "analysis" ? analysisView : methodologyView;
+  const nextView = nextTab === "analysis" ? analysisView : methodologyView;
+  const currentButton = activeTab === "analysis" ? analysisTab : methodologyTab;
+  const nextButton = nextTab === "analysis" ? analysisTab : methodologyTab;
+
+  currentView.classList.add("fading");
+  window.setTimeout(() => {
+    currentView.classList.add("hidden");
+    currentView.classList.remove("fading", "active");
+    nextView.classList.remove("hidden");
+    nextView.classList.add("fading");
+    void nextView.offsetWidth;
+    nextView.classList.add("active");
+    nextView.classList.remove("fading");
+    nextView.scrollTop = 0;
+  }, 150);
+
+  currentButton.classList.remove("active");
+  currentButton.setAttribute("aria-selected", "false");
+  nextButton.classList.add("active");
+  nextButton.setAttribute("aria-selected", "true");
+  activeTab = nextTab;
 }
 
 function updateCounter() {
@@ -520,6 +554,8 @@ form.addEventListener("submit", async (event) => {
 });
 
 batchButton.addEventListener("click", () => batchFileInput.click());
+analysisTab.addEventListener("click", () => switchTab("analysis"));
+methodologyTab.addEventListener("click", () => switchTab("methodology"));
 exampleButtons.forEach((button) => {
   button.addEventListener("click", () => applyExample(button.dataset.category, button));
 });
