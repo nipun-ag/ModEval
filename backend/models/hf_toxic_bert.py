@@ -7,7 +7,7 @@ import requests
 from backend.config import HF_API_KEY, REQUEST_TIMEOUT
 
 
-HF_MODEL_URL = "https://api-inference.huggingface.co/models/unitary/toxic-bert"
+HF_MODEL_URL = "https://router.huggingface.co/hf-inference/models/unitary/toxic-bert"
 
 
 def analyze(text: str) -> dict:
