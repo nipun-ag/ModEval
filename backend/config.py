@@ -19,7 +19,6 @@ PROJECT_ROOT = BASE_DIR.parent
 load_dotenv(PROJECT_ROOT / ".env")
 
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
 HF_API_KEY = os.getenv("HF_API_KEY", "").strip()
 
 

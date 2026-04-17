@@ -1,4 +1,4 @@
-"""Comparison helpers for the current OpenAI + HuggingFace model lineup."""
+"""Comparison helpers for the current three-model HuggingFace lineup."""
 
 from __future__ import annotations
 

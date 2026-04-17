@@ -11,6 +11,13 @@ CATEGORY_ALIASES = {
     "offensive": "harassment",
     "offensive_language": "harassment",
     "offensive content": "harassment",
+    "hate": "hate",
+    "hateful": "hate",
+    "hate_speech": "hate",
+    "non_hate": "allow",
+    "nothate": "allow",
+    "normal": "allow",
+    "neutral": "allow",
     "severe_toxicity": "severe_toxicity",
     "severe_toxic": "severe_toxicity",
     "obscene": "profanity",
@@ -33,6 +40,7 @@ CATEGORY_ALIASES = {
     "self-harm/instructions": "self-harm/instructions",
     "label_0": "allow",
     "label_1": "harassment",
+    "label_2": "hate",
 }
 
 
