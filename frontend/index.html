@@ -6,138 +6,193 @@
   <title>ModEval</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <div class="page-shell">
-    <aside class="panel input-panel">
-      <div class="eyebrow">Context-aware moderation evaluation</div>
-      <h1>ModEval</h1>
-      <p class="intro">
-        Compare how three moderation systems behave under different platform contexts and policy assumptions.
-      </p>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-lockup">
+        <div class="brand-mark"></div>
+        <div class="brand-wordmark">Mod<span>Eval</span></div>
+      </div>
+      <div class="topbar-status">
+        <span class="status-dot"></span>
+        <span>3 Models Active</span>
+      </div>
+    </header>
 
-      <form id="analyze-form" class="input-form">
-        <label for="text">Content</label>
-        <textarea id="text" name="text" rows="6" maxlength="500" placeholder="Paste the content you want to evaluate..." required></textarea>
-        <div class="counter-wrap">
-          <span>Max 500 characters</span>
-          <span id="char-counter">0 / 500</span>
+    <div class="workspace">
+      <aside class="input-panel">
+        <div class="panel-accent"></div>
+        <div class="panel-frame">
+          <h1 class="hero-title">Mod<span>Eval</span></h1>
+          <p class="hero-copy">
+            Compare how AI moderation models interpret content across platform contexts
+          </p>
+
+          <form id="analyze-form" class="input-form">
+            <div class="field-block">
+              <label for="text">Content Input</label>
+              <textarea id="text" name="text" rows="8" maxlength="500" placeholder="Paste the content you want to evaluate..." required></textarea>
+              <div class="counter-wrap">
+                <span>Max 500 Characters</span>
+                <span id="char-counter" class="mono">0 / 500</span>
+              </div>
+            </div>
+
+            <section class="context-card">
+              <button type="button" id="context-toggle" class="section-toggle" aria-expanded="false">
+                <span>Analysis Context</span>
+                <span id="context-toggle-indicator" class="chevron">⌄</span>
+              </button>
+              <div id="context-content" class="context-content hidden">
+                <div class="context-grid">
+                  <div class="field-block">
+                    <label for="platform_context">Platform Context</label>
+                    <select id="platform_context" name="platform_context">
+                      <option>Gaming</option>
+                      <option selected>Social Media</option>
+                      <option>Professional</option>
+                      <option>Forum</option>
+                      <option>VR/Metaverse</option>
+                    </select>
+                  </div>
+
+                  <div class="field-block">
+                    <label for="content_type">Content Type</label>
+                    <select id="content_type" name="content_type">
+                      <option selected>Original Post</option>
+                      <option>Comment/Reply</option>
+                      <option>Username</option>
+                      <option>Bio</option>
+                      <option>UGC</option>
+                    </select>
+                  </div>
+
+                  <div class="field-block">
+                    <label for="strictness">Strictness</label>
+                    <select id="strictness" name="strictness">
+                      <option>Strict</option>
+                      <option selected>Balanced</option>
+                      <option>Lenient</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <div class="field-block">
+              <label for="policy">Platform Policy</label>
+              <select id="policy" name="policy">
+                <option selected>Reddit</option>
+                <option>Discord</option>
+                <option>Facebook</option>
+                <option>Instagram</option>
+                <option>Custom</option>
+              </select>
+            </div>
+
+            <section class="policy-card">
+              <button type="button" id="policy-toggle" class="section-toggle policy-toggle" aria-expanded="false">
+                <span>View Policy Guidelines</span>
+                <span id="policy-toggle-indicator" class="chevron">⌄</span>
+              </button>
+              <div id="policy-content" class="policy-content hidden">
+                <ul id="policy-guidelines" class="policy-guidelines"></ul>
+                <p id="policy-citation" class="policy-citation hidden"></p>
+              </div>
+            </section>
+
+            <div id="custom-policy-wrap" class="field-block hidden">
+              <label for="custom_policy_text">Custom Policy</label>
+              <textarea id="custom_policy_text" name="custom_policy_text" rows="4" placeholder="Describe your policy rules in plain English..."></textarea>
+            </div>
+
+            <div class="button-row">
+              <button type="submit" id="analyze-button" class="primary-button">
+                <span class="button-label">Analyze</span>
+                <span id="analyze-spinner" class="button-spinner hidden" aria-hidden="true"></span>
+              </button>
+              <button type="button" id="batch-button" class="secondary-button">Batch Upload</button>
+              <input type="file" id="batch-file" accept=".csv,text/csv" hidden>
+            </div>
+          </form>
         </div>
+      </aside>
 
-        <label for="platform_context">Platform Context</label>
-        <select id="platform_context" name="platform_context">
-          <option>Gaming</option>
-          <option selected>Social Media</option>
-          <option>Professional</option>
-          <option>Forum</option>
-          <option>VR/Metaverse</option>
-        </select>
+      <main class="results-panel">
+        <section class="results-frame">
+          <div class="results-header">
+            <div>
+              <p class="section-kicker">Analysis Output</p>
+              <h2>Model Comparison</h2>
+            </div>
+            <div id="status-pill" class="status-pill idle">Waiting for input</div>
+          </div>
 
-        <label for="content_type">Content Type</label>
-        <select id="content_type" name="content_type">
-          <option selected>Original Post</option>
-          <option>Comment/Reply</option>
-          <option>Username</option>
-          <option>Bio</option>
-          <option>UGC</option>
-        </select>
+          <section id="batch-summary" class="batch-summary hidden"></section>
+          <section id="disagreement-banner" class="disagreement-banner hidden"></section>
 
-        <label for="strictness">Strictness</label>
-        <select id="strictness" name="strictness">
-          <option>Strict</option>
-          <option selected>Balanced</option>
-          <option>Lenient</option>
-        </select>
+          <section id="results-empty" class="empty-state">
+            <div class="empty-mark"></div>
+            <h3>Run your first analysis</h3>
+            <p>ModEval will compare model decisions, policy alignment, and disagreement signals here.</p>
+          </section>
 
-        <label for="policy">Platform Policy</label>
-        <select id="policy" name="policy">
-          <option selected>Reddit</option>
-          <option>Discord</option>
-          <option>Facebook</option>
-          <option>Instagram</option>
-          <option>Custom</option>
-        </select>
+          <div id="results-content" class="results-content hidden">
+            <section class="insights-strip" id="insights-strip">
+              <article id="strictest-card" class="insight-card" data-tone="review">
+                <span>Strictest Model</span>
+                <strong id="strictest-model">-</strong>
+              </article>
+              <article id="lenient-card" class="insight-card" data-tone="allow">
+                <span>Most Lenient</span>
+                <strong id="most-lenient-model">-</strong>
+              </article>
+              <article id="consensus-card" class="insight-card" data-tone="neutral">
+                <span>Consensus</span>
+                <strong id="consensus-action">-</strong>
+              </article>
+            </section>
 
-        <section class="policy-card">
-          <button type="button" id="policy-toggle" class="policy-toggle" aria-expanded="false">
-            <span>View Policy Guidelines</span>
-            <span id="policy-toggle-indicator">+</span>
-          </button>
-          <div id="policy-content" class="policy-content hidden">
-            <ul id="policy-guidelines" class="policy-guidelines"></ul>
+            <section class="table-card">
+              <div class="section-heading">
+                <div>
+                  <p class="section-kicker">Decision Matrix</p>
+                  <h3>Comparison Table</h3>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Model</th>
+                      <th>Top Category</th>
+                      <th>Severity</th>
+                      <th>Confidence</th>
+                      <th>Action</th>
+                      <th>Policy Alignment</th>
+                    </tr>
+                  </thead>
+                  <tbody id="results-body"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="explainability-card">
+              <div class="section-heading">
+                <div>
+                  <p class="section-kicker">Interpretation Layer</p>
+                  <h3>Explainability</h3>
+                </div>
+              </div>
+              <div id="explainability-list" class="explainability-grid"></div>
+            </section>
           </div>
         </section>
-
-        <div id="custom-policy-wrap" class="hidden">
-          <label for="custom_policy_text">Custom Policy</label>
-          <textarea id="custom_policy_text" name="custom_policy_text" rows="4" placeholder="Describe your policy rules in plain English..."></textarea>
-        </div>
-
-        <div class="button-row">
-          <button type="submit" class="primary-button">Analyze</button>
-          <button type="button" id="batch-button" class="secondary-button">Batch Upload</button>
-          <input type="file" id="batch-file" accept=".csv,text/csv" hidden>
-        </div>
-      </form>
-    </aside>
-
-    <main class="panel results-panel">
-      <div class="results-header">
-        <div>
-          <div class="eyebrow">Live model comparison</div>
-          <h2>Results</h2>
-        </div>
-        <div id="status-pill" class="status-pill idle">Waiting for input</div>
-      </div>
-
-      <section id="batch-summary" class="batch-summary hidden"></section>
-      <section id="disagreement-banner" class="banner hidden"></section>
-
-      <section class="insights-strip" id="insights-strip">
-        <article class="insight-card">
-          <span>Strictest Model</span>
-          <strong id="strictest-model">-</strong>
-        </article>
-        <article class="insight-card">
-          <span>Most Lenient</span>
-          <strong id="most-lenient-model">-</strong>
-        </article>
-        <article class="insight-card">
-          <span>Consensus</span>
-          <strong id="consensus-action">-</strong>
-        </article>
-      </section>
-
-      <section class="table-card">
-        <table>
-          <thead>
-            <tr>
-              <th>Model</th>
-              <th>Top Category</th>
-              <th>Severity</th>
-              <th>Confidence</th>
-              <th>Action</th>
-              <th>Policy Alignment</th>
-            </tr>
-          </thead>
-          <tbody id="results-body">
-            <tr class="empty-row">
-              <td colspan="6">Run an analysis to compare moderation outputs.</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section class="explainability-card">
-        <div class="section-heading">
-          <h3>Explainability</h3>
-          <p>Expand each model to inspect context and policy reasoning.</p>
-        </div>
-        <div id="explainability-list" class="accordion-list"></div>
-      </section>
-    </main>
+      </main>
+    </div>
   </div>
 
   <script src="/app.js"></script>

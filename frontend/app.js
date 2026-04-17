@@ -16,10 +16,19 @@ const batchSummary = document.getElementById("batch-summary");
 const policyToggle = document.getElementById("policy-toggle");
 const policyContent = document.getElementById("policy-content");
 const policyGuidelines = document.getElementById("policy-guidelines");
-const policyToggleIndicator = document.getElementById("policy-toggle-indicator");
+const policyCitation = document.getElementById("policy-citation");
+const contextToggle = document.getElementById("context-toggle");
+const contextContent = document.getElementById("context-content");
+const analyzeButton = document.getElementById("analyze-button");
+const analyzeSpinner = document.getElementById("analyze-spinner");
+const resultsEmpty = document.getElementById("results-empty");
+const resultsContent = document.getElementById("results-content");
+const strictestCard = document.getElementById("strictest-card");
+const lenientCard = document.getElementById("lenient-card");
+const consensusCard = document.getElementById("consensus-card");
 
 const POLICY_GUIDELINES = {
-  "Reddit": [
+  Reddit: [
     "Do not post content that incites or glorifies violence against people or animals",
     "Do not harass, bully, threaten, or intimidate other users",
     "Do not share or encourage sexual or suggestive content involving minors",
@@ -29,7 +38,7 @@ const POLICY_GUIDELINES = {
     "Do not manipulate votes or engage in spam",
     "Abide by the rules of each community you participate in",
   ],
-  "Discord": [
+  Discord: [
     "Do not promote, coordinate, or engage in harassment or sexual harassment",
     "Do not threaten to harm another individual or group of people",
     "Do not share or threaten to share personally identifiable information without consent (doxxing)",
@@ -39,7 +48,7 @@ const POLICY_GUIDELINES = {
     "Do not promote, glorify, or provide instructions for self-harm or suicide",
     "Do not share false or misleading information that causes real-world harm",
   ],
-  "Facebook": [
+  Facebook: [
     "Do not post content that incites or facilitates violence against people or animals",
     "Do not bully, harass, or threaten private individuals",
     "Do not post content that sexually exploits or endangers children",
@@ -49,7 +58,7 @@ const POLICY_GUIDELINES = {
     "Do not coordinate inauthentic behavior or run influence operations",
     "Do not facilitate or promote terrorism or organized crime",
   ],
-  "Instagram": [
+  Instagram: [
     "Do not post content that promotes violence or incites harm against others",
     "Do not bully or harass individuals, with extra protection for minors",
     "Do not share content that sexually exploits or endangers children",
@@ -59,28 +68,28 @@ const POLICY_GUIDELINES = {
     "Do not impersonate other people or organizations",
     "Authentic identity is not required but coordinated inauthentic behavior is prohibited",
   ],
-  "Custom": [
-    "No predefined guidelines — your custom policy rules apply",
+  Custom: [
+    "No predefined guidelines - your custom policy rules apply",
   ],
 };
 
 const POLICY_CITATIONS = {
-  "Reddit": {
+  Reddit: {
     label: "Source: Reddit Content Policy",
     url: "https://redditinc.com/policies/content-policy",
     suffix: "redditinc.com/policies/content-policy",
   },
-  "Discord": {
+  Discord: {
     label: "Source: Discord Community Guidelines",
     url: "https://discord.com/guidelines",
     suffix: "discord.com/guidelines (Effective September 29, 2025)",
   },
-  "Facebook": {
+  Facebook: {
     label: "Source: Meta Community Standards",
     url: "https://transparency.meta.com/policies/community-standards",
     suffix: "transparency.meta.com/policies/community-standards",
   },
-  "Instagram": {
+  Instagram: {
     label: "Source: Meta Community Standards (unified)",
     url: "https://transparency.meta.com/policies/community-standards",
     suffix: "transparency.meta.com/policies/community-standards",
@@ -92,6 +101,12 @@ function setStatus(message, state) {
   statusPill.className = `status-pill ${state}`;
 }
 
+function setAnalyzeLoading(isLoading) {
+  analyzeButton.disabled = isLoading;
+  analyzeSpinner.classList.toggle("hidden", !isLoading);
+  analyzeButton.querySelector(".button-label").textContent = isLoading ? "Analyzing" : "Analyze";
+}
+
 function updateCounter() {
   charCounter.textContent = `${textInput.value.length} / 500`;
 }
@@ -100,46 +115,92 @@ function toggleCustomPolicy() {
   customPolicyWrap.classList.toggle("hidden", policySelect.value !== "Custom");
 }
 
+function setSectionExpanded(toggle, content, expanded) {
+  toggle.setAttribute("aria-expanded", String(expanded));
+  content.classList.toggle("hidden", !expanded);
+}
+
 function renderPolicyGuidelines() {
   const guidelines = POLICY_GUIDELINES[policySelect.value] || [];
   const citation = POLICY_CITATIONS[policySelect.value];
-  const citationHtml = citation
-    ? `<p class="policy-citation">${citation.label} — <a href="${citation.url}" target="_blank" rel="noreferrer">${citation.suffix}</a></p>`
-    : "";
+  policyGuidelines.innerHTML = guidelines.map((guideline) => `<li>${guideline}</li>`).join("");
 
-  policyGuidelines.innerHTML = `
-    ${guidelines.map((guideline) => `<li>${guideline}</li>`).join("")}
-    ${citationHtml}
-  `;
-}
-
-function setPolicyCardExpanded(expanded) {
-  policyToggle.setAttribute("aria-expanded", String(expanded));
-  policyContent.classList.toggle("hidden", !expanded);
-  policyToggleIndicator.textContent = expanded ? "−" : "+";
+  if (citation) {
+    policyCitation.classList.remove("hidden");
+    policyCitation.innerHTML = `${citation.label} - <a href="${citation.url}" target="_blank" rel="noreferrer">${citation.suffix}</a>`;
+  } else {
+    policyCitation.classList.add("hidden");
+    policyCitation.innerHTML = "";
+  }
 }
 
 function badge(label, variant) {
   return `<span class="badge ${variant}">${label}</span>`;
 }
 
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function actionTone(action) {
+  const normalized = String(action || "").toLowerCase();
+  if (normalized === "allow") {
+    return "allow";
+  }
+  if (normalized === "remove") {
+    return "remove";
+  }
+  if (normalized === "review") {
+    return "review";
+  }
+  return "neutral";
+}
+
+function showResults(hasResults) {
+  resultsEmpty.classList.toggle("hidden", hasResults);
+  resultsContent.classList.toggle("hidden", !hasResults);
+}
+
 function renderResults(results) {
   if (!results.length) {
-    resultsBody.innerHTML = `<tr class="empty-row"><td colspan="6">No results available.</td></tr>`;
+    resultsBody.innerHTML = `
+      <tr class="empty-row">
+        <td colspan="6">No model output available.</td>
+      </tr>
+    `;
     return;
   }
 
-  resultsBody.innerHTML = results.map((result) => `
-    <tr>
-      <td data-label="Model">${result.model}</td>
-      <td data-label="Top Category">${result.top_category}</td>
-      <td data-label="Severity">${result.severity}</td>
-      <td data-label="Confidence" class="mono">${Number(result.confidence).toFixed(2)}</td>
-      <td data-label="Action">${badge(result.action, result.action.toLowerCase())}</td>
+  resultsBody.innerHTML = results.map((result, index) => `
+    <tr data-action="${escapeHtml(result.action)}" style="animation-delay:${index * 90}ms">
+      <td data-label="Model" class="model-cell">
+        <strong>${escapeHtml(result.model)}</strong>
+        <span class="metric-soft">${result.error ? "Model unavailable" : "Live inference"}</span>
+      </td>
+      <td data-label="Top Category">
+        <span class="metric-strong">${escapeHtml(result.top_category)}</span>
+      </td>
+      <td data-label="Severity">
+        <span class="metric-strong mono">${escapeHtml(result.severity)}</span>
+      </td>
+      <td data-label="Confidence">
+        <span class="metric-strong mono">${Number(result.confidence).toFixed(2)}</span>
+      </td>
+      <td data-label="Action" class="action-cell">
+        ${badge(result.action, actionTone(result.action))}
+      </td>
       <td data-label="Policy Alignment">
-        ${badge(result.aligned ? "Aligned" : "Misaligned", result.aligned ? "aligned" : "misaligned")}
-        <div class="mono">${Number(result.alignment_score || 0).toFixed(2)}</div>
-        ${result.error ? `<div class="error-text">${result.error}</div>` : ""}
+        <div class="metric-inline">
+          ${badge(result.aligned ? "Aligned" : "Misaligned", result.aligned ? "aligned" : "misaligned")}
+          <span class="separator">/</span>
+          <span class="mono">${Number(result.alignment_score || 0).toFixed(2)}</span>
+        </div>
+        ${result.error ? `<div class="metric-soft error-text">${escapeHtml(result.error)}</div>` : ""}
       </td>
     </tr>
   `).join("");
@@ -148,41 +209,53 @@ function renderResults(results) {
 function renderDisagreements(disagreements) {
   if (!disagreements.length) {
     disagreementBanner.classList.add("hidden");
+    disagreementBanner.classList.remove("visible");
     disagreementBanner.innerHTML = "";
     return;
   }
 
+  const priorityOrder = ["Action Mismatch", "Severity Gap", "Category Mismatch"];
+  const mostCritical = [...disagreements].sort(
+    (left, right) => priorityOrder.indexOf(left.type) - priorityOrder.indexOf(right.type)
+  )[0];
+
+  const messages = {
+    "Action Mismatch": "Action conflict detected - models disagree on final recommendation",
+    "Severity Gap": "Severity gap detected - models disagree on how serious this content is",
+    "Category Mismatch": "Category mismatch detected - models flagged different primary risks",
+  };
+
+  disagreementBanner.innerHTML = `
+    <span class="warning-icon">⚠</span>
+    <span>${messages[mostCritical.type] || escapeHtml(mostCritical.description)}</span>
+  `;
   disagreementBanner.classList.remove("hidden");
-  disagreementBanner.innerHTML = disagreements.map((item) => `<p>${item.description}</p>`).join("");
+  requestAnimationFrame(() => disagreementBanner.classList.add("visible"));
 }
 
-function renderInsights(insights) {
+function renderInsights(insights, results) {
   strictestModel.textContent = insights.strictest_model || "-";
   mostLenientModel.textContent = insights.most_lenient_model || "-";
   consensusAction.textContent = insights.consensus_action || "-";
+
+  const strictestResult = results.find((result) => result.model === insights.strictest_model);
+  const lenientResult = results.find((result) => result.model === insights.most_lenient_model);
+
+  strictestCard.dataset.tone = actionTone(strictestResult?.action || "Review");
+  lenientCard.dataset.tone = actionTone(lenientResult?.action || "Allow");
+  consensusCard.dataset.tone = actionTone(insights.consensus_action || "neutral");
 }
 
 function renderExplainability(results) {
-  explainabilityList.innerHTML = results.map((result, index) => `
-    <article class="accordion-item">
-      <button class="accordion-trigger" type="button" aria-expanded="${index === 0 ? "true" : "false"}">
-        <span>${result.model}</span>
-        <span>${result.action}</span>
-      </button>
-      <div class="accordion-content ${index === 0 ? "" : "hidden"}">
-        <p>${result.explanation}</p>
+  explainabilityList.innerHTML = results.map((result) => `
+    <article class="explanation-card">
+      <div class="explanation-head">
+        <h4>${escapeHtml(result.model)}</h4>
+        ${badge(result.action, actionTone(result.action))}
       </div>
+      <p class="explanation-text">${escapeHtml(result.explanation || "No explanation available.")}</p>
     </article>
   `).join("");
-
-  document.querySelectorAll(".accordion-trigger").forEach((trigger) => {
-    trigger.addEventListener("click", () => {
-      const content = trigger.nextElementSibling;
-      const expanded = trigger.getAttribute("aria-expanded") === "true";
-      trigger.setAttribute("aria-expanded", String(!expanded));
-      content.classList.toggle("hidden", expanded);
-    });
-  });
 }
 
 async function postJson(url, payload) {
@@ -203,23 +276,28 @@ async function postJson(url, payload) {
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   setStatus("Analyzing", "loading");
+  setAnalyzeLoading(true);
   batchSummary.classList.add("hidden");
 
   const payload = Object.fromEntries(new FormData(form).entries());
 
   try {
     const data = await postJson("/analyze", payload);
+    showResults(true);
     renderResults(data.results || []);
     renderDisagreements(data.disagreements || []);
-    renderInsights(data.insights || {});
+    renderInsights(data.insights || {}, data.results || []);
     renderExplainability(data.results || []);
     setStatus("Analysis complete", "success");
   } catch (error) {
+    showResults(true);
     renderResults([]);
     renderDisagreements([]);
-    renderInsights({});
-    explainabilityList.innerHTML = `<p class="error-text">${error.message}</p>`;
+    renderInsights({}, []);
+    explainabilityList.innerHTML = `<p class="error-text">${escapeHtml(error.message)}</p>`;
     setStatus("Request failed", "error");
+  } finally {
+    setAnalyzeLoading(false);
   }
 });
 
@@ -248,13 +326,13 @@ batchFileInput.addEventListener("change", async () => {
     const data = await postJson("/batch-analyze", payload);
     batchSummary.classList.remove("hidden");
     batchSummary.innerHTML = `
-      <strong>Batch summary</strong>
+      <strong>Batch Summary</strong>
       <p>Total inputs: ${data.total} | Flagged inputs: ${data.flagged_count} | Flag rate: ${(data.flag_rate * 100).toFixed(1)}%</p>
     `;
     setStatus("Batch analysis complete", "success");
   } catch (error) {
     batchSummary.classList.remove("hidden");
-    batchSummary.innerHTML = `<p class="error-text">${error.message}</p>`;
+    batchSummary.innerHTML = `<p class="error-text">${escapeHtml(error.message)}</p>`;
     setStatus("Batch request failed", "error");
   } finally {
     batchFileInput.value = "";
@@ -266,10 +344,16 @@ policySelect.addEventListener("change", toggleCustomPolicy);
 policySelect.addEventListener("change", renderPolicyGuidelines);
 policyToggle.addEventListener("click", () => {
   const expanded = policyToggle.getAttribute("aria-expanded") === "true";
-  setPolicyCardExpanded(!expanded);
+  setSectionExpanded(policyToggle, policyContent, !expanded);
+});
+contextToggle.addEventListener("click", () => {
+  const expanded = contextToggle.getAttribute("aria-expanded") === "true";
+  setSectionExpanded(contextToggle, contextContent, !expanded);
 });
 
 updateCounter();
 toggleCustomPolicy();
 renderPolicyGuidelines();
-setPolicyCardExpanded(false);
+setSectionExpanded(policyToggle, policyContent, false);
+setSectionExpanded(contextToggle, contextContent, false);
+showResults(false);
