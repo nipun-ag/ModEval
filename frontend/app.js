@@ -13,8 +13,10 @@ const batchFileInput = document.getElementById("batch-file");
 const batchSummary = document.getElementById("batch-summary");
 const analysisTab = document.getElementById("analysis-tab");
 const methodologyTab = document.getElementById("methodology-tab");
+const didYouKnowTab = document.getElementById("did-you-know-tab");
 const analysisView = document.getElementById("analysis-view");
 const methodologyView = document.getElementById("methodology-view");
+const didYouKnowView = document.getElementById("did-you-know-view");
 const platformContextSelect = document.getElementById("platform-context-select");
 const platformContextInput = document.getElementById("platform_context");
 const platformContextTrigger = document.getElementById("platform-context-trigger");
@@ -185,6 +187,7 @@ const EXAMPLE_LIBRARY = {
 
 const lastExampleByCategory = {};
 let activeTab = "analysis";
+let selectedPlatform = "Social Media";
 
 function escapeHtml(value) {
   return String(value)
@@ -217,6 +220,7 @@ function selectPlatformContext(value) {
     return;
   }
 
+  selectedPlatform = value;
   platformContextInput.value = value;
   platformContextTriggerLabel.textContent = selectedOption.querySelector(".custom-select-name").textContent;
   platformContextOptions.forEach((option) => {
@@ -230,27 +234,34 @@ function switchTab(nextTab) {
     return;
   }
 
-  const currentView = activeTab === "analysis" ? analysisView : methodologyView;
-  const nextView = nextTab === "analysis" ? analysisView : methodologyView;
-  const currentButton = activeTab === "analysis" ? analysisTab : methodologyTab;
-  const nextButton = nextTab === "analysis" ? analysisTab : methodologyTab;
+  const views = { analysis: analysisView, methodology: methodologyView, didYouKnow: didYouKnowView };
+  const buttons = { analysis: analysisTab, methodology: methodologyTab, didYouKnow: didYouKnowTab };
+
+  const currentView = views[activeTab];
+  const nextView = views[nextTab];
+  const currentButton = buttons[activeTab];
+  const nextButton = buttons[nextTab];
 
   currentView.classList.add("fading");
   window.setTimeout(() => {
     currentView.classList.add("hidden");
     currentView.classList.remove("fading", "active");
-    nextView.classList.remove("hidden");
-    nextView.classList.add("fading");
-    void nextView.offsetWidth;
-    nextView.classList.add("active");
-    nextView.classList.remove("fading");
-    nextView.scrollTop = 0;
+    if (nextView) {
+      nextView.classList.remove("hidden");
+      nextView.classList.add("fading");
+      void nextView.offsetWidth;
+      nextView.classList.add("active");
+      nextView.classList.remove("fading");
+      nextView.scrollTop = 0;
+    }
   }, 150);
 
   currentButton.classList.remove("active");
   currentButton.setAttribute("aria-selected", "false");
-  nextButton.classList.add("active");
-  nextButton.setAttribute("aria-selected", "true");
+  if (nextButton) {
+    nextButton.classList.add("active");
+    nextButton.setAttribute("aria-selected", "true");
+  }
   activeTab = nextTab;
 }
 
@@ -484,6 +495,7 @@ form.addEventListener("submit", async (event) => {
 batchButton.addEventListener("click", () => batchFileInput.click());
 analysisTab.addEventListener("click", () => switchTab("analysis"));
 methodologyTab.addEventListener("click", () => switchTab("methodology"));
+didYouKnowTab.addEventListener("click", () => switchTab("didYouKnow"));
 platformContextTrigger.addEventListener("click", () => {
   const expanded = platformContextTrigger.getAttribute("aria-expanded") === "true";
   setPlatformContextOpen(!expanded);
