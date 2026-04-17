@@ -63,13 +63,35 @@
                 <div class="context-grid">
                   <div class="field-block">
                     <label for="platform_context">Platform Context</label>
-                    <select id="platform_context" name="platform_context">
-                      <option value="Social Media" selected>Social Media — Public feeds, posts and comments</option>
-                      <option value="Gaming">Gaming — In-game chat, voice and player profiles</option>
-                      <option value="Professional">Professional — Workplace tools and business networks</option>
-                      <option value="Forum">Community / Forum — Interest groups and discussion boards</option>
-                      <option value="VR/Metaverse">VR / Metaverse — Immersive environments and spatial audio</option>
-                    </select>
+                    <div class="custom-select" id="platform-context-select">
+                      <input type="hidden" id="platform_context" name="platform_context" value="Social Media">
+                      <button type="button" id="platform-context-trigger" class="custom-select-trigger" aria-expanded="false" aria-haspopup="listbox">
+                        <span id="platform-context-trigger-label">Social Media</span>
+                        <span class="chevron">⌄</span>
+                      </button>
+                      <div id="platform-context-panel" class="custom-select-panel hidden" role="listbox">
+                        <button type="button" class="custom-select-option selected" data-value="Social Media">
+                          <span class="custom-select-name">Social Media</span>
+                          <span class="custom-select-description">Public feeds, posts and comments</span>
+                        </button>
+                        <button type="button" class="custom-select-option" data-value="Gaming">
+                          <span class="custom-select-name">Gaming</span>
+                          <span class="custom-select-description">In-game chat, voice and player profiles</span>
+                        </button>
+                        <button type="button" class="custom-select-option" data-value="Professional">
+                          <span class="custom-select-name">Professional</span>
+                          <span class="custom-select-description">Workplace tools and business networks</span>
+                        </button>
+                        <button type="button" class="custom-select-option" data-value="Forum">
+                          <span class="custom-select-name">Community / Forum</span>
+                          <span class="custom-select-description">Interest groups and discussion boards</span>
+                        </button>
+                        <button type="button" class="custom-select-option" data-value="VR/Metaverse">
+                          <span class="custom-select-name">VR / Metaverse</span>
+                          <span class="custom-select-description">Immersive environments and spatial audio</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
                   <div class="field-block">
