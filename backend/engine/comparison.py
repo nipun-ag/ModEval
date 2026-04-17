@@ -1,6 +1,8 @@
-"""Comparison helpers for the current three-model HuggingFace lineup."""
+"""Comparison helpers for the current five-model HuggingFace lineup."""
 
 from __future__ import annotations
+
+from collections import Counter
 
 
 ACTION_RANK = {"Allow": 0, "Review": 1, "Remove": 2}
@@ -64,8 +66,13 @@ def build_insights(results: list[dict]) -> dict:
 
     strictest = max(valid_results, key=lambda item: (ACTION_RANK[item["action"]], item["confidence"]))
     lenient = min(valid_results, key=lambda item: (ACTION_RANK[item["action"]], item["confidence"]))
-    actions = {result["action"] for result in valid_results}
-    consensus_action = valid_results[0]["action"] if len(actions) == 1 else "No Consensus"
+    action_counts = Counter(result["action"] for result in valid_results)
+    most_common = action_counts.most_common()
+    consensus_action = (
+        most_common[0][0]
+        if len(most_common) == 1 or (len(most_common) > 1 and most_common[0][1] > most_common[1][1])
+        else "No Consensus"
+    )
 
     summary = (
         f"{strictest['model']} was the strictest while {lenient['model']} was the most lenient. "

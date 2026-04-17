@@ -26,6 +26,7 @@ const resultsContent = document.getElementById("results-content");
 const strictestCard = document.getElementById("strictest-card");
 const lenientCard = document.getElementById("lenient-card");
 const consensusCard = document.getElementById("consensus-card");
+const exampleButtons = Array.from(document.querySelectorAll(".example-pill"));
 
 const MODEL_DISPLAY = {
   "HuggingFace toxic-bert": {
@@ -40,7 +41,80 @@ const MODEL_DISPLAY = {
     name: "Hate Speech Detector",
     subtitle: "facebook/roberta-hate-speech",
   },
+  "HuggingFace Spam Detector": {
+    name: "Spam Detector",
+    subtitle: "mrm8488/bert-tiny",
+  },
+  "HuggingFace Bias Detector": {
+    name: "Bias Detector",
+    subtitle: "valurank/distilroberta-bias",
+  },
 };
+
+const EXAMPLE_LIBRARY = {
+  Toxicity: [
+    "You are absolutely pathetic and worthless, nobody wants you here",
+    "What the fuck is wrong with you, are you actually this stupid",
+    "Nobody likes you, just disappear already you miserable loser",
+    "You're a complete waste of space and everyone fucking knows it",
+    "Shut your stupid mouth before someone shuts it for you",
+    "You're too damn dumb to understand anything, just give up already",
+    "Go crawl back under the rock you came from you piece of shit",
+    "You disgust me, you absolute brain-dead moron",
+    "People like you make this world a worse place to live in",
+    "You're a joke and everyone around you is laughing behind your back",
+  ],
+  Harassment: [
+    "I know where you live and I will find you, don't think I won't",
+    "You better watch your back walking home tonight, I'm serious",
+    "I've been watching your posts for weeks you can't hide from me",
+    "Tell your family I said hello, I know exactly who they are",
+    "Keep posting that shit and see what the fuck happens to you",
+    "You reported me? Big mistake. I don't forget and I don't forgive",
+    "I will make sure everyone knows what you really are you fake bastard",
+    "Your address isn't hard to find, just so you know",
+    "Every single time you post I'm going to be right there",
+    "You think blocking me does anything? You're so fucking naive",
+  ],
+  "Hate Speech": [
+    "People from that country are all criminals and should be thrown out",
+    "That religion is a cancer on society and its followers are dangerous as hell",
+    "Women don't belong in leadership, they're too damn emotional to handle it",
+    "That ethnic group has always been the rot at the center of this country",
+    "People like them shouldn't be allowed to vote or own property",
+    "That community is infesting our neighborhoods and bringing crime with them",
+    "Their kind has never contributed a damn thing to civilization",
+    "That group is genetically wired to be violent, the data proves it",
+    "They control the banks and the media and we need to wake the fuck up",
+    "They should all be shipped back to wherever the hell they came from",
+  ],
+  Spam: [
+    "CONGRATULATIONS!! You've been selected for a $1000 gift card, click NOW before it expires",
+    "Make $5000 a week from home, no experience needed, DM me and I'll show you how",
+    "Your account has been hacked, verify your identity immediately at this link or lose access",
+    "FREE iPhone giveaway!! Just follow, like, and DM your address to claim your prize",
+    "I made $47,000 last month doing this one thing, ask me how and I'll send you the link",
+    "URGENT: Your payment failed, update billing info now or your account gets suspended today",
+    "Buy 10,000 real followers for $9.99, guaranteed delivery in 24 hours, DM to order",
+    "You have an unclaimed inheritance of $2.4 million waiting, contact our agent to release funds",
+    "Lose 30 pounds in 30 days with this doctor-approved trick they don't want you to know about",
+    "Your package couldn't be delivered, click here within 24 hours or it gets sent back permanently",
+  ],
+  Bias: [
+    "The radical left is hell-bent on destroying everything this country was built on",
+    "Only a complete idiot could possibly support that policy, wake the fuck up",
+    "The mainstream media is actively hiding the real truth and you're too blind to see it",
+    "Any real patriot knows the election was stolen, the evidence is right in front of you",
+    "Anyone who disagrees with this is either corrupt, paid off, or completely brain-dead",
+    "The globalist agenda is pulling the strings behind every major world event, always has been",
+    "These so-called experts have been catastrophically wrong about everything, stop listening to them",
+    "If you vote for that party you clearly hate your own country and everything it stands for",
+    "The deep state controls every single thing you see on the news, none of it is real",
+    "Smart people already know the government has been lying to us about this for decades",
+  ],
+};
+
+const lastExampleByCategory = {};
 
 const POLICY_GUIDELINES = {
   Reddit: [
@@ -124,6 +198,32 @@ function setAnalyzeLoading(isLoading) {
 
 function updateCounter() {
   charCounter.textContent = `${textInput.value.length} / 500`;
+}
+
+function applyExample(category, button) {
+  const examples = EXAMPLE_LIBRARY[category] || [];
+  if (!examples.length) {
+    return;
+  }
+
+  let nextExample = examples[Math.floor(Math.random() * examples.length)];
+  if (examples.length > 1) {
+    while (nextExample === lastExampleByCategory[category]) {
+      nextExample = examples[Math.floor(Math.random() * examples.length)];
+    }
+  }
+
+  lastExampleByCategory[category] = nextExample;
+  textInput.value = nextExample;
+  textInput.classList.remove("example-loaded");
+  void textInput.offsetWidth;
+  textInput.classList.add("example-loaded");
+  updateCounter();
+  textInput.focus();
+
+  exampleButtons.forEach((pill) => pill.classList.remove("active"));
+  button.classList.add("active");
+  window.setTimeout(() => button.classList.remove("active"), 650);
 }
 
 function toggleCustomPolicy() {
@@ -342,6 +442,9 @@ form.addEventListener("submit", async (event) => {
 });
 
 batchButton.addEventListener("click", () => batchFileInput.click());
+exampleButtons.forEach((button) => {
+  button.addEventListener("click", () => applyExample(button.dataset.category, button));
+});
 
 batchFileInput.addEventListener("change", async () => {
   const [file] = batchFileInput.files;
@@ -390,6 +493,7 @@ contextToggle.addEventListener("click", () => {
   const expanded = contextToggle.getAttribute("aria-expanded") === "true";
   setSectionExpanded(contextToggle, contextContent, !expanded);
 });
+textInput.addEventListener("animationend", () => textInput.classList.remove("example-loaded"));
 
 updateCounter();
 toggleCustomPolicy();

@@ -8,6 +8,10 @@ from backend.engine.context_engine import determine_action
 CATEGORY_ALIASES = {
     "toxicity": "toxicity",
     "toxic": "toxicity",
+    "spam": "spam",
+    "ham": "allow",
+    "biased": "bias",
+    "bias": "bias",
     "offensive": "harassment",
     "offensive_language": "harassment",
     "offensive content": "harassment",
@@ -48,7 +52,11 @@ def normalize_scores(raw_scores: dict) -> dict:
     """Map provider-specific score keys into the shared category namespace."""
     normalized = {}
     for category, score in raw_scores.items():
-        canonical_name = CATEGORY_ALIASES.get(category.lower(), category.lower())
+        key = category.lower()
+        if key == "label_1" and "label_0" in {item.lower() for item in raw_scores}:
+            canonical_name = "spam"
+        else:
+            canonical_name = CATEGORY_ALIASES.get(key, key)
         if canonical_name == "allow":
             continue
         normalized[canonical_name] = max(float(score), normalized.get(canonical_name, 0.0))

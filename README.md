@@ -1,241 +1,133 @@
-# ModEval – Context & Policy-Aware Moderation Evaluation System
-**Version:** 3.0  
-**Status:** Finalized  
-**Author:** Nipun Aggarwal  
-**Last Updated:** April 2026
-
+ModEval — Context & Policy-Aware AI Moderation Evaluation System
+Live: modeval.onrender.com  |  Built by: Nipun Aggarwal  |  Status: Live
 ---
-
-## 1. Overview
-
-ModEval is a live, web-based platform that evaluates text content using multiple free AI moderation APIs simultaneously. It normalizes their outputs into a unified format, applies platform context and strictness rules, scores each model's alignment with real-world platform policies, and surfaces disagreements between models.
-
-The goal is to replicate the kind of evaluation workflow used by Trust & Safety teams at scale — where no single model is trusted blindly, context determines the threshold, and policy governs the final action.
-
-ModEval is both a functional tool and a portfolio artifact demonstrating applied knowledge of AI moderation systems, policy alignment, and Trust & Safety operations.
-
+What Is This
+ModEval is a live web tool that evaluates text content using five independent AI moderation models simultaneously across five distinct safety dimensions. It normalizes their outputs into a unified format, applies platform context and strictness rules, scores each model's alignment with real platform policies, and surfaces disagreements between models.
+The core insight behind it: no single moderation model should be trusted blindly. The same piece of content can be classified completely differently depending on which model you use, what platform it appears on, and what policy framework is being applied. ModEval makes those differences visible.
 ---
-
-## 2. Problem Statement
-
-AI moderation models are not interchangeable. The same piece of content can be classified differently depending on the model used, the platform context it appears in, and the policy framework being applied. There is currently no simple tool that:
-
-- Runs multiple free moderation models on the same input simultaneously
-- Normalizes their outputs into a comparable format
-- Adjusts evaluation thresholds based on platform context and strictness
-- Measures whether each model's output aligns with a given platform's policy
-- Flags and explains disagreements between models
-
-ModEval solves this.
-
+Why I Built This
+I spent six years reviewing harmful content at scale — across Meta, Twitter, gaming platforms, and brand communities. In that time I developed one strong conviction: the hardest part of Trust & Safety isn't detecting obvious violations. It's the edge cases, the context-dependent calls, and the moments where different systems disagree.
+When I moved into AI safety and red teaming, I started asking the same question about moderation models. How do they differ? When do they disagree? Which one aligns with Reddit's actual policy versus Discord's? There was no simple tool to answer that. So I built one.
+ModEval is both a functional tool and a demonstration of applied AI governance thinking — the kind of work that sits at the intersection of policy, safety operations, and AI systems.
 ---
-
-## 3. Core Objectives
-
-1. Evaluate a text input using three real moderation APIs in parallel
-2. Normalize all outputs into a single unified schema
-3. Apply context adjustments based on platform type, content type, and strictness level
-4. Apply predefined or custom platform policies to score alignment
-5. Compare model outputs and detect disagreements
-6. Surface an explainability layer showing flagged categories and context-adjusted reasoning
-7. Deploy live with a custom domain as a publicly accessible tool
-
+What It Does
+Runs text through five independent moderation models in parallel, each covering a different safety dimension
+Normalizes all outputs into a unified schema (category, severity, confidence, action)
+Adjusts evaluation thresholds based on platform context (Gaming, Social Media, Professional, Forum, VR)
+Adjusts further based on content type (Original Post, Comment, Username, Bio, UGC) and strictness level
+Scores each model's alignment with the selected platform's real policy
+Detects and explains disagreements between models (action conflicts, category mismatches, severity gaps)
+Surfaces an explainability layer showing what each model flagged and why
+Displays official policy guidelines for each platform, sourced directly from their public policy pages
+Includes a pre-loaded test case library with 50 real-world content examples across 5 violation categories
 ---
-
-## 4. Models Used
-
-All models used are free to access.
-
-### 4.1 Perspective API (Google Jigsaw)
-- **Access:** Free with a Google Cloud project and API key
-- **What it returns:** Scores (0–1) for: TOXICITY, SEVERE_TOXICITY, INSULT, THREAT, PROFANITY, IDENTITY_ATTACK, SEXUALLY_EXPLICIT
-- **Strength:** Best-in-class for conversational toxicity; widely used in real T&S pipelines
-- **Docs:** https://developers.perspectiveapi.com
-
-### 4.2 OpenAI Moderation API
-- **Access:** Free endpoint — does not require a paid GPT subscription. Requires an OpenAI account.
-- **Endpoint:** `POST https://api.openai.com/v1/moderations`
-- **What it returns:** Boolean flags + scores for: hate, hate/threatening, harassment, harassment/threatening, self-harm, self-harm/intent, self-harm/instructions, sexual, sexual/minors, violence, violence/graphic
-- **Strength:** Broad category coverage, especially for self-harm and sexual content
-- **Docs:** https://platform.openai.com/docs/guides/moderation
-
-### 4.3 HuggingFace Inference API — `unitary/toxic-bert`
-- **Access:** Free tier via HuggingFace Inference API (rate-limited)
-- **Model:** `unitary/toxic-bert` — fine-tuned BERT for toxic comment classification
-- **What it returns:** Labels with scores: toxic, severe_toxic, obscene, threat, insult, identity_hate
-- **Strength:** Open-source, independent from Google and OpenAI; adds a third reference point
-- **Docs:** https://huggingface.co/unitary/toxic-bert
-- **Fallback:** If rate-limited, surface a clear error state in the UI rather than silently failing
-
+Models Used
+All five models are free and run via the HuggingFace Inference API. Each covers a distinct safety dimension, simulating a real multi-layer Trust & Safety pipeline.
+Display Name	Model	Safety Dimension
+Toxicity Classifier	`unitary/toxic-bert`	General toxicity, insults, threats, obscenity
+Offensive Language Detector	`cardiffnlp/twitter-roberta-base-offensive`	Offensive and harassing language
+Hate Speech Detector	`facebook/roberta-hate-speech-dynabench-r4-target`	Hate speech targeting protected groups
+Spam Detector	`mrm8488/bert-tiny-finetuned-sms-spam-detection`	Spam, scams, and manipulative content
+Bias Detector	`valurank/distilroberta-bias`	Biased and non-neutral language
+Each model uses a different architecture and training dataset. The value of ModEval comes from seeing how genuinely independent systems interpret the same content across multiple safety lenses simultaneously.
 ---
-
-## 5. Normalized Output Schema
-
-Every model's raw output is converted into the following unified format before any further processing:
-
+Try an Example
+ModEval includes a built-in test case library with 50 pre-loaded content examples across five violation categories. Click any category button to instantly load a random example into the input field:
+Toxicity — general toxic and abusive language
+Harassment — targeted threatening and intimidating content
+Hate Speech — content targeting protected groups
+Spam — scam, manipulative, and unsolicited content
+Bias — slanted, non-neutral, and manipulative framing
+Each click loads a different random example from that category, making it easy to explore how different content types score across all five models without having to think of test cases yourself.
+---
+Platform Policies Supported
+ModEval includes official policy guidelines for each platform, sourced directly from their public policy pages and displayed as a collapsible card in the interface.
+Platform	Source
+Reddit	redditinc.com/policies/content-policy
+Discord	discord.com/guidelines (effective September 29, 2025)
+Facebook	transparency.meta.com/policies/community-standards
+Instagram	transparency.meta.com/policies/community-standards (unified November 2024)
+Custom	User-defined rules in plain text
+---
+Context Engine
+The Context Engine modifies action thresholds before the final recommendation is determined. It does not change raw model scores — it shifts the threshold at which a score triggers Review or Remove.
+Platform modifiers:
+Platform	Threshold Shift	Rationale
+Gaming	-0.10	Higher tolerance for competitive language
+Social Media	0.00	Baseline
+Professional	+0.15	Lower tolerance, reputational risk
+Forum	-0.05	Slightly higher tolerance for debate
+VR / Metaverse	-0.15	Evolving norms, higher tolerance
+Content type and strictness modifiers apply on top of platform modifiers. Final thresholds are clamped between 0.10 and 0.90.
+---
+UI Features
+Two-panel layout — inputs on the left, results on the right
+Analysis Context — collapsible section grouping platform context, content type, and strictness controls
+Policy Guidelines card — collapsible card showing official platform policy bullet points with source citations
+Try an Example — 50 pre-loaded test cases across 5 violation categories, randomly served on click
+Decision Matrix — comparison table with color-coded action badges and inline alignment scores
+Insight Strip — surfaces the strictest model, most lenient model, and consensus recommendation with plain-English explainers
+Disagreement Banner — compact alert when models conflict on action or category
+Explainability Cards — per-model breakdown of what was flagged, confidence scores, and context-adjusted reasoning
+5 Models Active indicator in the navigation bar
+---
+Tech Stack
+Layer	Technology
+Backend	Python 3.14, Flask 3.1, Gunicorn
+Model Integration	HuggingFace Inference API (5 models)
+Frontend	Plain HTML, CSS, JavaScript
+Fonts	Space Grotesk, DM Mono (Google Fonts)
+Deployment	Render (free tier)
+Version Control	Git + GitHub
+---
+Project Structure
+```
+modeval/
+├── backend/
+│   ├── app.py                        # Flask entry point
+│   ├── config.py                     # Environment variable loading
+│   ├── requirements.txt
+│   ├── routes/
+│   │   ├── analyze.py                # POST /analyze
+│   │   └── batch.py                  # POST /batch-analyze
+│   ├── models/
+│   │   ├── hf_toxic_bert.py          # Toxicity Classifier
+│   │   ├── hf_roberta_offensive.py   # Offensive Language Detector
+│   │   ├── hf_hate_speech.py         # Hate Speech Detector
+│   │   ├── hf_spam.py                # Spam Detector
+│   │   └── hf_bias.py                # Bias Detector
+│   └── engine/
+│       ├── normalizer.py             # Output normalization
+│       ├── context_engine.py         # Threshold adjustment
+│       ├── policy_engine.py          # Policy alignment scoring
+│       ├── comparison.py             # Disagreement detection
+│       └── explainer.py              # Explainability text
+├── frontend/
+│   ├── index.html
+│   ├── style.css
+│   └── app.js
+├── .gitignore
+└── README.md
+```
+---
+API Endpoints
+POST /analyze
 ```json
-{
-  "model": "string",
-  "raw_scores": { "category_name": 0.0 },
-  "top_category": "string",
-  "severity": 1,
-  "confidence": 0.0,
-  "action": "Allow | Review | Remove",
-  "flagged": true
-}
-```
-
-**Field definitions:**
-
-| Field | Type | Description |
-|---|---|---|
-| `model` | string | Name of the model (e.g. "Perspective API") |
-| `raw_scores` | object | Original scores returned by the API, preserved for transparency |
-| `top_category` | string | The highest-scoring violation category |
-| `severity` | int 1–10 | Derived from the highest raw score, scaled linearly |
-| `confidence` | float 0–1 | The highest raw score, treated as confidence |
-| `action` | string | Final recommended action (see thresholds below) |
-| `flagged` | boolean | Whether the content crosses the action threshold |
-
-**Default action thresholds (before context adjustment):**
-
-| Confidence | Action |
-|---|---|
-| 0.0 – 0.39 | Allow |
-| 0.40 – 0.69 | Review |
-| 0.70 – 1.0 | Remove |
-
----
-
-## 6. Context Engine
-
-The Context Engine modifies action thresholds before the final action is determined. It does not change the raw scores — it shifts the threshold at which a score triggers Review or Remove.
-
-### 6.1 Platform Context
-
-| Platform | Threshold Modifier | Rationale |
-|---|---|---|
-| Gaming | -0.10 | Higher tolerance for aggression and competitive language |
-| Social Media | 0.00 | Baseline |
-| Professional | +0.15 | Lower tolerance; reputational risk is high |
-| Forum | -0.05 | Slightly higher tolerance for debate and blunt speech |
-| VR / Metaverse | -0.15 | Behavioral norms are still evolving; higher tolerance applied |
-
-### 6.2 Content Type
-
-| Content Type | Threshold Modifier | Rationale |
-|---|---|---|
-| Original Post | 0.00 | Baseline |
-| Comment / Reply | -0.05 | Replies are often reactive; slight tolerance |
-| Username | +0.20 | Permanent, identity-linked; very low tolerance |
-| Bio | +0.15 | Persistent, public-facing content |
-| UGC | -0.05 | User-generated creative content; some leeway |
-
-### 6.3 Strictness Level
-
-| Strictness | Threshold Modifier |
-|---|---|
-| Strict | +0.15 |
-| Balanced | 0.00 |
-| Lenient | -0.15 |
-
-### 6.4 Final Threshold Calculation
-
-```
-adjusted_threshold = base_threshold + platform_modifier + content_type_modifier + strictness_modifier
-```
-
-The adjusted threshold replaces the default thresholds for determining the final action. Thresholds are clamped between 0.10 and 0.90 to prevent extreme values.
-
----
-
-## 7. Platform Policy Engine
-
-### 7.1 Predefined Policies
-
-Each predefined platform policy defines which violation categories are zero-tolerance (auto-Remove regardless of score) and which categories are deprioritized (threshold raised by +0.20).
-
-| Platform | Zero Tolerance Categories | Deprioritized Categories |
-|---|---|---|
-| Reddit | violence, self-harm, sexual/minors | profanity, insult |
-| Discord | harassment/threatening, sexual/minors, hate | profanity |
-| Facebook | hate, violence, sexual, self-harm | none |
-| Instagram | sexual/minors, harassment, identity_attack | profanity, insult |
-
-### 7.2 Custom Policy Input
-
-When "Custom" is selected, the user is shown a free-text field. They define their own rules in plain English. Example:
-
-> "Flag any mention of self-harm or suicide immediately. Allow profanity unless it is directed at a person."
-
-Custom policy text is passed to the backend and used to generate a policy summary displayed alongside results. Custom policies do not modify API calls — they are evaluated post-normalization by applying keyword and category matching logic defined in the backend.
-
-### 7.3 Policy Alignment Score
-
-After the context-adjusted action is determined, the Policy Alignment Score measures whether the model's output is consistent with the selected platform's expected behavior.
-
-```
-alignment_score = 1 - abs(model_confidence - policy_expected_threshold)
-```
-
-Displayed as a value 0–1 alongside a binary label: **Aligned** / **Misaligned**.
-
----
-
-## 8. Disagreement Detection
-
-A disagreement is flagged when two or more models produce different final actions for the same input after context adjustment.
-
-**Disagreement types:**
-
-| Type | Definition |
-|---|---|
-| Action Mismatch | Models recommend different actions (e.g. Allow vs Remove) |
-| Category Mismatch | Models flag different top categories |
-| Severity Gap | Severity scores differ by 3 or more points |
-
-When a disagreement is detected, a warning banner is shown in the results panel with the specific conflict described in plain language. Example:
-
-> "Perspective API recommends Remove (Toxicity: 0.82) while toxic-bert recommends Allow (Toxic: 0.31). Severity gap: 5 points."
-
----
-
-## 9. Explainability Layer
-
-For each model result, the following is surfaced:
-
-- **Top flagged category** and its score
-- **All categories above 0.30** listed with scores
-- **Context adjustment summary**: a plain-English sentence describing how context shifted the threshold. Example: "Professional platform + Username content type raised the Remove threshold by 0.35."
-- **Policy note**: whether this result aligns or conflicts with the selected platform's known policy
-
-The explainability layer is displayed as a collapsible panel below the comparison table.
-
----
-
-## 10. API Contract
-
-### 10.1 POST /analyze
-
-**Request body:**
-```json
+// Request
 {
   "text": "string",
   "platform_context": "Gaming | Social Media | Professional | Forum | VR/Metaverse",
   "content_type": "Original Post | Comment/Reply | Username | Bio | UGC",
   "strictness": "Strict | Balanced | Lenient",
   "policy": "Reddit | Discord | Facebook | Instagram | Custom",
-  "custom_policy_text": "string (only if policy = Custom)"
+  "custom_policy_text": "string (optional)"
 }
-```
 
-**Response body:**
-```json
+// Response
 {
   "results": [
     {
       "model": "string",
-      "raw_scores": {},
       "top_category": "string",
       "severity": 0,
       "confidence": 0.0,
@@ -260,153 +152,58 @@ The explainability layer is displayed as a collapsible panel below the compariso
   }
 }
 ```
+POST /batch-analyze
+Accepts multiple text inputs with the same context settings. Returns aggregate flag rate and per-item results.
+GET /health
+Health check endpoint used by Render for uptime monitoring.
+---
+Running Locally
+Requirements: Python 3.12+, pip
+```bash
+# Clone the repo
+git clone https://github.com/nipun-ag/ModEval.git
+cd ModEval
 
-### 10.2 POST /batch-analyze
+# Create .env file in root and add your API key
+# (see Environment Variables section below)
 
-**Request body:**
-```json
-{
-  "inputs": ["string", "string"],
-  "platform_context": "string",
-  "content_type": "string",
-  "strictness": "string",
-  "policy": "string"
-}
+# Install dependencies
+cd backend
+pip install -r requirements.txt
+
+# Run the Flask server from project root
+cd ..
+py -m flask --app backend/app.py run
 ```
-
-**Response body:**
-```json
-{
-  "total": 0,
-  "flagged_count": 0,
-  "flag_rate": 0.0,
-  "results": []
-}
+Open `http://127.0.0.1:5000` in your browser.
+---
+Environment Variables
+Create a `.env` file in the project root with the following key:
 ```
-
----
-
-## 11. Frontend Requirements
-
-### 11.1 Layout
-
-Two-panel desktop layout:
-
-- **Left panel (40%):** All inputs
-- **Right panel (60%):** All results
-
-Collapses to single column on mobile (desktop-first, mobile-supported).
-
-### 11.2 Input Panel
-
-- Large textarea for content input (min 3 lines, max 500 characters with counter)
-- Dropdown: Platform Context
-- Dropdown: Content Type
-- Dropdown: Strictness Level
-- Dropdown: Platform Policy
-- Conditional textarea: Custom Policy (visible only when Custom is selected)
-- Primary CTA button: "Analyze"
-- Secondary button: "Batch Upload" (CSV, optional feature)
-
-### 11.3 Results Panel
-
-- **Comparison Table:** One row per model. Columns: Model, Top Category, Severity, Confidence, Action, Policy Alignment
-- **Disagreement Alert Banner:** Conditionally shown, described in plain English
-- **Insights Strip:** Strictest model, most lenient model, consensus action
-- **Explainability Panel:** Collapsible, one section per model
-
-### 11.4 Design Guidelines
-
-- Dark theme preferred (consistent with existing portfolio aesthetic)
-- Action badges color-coded: Allow = green, Review = amber, Remove = red
-- Alignment badges: Aligned = green, Misaligned = red
-- No heavy frameworks — plain HTML/CSS/JS or lightweight React
-
----
-
-## 12. Folder Structure
-
+HF_API_KEY=your_huggingface_token
 ```
-modeval/
-├── backend/
-│   ├── app.py                  # Flask app entry point
-│   ├── routes/
-│   │   ├── analyze.py          # POST /analyze handler
-│   │   └── batch.py            # POST /batch-analyze handler
-│   ├── models/
-│   │   ├── perspective.py      # Perspective API integration
-│   │   ├── openai_mod.py       # OpenAI Moderation API integration
-│   │   └── hf_toxic_bert.py    # HuggingFace toxic-bert integration
-│   ├── engine/
-│   │   ├── normalizer.py       # Output normalization logic
-│   │   ├── context_engine.py   # Threshold adjustment logic
-│   │   ├── policy_engine.py    # Policy alignment scoring
-│   │   ├── comparison.py       # Disagreement detection
-│   │   └── explainer.py        # Explainability text generation
-│   ├── config.py               # API keys, constants
-│   └── requirements.txt
-├── frontend/
-│   ├── index.html
-│   ├── style.css
-│   └── app.js
-├── .env                        # API keys (never committed)
-├── .gitignore
-└── README.md
-```
-
+Get a free HuggingFace token at huggingface.co/settings/tokens. Read access is sufficient. This single key covers all five models.
+The `.env` file is gitignored and must never be committed.
 ---
-
-## 13. Deployment
-
-### 13.1 Platform
-**Render (render.com)** — free tier supports Python/Flask backends. No credit card required to start.
-
-### 13.2 Services
-- **Backend:** Render Web Service (Python, Flask)
-- **Frontend:** Render Static Site or served directly from Flask
-
-### 13.3 Domain
-- Register domain via Namecheap or Porkbun (~$10–15/year)
-- Recommended names: `modeval.io`, `modeval.app`, `trymodeval.com`
-- Connect custom domain via Render's domain settings panel
-- HTTPS provisioned automatically via Let's Encrypt
-
-### 13.4 Environment Variables
-Store all API keys as environment variables in Render's dashboard. Never hardcode or commit keys.
-
-| Variable | Description |
-|---|---|
-| `PERSPECTIVE_API_KEY` | Google Cloud API key for Perspective |
-| `OPENAI_API_KEY` | OpenAI account API key |
-| `HF_API_KEY` | HuggingFace Inference API token |
-
+Deployment
+ModEval is deployed on Render as a Python Web Service.
+Build command: `pip install -r backend/requirements.txt`
+Start command: `gunicorn --chdir backend app:app`
+Environment variables: Set `HF_API_KEY` in Render's Environment dashboard
+Auto-deploy: Enabled on every push to `main`
 ---
-
-## 14. Success Criteria
-
-| Criteria | Definition |
-|---|---|
-| Multi-model evaluation | All three APIs return results for a given input |
-| Normalization | All outputs conform to the unified schema |
-| Context adjustment | Changing platform/strictness visibly changes actions |
-| Policy alignment | Alignment scores differ across platform policy selections |
-| Disagreement detection | Conflicting results are flagged and explained |
-| Live deployment | Tool is publicly accessible via custom domain |
-| Explainability | Each result includes a human-readable explanation |
-
+Future Improvements
+Human vs AI comparison mode — submit your own moderation decision and compare it against model outputs
+Red team mode — structured library of adversarial edge cases for systematic model stress-testing
+Export results as CSV or PDF
+Model leaderboard — aggregate alignment scores across all analyses to rank model performance by platform
+Prompt injection resistance testing — test whether policy instructions can be overridden via adversarial input
+Multilingual support — extend coverage to non-English content
 ---
-
-## 15. Future Improvements
-
-- **Human vs AI comparison:** Allow a human moderator to submit their own decision and compare it against model outputs
-- **Prompt injection testing:** Test whether policy instructions can be overridden via adversarial input
-- **Red team mode:** Structured input library of known edge cases for systematic model evaluation
-- **Export:** Download results as CSV or PDF
-- **History log:** Store past analyses (with user consent) for trend analysis
-- **Model leaderboard:** Aggregate alignment scores across all analyses to rank model performance by platform
-
----
-
-## 16. Positioning Statement
-
-ModEval is a context-aware, policy-aligned AI moderation evaluation platform built to expose how leading moderation models agree, disagree, and fail under real-world Trust & Safety conditions. It demonstrates applied knowledge of AI safety systems, platform policy design, output normalization, and the operational complexity of deploying moderation at scale.
+About the Builder
+Nipun Aggarwal — Trust & Safety professional with 6+ years across content moderation, platform safety, LLM training, and red teaming.
+Currently a Safety Red Teaming Analyst at Mercor, adversarially testing large language models to find where guardrails break. Previously at Khoros, Turing, Tech Mahindra, and Cognizant across Meta, Twitter, and gaming platform ecosystems.
+Transitioning into AI Governance and Responsible AI. ModEval is a direct expression of that work — applying operational T&S instincts to the problem of evaluating AI moderation systems at scale.
+Portfolio: bynipun.com
+LinkedIn: linkedin.com/in/nipun-agarwal-
+Email: hello@bynipun.com

@@ -165,6 +165,70 @@ button {
   line-height: 1.7;
 }
 
+.example-section {
+  margin-bottom: 24px;
+}
+
+.example-label {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.example-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.example-pill {
+  min-height: 34px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.example-pill:hover {
+  transform: translateY(-1px);
+}
+
+.example-pill.active {
+  box-shadow: 0 0 0 1px currentColor, 0 0 18px rgba(255, 255, 255, 0.08);
+}
+
+.example-pill.toxicity,
+.example-pill.hate-speech {
+  color: var(--red);
+  border-color: rgba(255, 77, 106, 0.28);
+  background: rgba(255, 77, 106, 0.1);
+}
+
+.example-pill.harassment {
+  color: var(--amber);
+  border-color: rgba(255, 181, 71, 0.28);
+  background: rgba(255, 181, 71, 0.1);
+}
+
+.example-pill.spam {
+  color: var(--accent);
+  border-color: rgba(79, 124, 255, 0.28);
+  background: rgba(79, 124, 255, 0.1);
+}
+
+.example-pill.bias {
+  color: #9b8afc;
+  border-color: rgba(155, 138, 252, 0.28);
+  background: rgba(155, 138, 252, 0.1);
+}
+
 .input-form,
 .context-grid,
 .button-row,
@@ -205,6 +269,10 @@ textarea {
   resize: vertical;
   min-height: 180px;
   line-height: 1.6;
+}
+
+textarea.example-loaded {
+  animation: exampleFill 320ms ease;
 }
 
 textarea:focus,
@@ -735,6 +803,18 @@ tr[data-action="Remove"] td:first-child {
   }
 }
 
+@keyframes exampleFill {
+  0% {
+    box-shadow: 0 0 0 0 rgba(79, 124, 255, 0.35);
+    transform: translateY(2px);
+  }
+
+  100% {
+    box-shadow: 0 0 0 1px rgba(79, 124, 255, 0.18);
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 1080px) {
   .workspace {
     grid-template-columns: 1fr;
@@ -770,6 +850,10 @@ tr[data-action="Remove"] td:first-child {
 
   .button-row {
     grid-template-columns: 1fr;
+  }
+
+  .example-row {
+    gap: 8px;
   }
 
   .insights-strip,
