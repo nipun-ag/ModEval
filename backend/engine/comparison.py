@@ -1,4 +1,4 @@
-"""Comparison helpers for cross-model insights and disagreement detection."""
+"""Comparison helpers for the current OpenAI + HuggingFace model lineup."""
 
 from __future__ import annotations
 

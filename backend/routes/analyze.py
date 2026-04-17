@@ -12,16 +12,16 @@ from backend.engine.context_engine import calculate_context_adjustment
 from backend.engine.explainer import explain_result
 from backend.engine.normalizer import build_error_result, normalize_result
 from backend.engine.policy_engine import evaluate_policy_alignment, get_policy_rules
-from backend.models import hf_toxic_bert, openai_mod, perspective
+from backend.models import hf_roberta_offensive, hf_toxic_bert, openai_mod
 
 
 analyze_bp = Blueprint("analyze", __name__)
 
 
 MODEL_RUNNERS = {
-    "Perspective API": perspective.analyze,
     "OpenAI Moderation API": openai_mod.analyze,
     "HuggingFace toxic-bert": hf_toxic_bert.analyze,
+    "HuggingFace RoBERTa offensive": hf_roberta_offensive.analyze,
 }
 
 

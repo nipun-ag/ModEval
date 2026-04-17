@@ -8,6 +8,9 @@ from backend.engine.context_engine import determine_action
 CATEGORY_ALIASES = {
     "toxicity": "toxicity",
     "toxic": "toxicity",
+    "offensive": "harassment",
+    "offensive_language": "harassment",
+    "offensive content": "harassment",
     "severe_toxicity": "severe_toxicity",
     "severe_toxic": "severe_toxicity",
     "obscene": "profanity",
@@ -28,6 +31,8 @@ CATEGORY_ALIASES = {
     "self-harm": "self-harm",
     "self-harm/intent": "self-harm/intent",
     "self-harm/instructions": "self-harm/instructions",
+    "label_0": "allow",
+    "label_1": "harassment",
 }
 
 
@@ -36,6 +41,8 @@ def normalize_scores(raw_scores: dict) -> dict:
     normalized = {}
     for category, score in raw_scores.items():
         canonical_name = CATEGORY_ALIASES.get(category.lower(), category.lower())
+        if canonical_name == "allow":
+            continue
         normalized[canonical_name] = max(float(score), normalized.get(canonical_name, 0.0))
     return normalized
 
