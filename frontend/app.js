@@ -227,6 +227,17 @@ function initializeCustomSelects() {
       panel.classList.toggle("hidden", !isOpen);
     }
 
+    function positionPanel() {
+      const triggerRect = trigger.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - triggerRect.bottom;
+      const panelHeight = 240;
+      if (spaceBelow < panelHeight + 16) {
+        panel.classList.add("drop-up");
+      } else {
+        panel.classList.remove("drop-up");
+      }
+    }
+
     trigger.addEventListener("click", () => {
       const expanded = trigger.getAttribute("aria-expanded") === "true";
       customSelects.forEach((other) => {
@@ -236,6 +247,7 @@ function initializeCustomSelects() {
           other.querySelector(".custom-select-trigger").setAttribute("aria-expanded", "false");
         }
       });
+      if (!expanded) positionPanel();
       setOpen(!expanded);
     });
 
