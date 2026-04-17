@@ -63,10 +63,10 @@
                 <div class="context-grid">
                   <div class="field-block">
                     <label for="platform_context">Platform Context</label>
-                    <div class="custom-select" id="platform-context-select">
-                      <input type="hidden" id="platform_context" name="platform_context" value="Social Media">
-                      <button type="button" id="platform-context-trigger" class="custom-select-trigger" aria-expanded="false" aria-haspopup="listbox">
-                        <span id="platform-context-trigger-label">Social Media</span>
+                    <div class="custom-select">
+                      <input type="hidden" name="platform_context" value="Social Media">
+                      <button type="button" class="custom-select-trigger" aria-expanded="false" aria-haspopup="listbox">
+                        <span class="custom-select-trigger-label">Social Media</span>
                         <span class="chevron">⌄</span>
                       </button>
                       <div id="platform-context-panel" class="custom-select-panel hidden" role="listbox">
@@ -96,22 +96,52 @@
 
                   <div class="field-block">
                     <label for="content_type">Content Type</label>
-                    <select id="content_type" name="content_type">
-                      <option selected>Original Post</option>
-                      <option>Comment/Reply</option>
-                      <option>Username</option>
-                      <option>Bio</option>
-                      <option>UGC</option>
-                    </select>
+                    <div class="custom-select">
+                      <input type="hidden" name="content_type" value="Original Post">
+                      <button type="button" class="custom-select-trigger" aria-expanded="false" aria-haspopup="listbox">
+                        <span class="custom-select-trigger-label">Original Post</span>
+                        <span class="chevron">⌄</span>
+                      </button>
+                      <div class="custom-select-panel hidden" role="listbox">
+                        <button type="button" class="custom-select-option selected" data-value="Original Post">
+                          <span class="custom-select-name">Original Post</span>
+                        </button>
+                        <button type="button" class="custom-select-option" data-value="Comment/Reply">
+                          <span class="custom-select-name">Comment/Reply</span>
+                        </button>
+                        <button type="button" class="custom-select-option" data-value="Username">
+                          <span class="custom-select-name">Username</span>
+                        </button>
+                        <button type="button" class="custom-select-option" data-value="Bio">
+                          <span class="custom-select-name">Bio</span>
+                        </button>
+                        <button type="button" class="custom-select-option" data-value="UGC">
+                          <span class="custom-select-name">UGC</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
                   <div class="field-block">
                     <label for="strictness">Strictness</label>
-                    <select id="strictness" name="strictness">
-                      <option>Strict</option>
-                      <option selected>Balanced</option>
-                      <option>Lenient</option>
-                    </select>
+                    <div class="custom-select">
+                      <input type="hidden" name="strictness" value="Balanced">
+                      <button type="button" class="custom-select-trigger" aria-expanded="false" aria-haspopup="listbox">
+                        <span class="custom-select-trigger-label">Balanced</span>
+                        <span class="chevron">⌄</span>
+                      </button>
+                      <div class="custom-select-panel hidden" role="listbox">
+                        <button type="button" class="custom-select-option" data-value="Strict">
+                          <span class="custom-select-name">Strict</span>
+                        </button>
+                        <button type="button" class="custom-select-option selected" data-value="Balanced">
+                          <span class="custom-select-name">Balanced</span>
+                        </button>
+                        <button type="button" class="custom-select-option" data-value="Lenient">
+                          <span class="custom-select-name">Lenient</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

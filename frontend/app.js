@@ -17,12 +17,7 @@ const didYouKnowTab = document.getElementById("did-you-know-tab");
 const analysisView = document.getElementById("analysis-view");
 const methodologyView = document.getElementById("methodology-view");
 const didYouKnowView = document.getElementById("did-you-know-view");
-const platformContextSelect = document.getElementById("platform-context-select");
-const platformContextInput = document.getElementById("platform_context");
-const platformContextTrigger = document.getElementById("platform-context-trigger");
-const platformContextTriggerLabel = document.getElementById("platform-context-trigger-label");
-const platformContextPanel = document.getElementById("platform-context-panel");
-const platformContextOptions = Array.from(document.querySelectorAll(".custom-select-option"));
+// Removed hardcoded select refs
 const contextToggle = document.getElementById("context-toggle");
 const contextContent = document.getElementById("context-content");
 const analyzeButton = document.getElementById("analyze-button");
@@ -209,24 +204,55 @@ function setAnalyzeLoading(isLoading) {
   analyzeButton.querySelector(".button-label").textContent = isLoading ? "Analyzing..." : "Execute Analysis";
 }
 
-function setPlatformContextOpen(isOpen) {
-  platformContextTrigger.setAttribute("aria-expanded", String(isOpen));
-  platformContextPanel.classList.toggle("hidden", !isOpen);
-}
+function initializeCustomSelects() {
+  const customSelects = document.querySelectorAll(".custom-select");
+  
+  customSelects.forEach((selectEl) => {
+    const hiddenInput = selectEl.querySelector("input[type='hidden']");
+    const trigger = selectEl.querySelector(".custom-select-trigger");
+    const triggerLabel = selectEl.querySelector(".custom-select-trigger-label");
+    const panel = selectEl.querySelector(".custom-select-panel");
+    const options = Array.from(selectEl.querySelectorAll(".custom-select-option"));
 
-function selectPlatformContext(value) {
-  const selectedOption = platformContextOptions.find((option) => option.dataset.value === value);
-  if (!selectedOption) {
-    return;
-  }
+    function setOpen(isOpen) {
+      trigger.setAttribute("aria-expanded", String(isOpen));
+      panel.classList.toggle("hidden", !isOpen);
+    }
 
-  selectedPlatform = value;
-  platformContextInput.value = value;
-  platformContextTriggerLabel.textContent = selectedOption.querySelector(".custom-select-name").textContent;
-  platformContextOptions.forEach((option) => {
-    option.classList.toggle("selected", option === selectedOption);
+    trigger.addEventListener("click", () => {
+      const expanded = trigger.getAttribute("aria-expanded") === "true";
+      customSelects.forEach((other) => {
+        if (other !== selectEl) {
+          const otherPanel = other.querySelector(".custom-select-panel");
+          if (otherPanel) otherPanel.classList.add("hidden");
+          other.querySelector(".custom-select-trigger").setAttribute("aria-expanded", "false");
+        }
+      });
+      setOpen(!expanded);
+    });
+
+    options.forEach((option) => {
+      option.addEventListener("click", () => {
+        hiddenInput.value = option.dataset.value;
+        const nameNode = option.querySelector(".custom-select-name");
+        triggerLabel.textContent = nameNode ? nameNode.textContent : option.textContent.trim();
+        
+        options.forEach((opt) => opt.classList.toggle("selected", opt === option));
+        setOpen(false);
+      });
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!selectEl.contains(event.target)) {
+        setOpen(false);
+      }
+    });
+
+    const initialSelected = options.find(opt => opt.classList.contains("selected"));
+    if (initialSelected) {
+        hiddenInput.value = initialSelected.dataset.value;
+    }
   });
-  setPlatformContextOpen(false);
 }
 
 function switchTab(nextTab) {
@@ -496,13 +522,7 @@ batchButton.addEventListener("click", () => batchFileInput.click());
 analysisTab.addEventListener("click", () => switchTab("analysis"));
 methodologyTab.addEventListener("click", () => switchTab("methodology"));
 didYouKnowTab.addEventListener("click", () => switchTab("didYouKnow"));
-platformContextTrigger.addEventListener("click", () => {
-  const expanded = platformContextTrigger.getAttribute("aria-expanded") === "true";
-  setPlatformContextOpen(!expanded);
-});
-platformContextOptions.forEach((option) => {
-  option.addEventListener("click", () => selectPlatformContext(option.dataset.value));
-});
+// Selects are initialized below
 exampleButtons.forEach((button) => {
   button.addEventListener("click", () => applyExample(button.dataset.category, button));
 });
@@ -558,13 +578,9 @@ window.addEventListener("resize", () => {
   });
 });
 
-document.addEventListener("click", (event) => {
-  if (!platformContextSelect.contains(event.target)) {
-    setPlatformContextOpen(false);
-  }
-});
+// Document click listener moved inside initializeCustomSelects
 
 updateCounter();
-selectPlatformContext(platformContextInput.value);
+initializeCustomSelects();
 setSectionExpanded(contextToggle, contextContent, false);
 showPanelState("empty");
