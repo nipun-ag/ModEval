@@ -1250,6 +1250,102 @@ tbody td {
   }
 }
 
+/* === Modal Select Overlay === */
+.select-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.select-modal-panel {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 420px;
+  width: 90%;
+}
+
+.select-modal-panel.animating-open {
+  animation: modal-open 200ms ease forwards;
+}
+
+.select-modal-panel.animating-close {
+  animation: modal-close 150ms ease forwards;
+}
+
+.select-modal-heading {
+  margin: 0 0 16px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.select-modal-option {
+  width: 100%;
+  padding: 12px 16px;
+  border: 0;
+  border-left: 2px solid transparent;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.select-modal-option:hover {
+  background: var(--surface3);
+}
+
+.select-modal-option.selected {
+  background: var(--accent-light);
+  border-left-color: var(--accent);
+}
+
+.select-modal-name {
+  display: block;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.select-modal-description {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 11px;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+@keyframes modal-open {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes modal-close {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
 @media (max-width: 900px) {
   .workspace {
     grid-template-columns: 1fr;

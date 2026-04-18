@@ -212,69 +212,96 @@ function setAnalyzeLoading(isLoading) {
   analyzeButton.querySelector(".button-label").textContent = isLoading ? "Analyzing..." : "Execute Analysis";
 }
 
-function initializeCustomSelects() {
-  const customSelects = document.querySelectorAll(".custom-select");
-  
-  customSelects.forEach((selectEl) => {
+function initializeModalSelects() {
+  const backdrop = document.createElement("div");
+  backdrop.className = "select-modal-backdrop";
+  backdrop.setAttribute("aria-hidden", "true");
+  backdrop.innerHTML = `
+    <div class="select-modal-panel" role="dialog" aria-modal="true">
+      <p class="select-modal-heading"></p>
+      <div class="select-modal-options"></div>
+    </div>
+  `;
+  document.body.appendChild(backdrop);
+
+  const panel = backdrop.querySelector(".select-modal-panel");
+  const heading = backdrop.querySelector(".select-modal-heading");
+  const optionsContainer = backdrop.querySelector(".select-modal-options");
+
+  let currentSelect = null;
+  let closeTimer = null;
+
+  function closeModal() {
+    if (!currentSelect) return;
+    if (closeTimer) clearTimeout(closeTimer);
+    panel.classList.remove("animating-open");
+    panel.classList.add("animating-close");
+    closeTimer = setTimeout(() => {
+      backdrop.style.display = "none";
+      backdrop.setAttribute("aria-hidden", "true");
+      panel.classList.remove("animating-close");
+      currentSelect = null;
+    }, 150);
+  }
+
+  function openModal(selectEl) {
+    if (closeTimer) clearTimeout(closeTimer);
+    currentSelect = selectEl;
+
     const hiddenInput = selectEl.querySelector("input[type='hidden']");
-    const trigger = selectEl.querySelector(".custom-select-trigger");
-    const triggerLabel = selectEl.querySelector(".custom-select-trigger-label");
-    const panel = selectEl.querySelector(".custom-select-panel");
+    const fieldBlock = selectEl.closest(".field-block");
+    const labelText = fieldBlock ? fieldBlock.querySelector("label").textContent.trim() : "";
     const options = Array.from(selectEl.querySelectorAll(".custom-select-option"));
 
-    function setOpen(isOpen) {
-      trigger.setAttribute("aria-expanded", String(isOpen));
-      panel.classList.toggle("hidden", !isOpen);
-    }
+    heading.textContent = `Select ${labelText}`;
+    optionsContainer.innerHTML = "";
 
-    function positionPanel() {
-      const triggerRect = trigger.getBoundingClientRect();
-      const spaceBelow = window.innerHeight - triggerRect.bottom;
-      const panelHeight = 240;
-      if (spaceBelow < panelHeight + 16) {
-        panel.classList.add("drop-up");
-      } else {
-        panel.classList.remove("drop-up");
-      }
-    }
+    options.forEach((opt) => {
+      const nameEl = opt.querySelector(".custom-select-name");
+      const descEl = opt.querySelector(".custom-select-description");
+      const val = opt.dataset.value;
 
-    trigger.addEventListener("click", () => {
-      const expanded = trigger.getAttribute("aria-expanded") === "true";
-      customSelects.forEach((other) => {
-        if (other !== selectEl) {
-          const otherPanel = other.querySelector(".custom-select-panel");
-          if (otherPanel) otherPanel.classList.add("hidden");
-          other.querySelector(".custom-select-trigger").setAttribute("aria-expanded", "false");
-        }
-      });
-      if (!expanded) positionPanel();
-      setOpen(!expanded);
-    });
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "select-modal-option" + (opt.classList.contains("selected") ? " selected" : "");
+      btn.dataset.value = val;
+      btn.innerHTML =
+        `<span class="select-modal-name">${escapeHtml(nameEl ? nameEl.textContent.trim() : val)}</span>` +
+        (descEl ? `<span class="select-modal-description">${escapeHtml(descEl.textContent.trim())}</span>` : "");
 
-    options.forEach((option) => {
-      option.addEventListener("click", () => {
-        const val = option.dataset.value;
+      btn.addEventListener("click", () => {
         hiddenInput.value = val;
-        const nameNode = option.querySelector(".custom-select-name");
-        triggerLabel.textContent = nameNode ? nameNode.textContent : option.textContent.trim();
-        options.forEach((opt) => opt.classList.toggle("selected", opt === option));
-        // Update global state variable if this select has a known name
-        const inputName = hiddenInput.name;
-        if (STATE_MAP[inputName]) STATE_MAP[inputName](val);
-        setOpen(false);
+        const triggerLabel = selectEl.querySelector(".custom-select-trigger-label");
+        triggerLabel.textContent = btn.querySelector(".select-modal-name").textContent;
+        options.forEach((o) => o.classList.toggle("selected", o.dataset.value === val));
+        if (STATE_MAP[hiddenInput.name]) STATE_MAP[hiddenInput.name](val);
+        closeModal();
       });
+
+      optionsContainer.appendChild(btn);
     });
 
-    document.addEventListener("click", (event) => {
-      if (!selectEl.contains(event.target)) {
-        setOpen(false);
-      }
-    });
+    panel.classList.remove("animating-close", "animating-open");
+    backdrop.style.display = "flex";
+    backdrop.setAttribute("aria-hidden", "false");
+    void panel.offsetWidth;
+    panel.classList.add("animating-open");
+  }
 
-    const initialSelected = options.find(opt => opt.classList.contains("selected"));
-    if (initialSelected) {
-        hiddenInput.value = initialSelected.dataset.value;
-    }
+  backdrop.addEventListener("click", (e) => {
+    if (e.target === backdrop) closeModal();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && currentSelect) closeModal();
+  });
+
+  document.querySelectorAll(".custom-select").forEach((selectEl) => {
+    const hiddenInput = selectEl.querySelector("input[type='hidden']");
+    const initialSelected = selectEl.querySelector(".custom-select-option.selected");
+    if (initialSelected) hiddenInput.value = initialSelected.dataset.value;
+
+    selectEl.querySelector(".custom-select-trigger").addEventListener("click", () => openModal(selectEl));
   });
 }
 
@@ -545,7 +572,6 @@ batchButton.addEventListener("click", () => batchFileInput.click());
 analysisTab.addEventListener("click", () => switchTab("analysis"));
 methodologyTab.addEventListener("click", () => switchTab("methodology"));
 didYouKnowTab.addEventListener("click", () => switchTab("didYouKnow"));
-// Selects are initialized below
 exampleButtons.forEach((button) => {
   button.addEventListener("click", () => applyExample(button.dataset.category, button));
 });
@@ -601,9 +627,7 @@ window.addEventListener("resize", () => {
   });
 });
 
-// Document click listener moved inside initializeCustomSelects
-
 updateCounter();
-initializeCustomSelects();
+initializeModalSelects();
 setSectionExpanded(contextToggle, contextContent, false);
 showPanelState("empty");
