@@ -35,7 +35,7 @@ ModEval is both a functional tool and a demonstration of applied AI governance t
 - Surfaces an explainability layer showing what each model flagged and why
 - Includes a pre-loaded test case library with 100 real-world content examples across 10 violation categories
 - Documents the full methodology in a dedicated "How It Works" tab
-- Provides platform knowledge and policy facts in a "Did You Know" tab
+- Provides detailed model cards for all 5 models in a dedicated "Models" tab
 
 ---
 
@@ -43,13 +43,30 @@ ModEval is both a functional tool and a demonstration of applied AI governance t
 
 All five models are free and run via the HuggingFace Inference API. Each covers a distinct safety dimension, simulating a real multi-layer Trust & Safety pipeline.
 
-| Display Name | Model | Architecture | Training Data | Safety Dimension |
-|---|---|---|---|---|
-| Toxicity Classifier | `unitary/toxic-bert` | BERT | Jigsaw Toxic Comments | General toxicity baseline |
-| Offensive Language Detector | `cardiffnlp/twitter-roberta-base-offensive` | RoBERTa | Twitter data | Social media offensive language |
-| Hate Speech Detector | `facebook/roberta-hate-speech-dynabench-r4-target` | RoBERTa | DynaBench R4 | Adversarially collected hate speech |
-| Spam Detector | `mrm8488/bert-tiny-finetuned-sms-spam-detection` | BERT-tiny | SMS Spam Collection | Manipulation and unsolicited content |
-| Bias Detector | `valurank/distilroberta-bias` | DistilRoBERTa | Wikipedia revisions | Non-neutral language detection |
+| Display Name | Model | Architecture | Creator | Training Data | Safety Dimension |
+|---|---|---|---|---|---|
+| Toxicity Classifier | `unitary/toxic-bert` | BERT | Unitary AI | Jigsaw Toxic Comments | General toxicity baseline |
+| Offensive Language Detector | `cardiffnlp/twitter-roberta-base-offensive` | RoBERTa | Cardiff NLP | Twitter / SemEval 2019 | Social media offensive language |
+| Hate Speech Detector | `facebook/roberta-hate-speech-dynabench-r4-target` | RoBERTa | Facebook AI Research | DynaBench R4 (adversarial) | Identity-based hate speech |
+| Spam Detector | `mrm8488/bert-tiny-finetuned-sms-spam-detection` | BERT-tiny | Manuel Romero | SMS Spam Collection | Spam and manipulative content |
+| Bias Detector | `valurank/distilroberta-bias` | DistilRoBERTa | Valurank | Wikipedia revisions (WNC) | Non-neutral language detection |
+
+### Model Details
+
+**Toxicity Classifier — unitary/toxic-bert**
+Multi-label classification covering 6 toxicity dimensions simultaneously. Trained on Wikipedia comments which skews toward formal English. Best general-purpose toxicity baseline, widely used in production T&S pipelines. May underperform on informal social media slang.
+
+**Offensive Language Detector — cardiffnlp/twitter-roberta-base-offensive**
+Specifically trained on real Twitter content making it better at detecting informal offensive language and slang. Twitter-specific training may miss platform-specific offensive patterns from other networks.
+
+**Hate Speech Detector — facebook/roberta-hate-speech-dynabench-r4-target**
+Trained on adversarially collected data making it more robust against evasion attempts. Specifically targets identity-based hate rather than general toxicity. Binary hate/not-hate output provides less granularity than multi-label models.
+
+**Spam Detector — mrm8488/bert-tiny-finetuned-sms-spam-detection**
+Extremely lightweight at 4.4M parameters making it the fastest model in the pipeline. 98% validation accuracy. Trained on SMS data so may miss sophisticated social media spam patterns.
+
+**Bias Detector — valurank/distilroberta-bias**
+Unique training methodology using real Wikipedia editorial decisions where neutral editors removed biased language. Detects subtle linguistic bias rather than overt violations. May flag strongly opinionated but legitimate content as biased.
 
 ---
 
@@ -133,15 +150,16 @@ alignment_score = 1 - abs(model_confidence - policy_expected_threshold)
 ## UI Features
 
 - **Premium dark theme** — enterprise-grade UI inspired by Vercel, Stripe, and OpenAI
-- **Three tabs** — Analysis, How It Works (full methodology), Did You Know (platform facts)
+- **Four tabs** — Analysis, How It Works, Models, (Did You Know planned)
 - **Modal overlay selectors** — all three context dropdowns open as centered modals with blurred backdrop, animating from the trigger button position
 - **Try an Example** — 100 pre-loaded test cases across 10 violation categories
-- **Analysis Context** — Platform Context, Content Type, and Strictness each with descriptive option labels
+- **Analysis Context** — Platform Context, Content Type, and Strictness with descriptive option labels
 - **Decision Matrix** — comparison table with model chip badges, color-coded action badges, alignment scores
 - **Insight Strip** — strictest model, most lenient model, consensus recommendation with plain-English explainers
 - **Disagreement Banner** — high-contrast alert when models conflict
 - **Explainability Cards** — 2-column grid per-model breakdown
 - **Skeleton shimmer loading** — premium loading state while models run
+- **Model Cards** — detailed cards for all 5 models with architecture, training data, strengths, limitations, and HuggingFace links
 - **5 Models Active** indicator in navigation
 
 ---
@@ -253,13 +271,18 @@ Free token at huggingface.co/settings/tokens. Read access only. Single key cover
 
 ## Future Improvements
 
-- Human vs AI comparison mode
-- Red team mode with adversarial edge case library
-- Export results as CSV or PDF
-- Model leaderboard aggregating alignment scores
-- Prompt injection resistance testing
-- Multilingual support
-- Paid API integrations (AWS Comprehend, Azure Content Moderator, Clarifai)
+**In Progress / Planned:**
+
+- **Did You Know tab** — Platform knowledge cards for Reddit, Discord, Facebook, and Instagram featuring key policy facts, enforcement statistics from official transparency reports, and interesting moderation quirks. Deferred to ensure quality over quantity.
+- **Human vs AI comparison mode** — Submit your own moderation decision and compare it against all 5 model outputs to see where human judgment diverges from automated systems
+- **Red team mode** — Structured library of adversarial edge cases for systematic model stress-testing, inspired by real red teaming workflows
+- **Export results** — Download analysis results as CSV or PDF for reporting and documentation
+- **Model leaderboard** — Aggregate alignment scores across all analyses to rank model performance by platform and violation category
+- **Prompt injection resistance testing** — Test whether policy instructions can be overridden via adversarial input in the custom policy field
+- **Multilingual support** — Extend coverage to non-English content using multilingual model variants
+- **Paid API integrations** — AWS Comprehend, Azure Content Moderator, and Clarifai for enterprise-grade comparison
+- **Custom domain** — Deploy under a dedicated domain name
+- **G2-style model marketplace** — Long-term vision: aggregate benchmark data across all analyses to build the first independent public leaderboard ranking moderation APIs by accuracy, strictness, and policy alignment across platforms and violation categories
 
 ---
 
