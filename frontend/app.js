@@ -281,6 +281,13 @@ function initializeModalSelects() {
       optionsContainer.appendChild(btn);
     });
 
+    const trigger = selectEl.querySelector(".custom-select-trigger");
+    const triggerRect = trigger.getBoundingClientRect();
+    const fromX = (triggerRect.left + triggerRect.width / 2) - window.innerWidth / 2;
+    const fromY = (triggerRect.top + triggerRect.height / 2) - window.innerHeight / 2;
+    panel.style.setProperty("--modal-from-x", `${fromX}px`);
+    panel.style.setProperty("--modal-from-y", `${fromY}px`);
+
     panel.classList.remove("animating-close", "animating-open");
     backdrop.style.display = "flex";
     backdrop.setAttribute("aria-hidden", "false");
