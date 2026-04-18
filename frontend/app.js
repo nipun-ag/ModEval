@@ -13,11 +13,10 @@ const batchFileInput = document.getElementById("batch-file");
 const batchSummary = document.getElementById("batch-summary");
 const analysisTab = document.getElementById("analysis-tab");
 const methodologyTab = document.getElementById("methodology-tab");
-const didYouKnowTab = document.getElementById("did-you-know-tab");
+const modelsTab = document.getElementById("models-tab");
 const analysisView = document.getElementById("analysis-view");
 const methodologyView = document.getElementById("methodology-view");
-const didYouKnowView = document.getElementById("did-you-know-view");
-// Removed hardcoded select refs
+const modelsView = document.getElementById("models-view");
 const contextToggle = document.getElementById("context-toggle");
 const contextContent = document.getElementById("context-content");
 const analyzeButton = document.getElementById("analyze-button");
@@ -317,8 +316,8 @@ function switchTab(nextTab) {
     return;
   }
 
-  const views = { analysis: analysisView, methodology: methodologyView, didYouKnow: didYouKnowView };
-  const buttons = { analysis: analysisTab, methodology: methodologyTab, didYouKnow: didYouKnowTab };
+  const views = { analysis: analysisView, methodology: methodologyView, models: modelsView };
+  const buttons = { analysis: analysisTab, methodology: methodologyTab, models: modelsTab };
 
   const currentView = views[activeTab];
   const nextView = views[nextTab];
@@ -578,7 +577,7 @@ form.addEventListener("submit", async (event) => {
 batchButton.addEventListener("click", () => batchFileInput.click());
 analysisTab.addEventListener("click", () => switchTab("analysis"));
 methodologyTab.addEventListener("click", () => switchTab("methodology"));
-didYouKnowTab.addEventListener("click", () => switchTab("didYouKnow"));
+modelsTab.addEventListener("click", () => switchTab("models"));
 exampleButtons.forEach((button) => {
   button.addEventListener("click", () => applyExample(button.dataset.category, button));
 });

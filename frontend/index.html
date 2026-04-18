@@ -172,7 +172,7 @@
             <div class="results-tabs" role="tablist" aria-label="Results navigation">
               <button type="button" id="analysis-tab" class="results-tab active" role="tab" aria-selected="true" aria-controls="analysis-view"><span>Analysis</span></button>
               <button type="button" id="methodology-tab" class="results-tab" role="tab" aria-selected="false" aria-controls="methodology-view"><span>How It Works</span></button>
-              <button type="button" id="did-you-know-tab" class="results-tab" role="tab" aria-selected="false" aria-controls="did-you-know-view"><span>Did You Know</span></button>
+              <button type="button" id="models-tab" class="results-tab" role="tab" aria-selected="false" aria-controls="models-view"><span>Models</span></button>
             </div>
           </div>
 
@@ -489,52 +489,142 @@
             </section>
           </div>
 
-          <div id="did-you-know-view" class="results-view hidden" role="tabpanel" aria-labelledby="did-you-know-tab">
+          <div id="models-view" class="results-view hidden" role="tabpanel" aria-labelledby="models-tab">
             <section class="methodology-hero">
-              <p class="section-label">Platform Knowledge</p>
-              <h2>Did You Know</h2>
+              <p class="section-label">Inference Pipeline</p>
+              <h2>Models</h2>
               <p class="methodology-intro">
-                Explore real-world facts and policies from the major platforms shaping online Trust &amp; Safety.
+                Five independent AI models, each trained on different datasets to detect a distinct safety dimension.
               </p>
             </section>
-            
-            <div class="limitations-grid" style="margin-top: 24px;">
-              <article class="limitation-card">
-                <h4>Reddit</h4>
-                <ul class="policy-guidelines">
-                  <li><strong>1.5 billion</strong> posts reviewed in 2022 with 79.6% of removals being spam.</li>
-                  <li>Uses a layered moderation model where community moderators enforce subreddit rules and admins enforce site-wide policy.</li>
-                  <li>One of the few platforms that publishes detailed transparency reports with category-level removal data.</li>
-                  <li>NSFW communities are allowed but must be properly labeled and age-restricted.</li>
-                </ul>
+
+            <div class="model-cards-grid">
+
+              <article class="model-detail-card dim-red">
+                <div class="model-card-header">
+                  <h3 class="model-card-title">Toxicity Classifier</h3>
+                  <span class="model-card-arch">BERT</span>
+                </div>
+                <p class="model-card-creator">Unitary AI</p>
+                <p class="model-card-detects">Detects: General toxicity, insults, threats, obscene language and severe toxic content</p>
+                <p class="model-card-trained"><strong>Trained on</strong> Jigsaw Toxic Comment Classification dataset (Wikipedia comments)</p>
+                <div class="model-card-section">
+                  <p class="section-label mono-label">Strengths</p>
+                  <ul class="model-card-list">
+                    <li>Multi-label classification covering 6 toxicity dimensions simultaneously</li>
+                    <li>Best general-purpose toxicity baseline</li>
+                    <li>Widely used in production T&amp;S pipelines</li>
+                  </ul>
+                </div>
+                <div class="model-card-section">
+                  <p class="section-label mono-label">Limitations</p>
+                  <ul class="model-card-list">
+                    <li>Trained on Wikipedia comments which skews toward formal English</li>
+                    <li>May underperform on informal social media slang</li>
+                  </ul>
+                </div>
+                <a href="https://huggingface.co/unitary/toxic-bert" target="_blank" rel="noopener noreferrer" class="model-card-link">View on HuggingFace →</a>
               </article>
-              <article class="limitation-card">
-                <h4>Discord</h4>
-                <ul class="policy-guidelines">
-                  <li>Rolled out mandatory age verification globally in March 2026.</li>
-                  <li>Has a <strong>Teen Council</strong> of 13-17 year olds who directly influence product and policy decisions.</li>
-                  <li>Trust &amp; Safety team reviews reports from users, moderators, and trusted third-party partners.</li>
-                  <li>Off-platform behavior can be considered when assessing guideline violations.</li>
-                </ul>
+
+              <article class="model-detail-card dim-amber">
+                <div class="model-card-header">
+                  <h3 class="model-card-title">Offensive Language Detector</h3>
+                  <span class="model-card-arch">RoBERTa</span>
+                </div>
+                <p class="model-card-creator">Cardiff NLP</p>
+                <p class="model-card-detects">Detects: Offensive and harassing language in social media context</p>
+                <p class="model-card-trained"><strong>Trained on</strong> Twitter data (SemEval 2019 OffComEval dataset)</p>
+                <div class="model-card-section">
+                  <p class="section-label mono-label">Strengths</p>
+                  <ul class="model-card-list">
+                    <li>Specifically trained on real social media content</li>
+                    <li>Better at detecting informal offensive language and slang than general toxicity models</li>
+                  </ul>
+                </div>
+                <div class="model-card-section">
+                  <p class="section-label mono-label">Limitations</p>
+                  <ul class="model-card-list">
+                    <li>Twitter-specific training may miss platform-specific offensive patterns from other networks</li>
+                  </ul>
+                </div>
+                <a href="https://huggingface.co/cardiffnlp/twitter-roberta-base-offensive" target="_blank" rel="noopener noreferrer" class="model-card-link">View on HuggingFace →</a>
               </article>
-              <article class="limitation-card">
-                <h4>Facebook (Meta)</h4>
-                <ul class="policy-guidelines">
-                  <li>Unified Community Standards across Facebook, Instagram, Messenger and Threads as of November 2024.</li>
-                  <li>Uses a combination of AI detection and human review at scale.</li>
-                  <li>Has an independent <strong>Oversight Board</strong> that can reverse content moderation decisions.</li>
-                  <li>Publishes quarterly transparency reports with enforcement data by policy category.</li>
-                </ul>
+
+              <article class="model-detail-card dim-red">
+                <div class="model-card-header">
+                  <h3 class="model-card-title">Hate Speech Detector</h3>
+                  <span class="model-card-arch">RoBERTa</span>
+                </div>
+                <p class="model-card-creator">Facebook AI Research</p>
+                <p class="model-card-detects">Detects: Hate speech targeting protected groups and identity-based attacks</p>
+                <p class="model-card-trained"><strong>Trained on</strong> DynaBench R4 — an adversarially collected dataset designed to be harder to game than previous benchmarks</p>
+                <div class="model-card-section">
+                  <p class="section-label mono-label">Strengths</p>
+                  <ul class="model-card-list">
+                    <li>Trained on adversarially collected data making it more robust against evasion attempts</li>
+                    <li>Specifically targets identity-based hate rather than general toxicity</li>
+                  </ul>
+                </div>
+                <div class="model-card-section">
+                  <p class="section-label mono-label">Limitations</p>
+                  <ul class="model-card-list">
+                    <li>Binary hate/not-hate output provides less granularity than multi-label models</li>
+                  </ul>
+                </div>
+                <a href="https://huggingface.co/facebook/roberta-hate-speech-dynabench-r4-target" target="_blank" rel="noopener noreferrer" class="model-card-link">View on HuggingFace →</a>
               </article>
-              <article class="limitation-card">
-                <h4>Instagram</h4>
-                <ul class="policy-guidelines">
-                  <li>Shares the same unified policy as Facebook since November 2024.</li>
-                  <li>Introduced <strong>Sensitive Content Controls</strong> letting users adjust how much sensitive content appears in Explore.</li>
-                  <li>Has extra protections specifically for users under 18.</li>
-                  <li>Coordinated inauthentic behavior is prohibited even though authentic identity is not required.</li>
-                </ul>
+
+              <article class="model-detail-card dim-blue">
+                <div class="model-card-header">
+                  <h3 class="model-card-title">Spam Detector</h3>
+                  <span class="model-card-arch">BERT-tiny</span>
+                </div>
+                <p class="model-card-creator">Manuel Romero (mrm8488)</p>
+                <p class="model-card-detects">Detects: Spam, scam messages, and unsolicited manipulative content</p>
+                <p class="model-card-trained"><strong>Trained on</strong> SMS Spam Collection dataset</p>
+                <div class="model-card-section">
+                  <p class="section-label mono-label">Strengths</p>
+                  <ul class="model-card-list">
+                    <li>Extremely lightweight (4.4M parameters) making it the fastest model in the pipeline</li>
+                    <li>98% validation accuracy on SMS spam detection</li>
+                  </ul>
+                </div>
+                <div class="model-card-section">
+                  <p class="section-label mono-label">Limitations</p>
+                  <ul class="model-card-list">
+                    <li>Trained on SMS data so may miss sophisticated social media spam patterns</li>
+                    <li>Not designed for long-form content</li>
+                  </ul>
+                </div>
+                <a href="https://huggingface.co/mrm8488/bert-tiny-finetuned-sms-spam-detection" target="_blank" rel="noopener noreferrer" class="model-card-link">View on HuggingFace →</a>
               </article>
+
+              <article class="model-detail-card dim-purple">
+                <div class="model-card-header">
+                  <h3 class="model-card-title">Bias Detector</h3>
+                  <span class="model-card-arch">DistilRoBERTa</span>
+                </div>
+                <p class="model-card-creator">Valurank</p>
+                <p class="model-card-detects">Detects: Biased and non-neutral language in text</p>
+                <p class="model-card-trained"><strong>Trained on</strong> Wikipedia revision history (WNC corpus) — edits where neutral editors removed biased language</p>
+                <div class="model-card-section">
+                  <p class="section-label mono-label">Strengths</p>
+                  <ul class="model-card-list">
+                    <li>Unique training methodology using real editorial decisions</li>
+                    <li>Detects subtle linguistic bias rather than just overt violations</li>
+                    <li>Highly relevant for misinformation and propaganda detection</li>
+                  </ul>
+                </div>
+                <div class="model-card-section">
+                  <p class="section-label mono-label">Limitations</p>
+                  <ul class="model-card-list">
+                    <li>Trained on Wikipedia-style formal writing</li>
+                    <li>May flag strongly opinionated but legitimate content as biased</li>
+                  </ul>
+                </div>
+                <a href="https://huggingface.co/valurank/distilroberta-bias" target="_blank" rel="noopener noreferrer" class="model-card-link">View on HuggingFace →</a>
+              </article>
+
             </div>
           </div>
         </div>
