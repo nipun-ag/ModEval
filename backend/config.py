@@ -20,7 +20,7 @@ load_dotenv(PROJECT_ROOT / ".env")
 
 
 HF_API_KEY = os.getenv("HF_API_KEY", "").strip()
-
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
 
 REQUEST_TIMEOUT = 20
 MAX_INPUT_LENGTH = 500
@@ -37,7 +37,6 @@ PLATFORM_MODIFIERS = {
     "Social Media": 0.00,
     "Professional": 0.15,
     "Forum": -0.05,
-    "VR/Metaverse": -0.15,
 }
 
 CONTENT_TYPE_MODIFIERS = {
