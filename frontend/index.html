@@ -576,27 +576,28 @@
 
               <article class="model-detail-card dim-blue">
                 <div class="model-card-header">
-                  <h3 class="model-card-title">Spam Detector</h3>
-                  <span class="model-card-arch">BERT-tiny</span>
+                  <h3 class="model-card-title">OpenAI Moderation</h3>
+                  <span class="model-card-arch">omni-moderation</span>
                 </div>
-                <p class="model-card-creator">Manuel Romero (mrm8488)</p>
-                <p class="model-card-detects">Detects: Spam, scam messages, and unsolicited manipulative content</p>
-                <p class="model-card-trained"><strong>Trained on</strong> SMS Spam Collection dataset</p>
+                <p class="model-card-creator">OpenAI</p>
+                <p class="model-card-detects">Detects: Multi-category content violations across 13 safety dimensions</p>
+                <p class="model-card-trained"><strong>Trained on</strong> Proprietary dataset curated by OpenAI</p>
                 <div class="model-card-section">
                   <p class="section-label mono-label">Strengths</p>
                   <ul class="model-card-list">
-                    <li>Extremely lightweight (4.4M parameters) making it the fastest model in the pipeline</li>
-                    <li>98% validation accuracy on SMS spam detection</li>
+                    <li>Industry-standard moderation API used in production at scale</li>
+                    <li>Covers 13 categories including illicit content and self-harm</li>
+                    <li>Continuously updated by OpenAI with latest safety research</li>
                   </ul>
                 </div>
                 <div class="model-card-section">
                   <p class="section-label mono-label">Limitations</p>
                   <ul class="model-card-list">
-                    <li>Trained on SMS data so may miss sophisticated social media spam patterns</li>
-                    <li>Not designed for long-form content</li>
+                    <li>Black box model with no public training data details</li>
+                    <li>Less granular explainability compared to open-source models</li>
                   </ul>
                 </div>
-                <a href="https://huggingface.co/mrm8488/bert-tiny-finetuned-sms-spam-detection" target="_blank" rel="noopener noreferrer" class="model-card-link">View on HuggingFace →</a>
+                <a href="https://platform.openai.com/docs/guides/moderation" target="_blank" rel="noopener noreferrer" class="model-card-link">View on OpenAI →</a>
               </article>
 
               <article class="model-detail-card dim-purple">
