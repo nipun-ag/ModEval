@@ -828,7 +828,7 @@ thead th {
 }
 
 thead th:nth-child(1) {
-  min-width: 200px;
+  min-width: 260px;
 }
 
 thead th:nth-child(2) {
