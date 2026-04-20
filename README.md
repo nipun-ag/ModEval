@@ -48,7 +48,7 @@ All five models are free and run via the HuggingFace Inference API. Each covers 
 | Toxicity Classifier | `unitary/toxic-bert` | BERT | Unitary AI | Jigsaw Toxic Comments | General toxicity baseline |
 | Offensive Language Detector | `cardiffnlp/twitter-roberta-base-offensive` | RoBERTa | Cardiff NLP | Twitter / SemEval 2019 | Social media offensive language |
 | Hate Speech Detector | `facebook/roberta-hate-speech-dynabench-r4-target` | RoBERTa | Facebook AI Research | DynaBench R4 (adversarial) | Identity-based hate speech |
-| Spam Detector | `mrm8488/bert-tiny-finetuned-sms-spam-detection` | BERT-tiny | Manuel Romero | SMS Spam Collection | Spam and manipulative content |
+| OpenAI Moderation | omni-moderation-latest | omni-moderation | OpenAI | Proprietary | Multi-Category Safety |
 | Bias Detector | `valurank/distilroberta-bias` | DistilRoBERTa | Valurank | Wikipedia revisions (WNC) | Non-neutral language detection |
 
 ### Model Details
@@ -62,8 +62,8 @@ Specifically trained on real Twitter content making it better at detecting infor
 **Hate Speech Detector — facebook/roberta-hate-speech-dynabench-r4-target**
 Trained on adversarially collected data making it more robust against evasion attempts. Specifically targets identity-based hate rather than general toxicity. Binary hate/not-hate output provides less granularity than multi-label models.
 
-**Spam Detector — mrm8488/bert-tiny-finetuned-sms-spam-detection**
-Extremely lightweight at 4.4M parameters making it the fastest model in the pipeline. 98% validation accuracy. Trained on SMS data so may miss sophisticated social media spam patterns.
+**OpenAI Moderation — omni-moderation-latest**
+Industry-standard moderation API covering 13 safety categories simultaneously. Proprietary training data curated by OpenAI. Continuously updated with latest safety research. Black box model with limited explainability compared to open-source alternatives.
 
 **Bias Detector — valurank/distilroberta-bias**
 Unique training methodology using real Wikipedia editorial decisions where neutral editors removed biased language. Detects subtle linguistic bias rather than overt violations. May flag strongly opinionated but legitimate content as biased.
