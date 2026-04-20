@@ -12,20 +12,18 @@ from backend.engine.context_engine import calculate_context_adjustment
 from backend.engine.explainer import explain_result
 from backend.engine.normalizer import build_error_result, normalize_result
 from backend.engine.policy_engine import evaluate_policy_alignment, get_policy_rules
-from backend.models import hf_bias, hf_hate_speech, hf_roberta_offensive, hf_spam, hf_toxic_bert, openai_moderation
+from backend.models import hf_bias, hf_hate_speech, hf_roberta_offensive, hf_toxic_bert, openai_moderation
 
 analyze_bp = Blueprint("analyze", __name__)
 
 
 MODEL_RUNNERS = {
+    "OpenAI Moderation": openai_moderation.analyze,
     "HuggingFace toxic-bert": hf_toxic_bert.analyze,
     "HuggingFace RoBERTa offensive": hf_roberta_offensive.analyze,
     "HuggingFace Hate Speech": hf_hate_speech.analyze,
-    "HuggingFace Spam Detector": hf_spam.analyze,
-    "HuggingFace Bias Detector": hf_bias.analyze,"OpenAI Moderation": openai_moderation.analyze,
-
+    "HuggingFace Bias Detector": hf_bias.analyze,
 }
-
 
 def validate_payload(payload: dict) -> tuple[bool, str]:
     """Basic request validation for the analyze endpoint."""
