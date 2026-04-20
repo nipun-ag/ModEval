@@ -817,13 +817,38 @@ select:focus,
 
 table {
   width: 100%;
+  min-width: 800px;
   border-collapse: collapse;
 }
 
 thead th {
-  padding: 0 0 12px;
+  padding: 12px 16px 12px;
   border-bottom: 1px solid var(--border-strong);
   text-align: left;
+}
+
+thead th:nth-child(1) {
+  min-width: 200px;
+}
+
+thead th:nth-child(2) {
+  min-width: 130px;
+}
+
+thead th:nth-child(3) {
+  min-width: 80px;
+}
+
+thead th:nth-child(4) {
+  min-width: 90px;
+}
+
+thead th:nth-child(5) {
+  min-width: 80px;
+}
+
+thead th:nth-child(6) {
+  min-width: 140px;
 }
 
 tbody tr {
@@ -832,7 +857,7 @@ tbody tr {
 }
 
 tbody td {
-  padding: 16px 0;
+  padding: 16px;
   border-bottom: 1px solid var(--border);
   color: var(--text);
   font-size: 13px;
