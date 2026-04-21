@@ -575,51 +575,38 @@ function renderInsights(insights, results) {
 function formatExplanation(text) {
   if (!text) return "<p>No explanation available.</p>";
 
-  // Filter out sentences containing "policy loaded" or "Policy note:"
-  let filtered = text
-    .split(/(?<=[.!?])\s+/)
-    .filter(sentence => !/(policy loaded|policy note:)/i.test(sentence))
-    .join(" ");
+  // Split on ". " (period + space) to get sentences
+  const sentences = text.split(". ");
+  const output = [];
 
-  const sections = [];
-  let remaining = filtered;
+  for (let sentence of sentences) {
+    // Skip sentences containing "policy loaded" or "Policy note:"
+    if (/policy loaded|policy note:/i.test(sentence)) {
+      continue;
+    }
 
-  // Define patterns to match
-  const patterns = [
-    { regex: /Top category:\s*([^.]*)\./i, label: "Top category" },
-    { regex: /Recommended action:\s*([^.]*)\./i, label: "Recommended action" },
-    { regex: /Categories above threshold:\s*([^.]*)\./i, label: "Flagged categories" },
-    { regex: /(Social Media|Gaming|Professional|Forum|Community)(?:\s+context)?[:\s]*([^.]*)\./i, label: "Context", isContext: true }
-  ];
+    // Reconstruct period if not the last sentence
+    if (!sentence.endsWith(".") && !sentence.endsWith("?") && !sentence.endsWith("!")) {
+      sentence = sentence + ".";
+    }
 
-  // Extract and remove matched sections
-  for (const pattern of patterns) {
-    const match = remaining.match(pattern.regex);
-    if (match) {
-      const value = pattern.isContext ? match[2] || match[1] : match[1];
-      sections.push({
-        label: pattern.label,
-        value: value.trim()
-      });
-      remaining = remaining.replace(match[0], "").trim();
+    // Check each sentence for patterns
+    if (sentence.toLowerCase().startsWith("top category:")) {
+      const rest = sentence.substring("top category:".length).trim();
+      output.push(`<p><strong>Top category</strong> ${escapeHtml(rest)}</p>`);
+    } else if (sentence.toLowerCase().startsWith("recommended action:")) {
+      const rest = sentence.substring("recommended action:".length).trim();
+      output.push(`<p><strong>Recommended action</strong> ${escapeHtml(rest)}</p>`);
+    } else if (/strictness/i.test(sentence)) {
+      output.push(`<p><strong>Context</strong> ${escapeHtml(sentence)}</p>`);
+    } else if (/categories above/i.test(sentence)) {
+      output.push(`<p><strong>Flagged</strong> ${escapeHtml(sentence)}</p>`);
+    } else if (/no categories crossed/i.test(sentence)) {
+      output.push(`<p class="muted-note">${escapeHtml(sentence)}</p>`);
     }
   }
 
-  // Add any remaining text
-  if (remaining) {
-    sections.push({
-      label: null,
-      value: remaining
-    });
-  }
-
-  return sections.map(section => {
-    if (section.label) {
-      return `<p><strong>${escapeHtml(section.label)}</strong> ${escapeHtml(section.value)}</p>`;
-    } else {
-      return `<p>${escapeHtml(section.value)}</p>`;
-    }
-  }).join("");
+  return output.length > 0 ? output.join("") : "<p>No explanation available.</p>";
 }
 
 function renderExplainability(results) {
