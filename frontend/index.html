@@ -460,12 +460,12 @@
                   <tr class="dimension-toxic"><td>Toxicity Classifier</td><td><span class="mono">unitary/toxic-bert</span></td><td>BERT</td><td>Jigsaw Toxic Comments dataset</td><td><strong>General toxicity baseline</strong></td></tr>
                   <tr class="dimension-offensive"><td>Offensive Language Detector</td><td><span class="mono">cardiffnlp/roberta-offensive</span></td><td>RoBERTa</td><td>Twitter data</td><td><strong>Social media offensive language</strong></td></tr>
                   <tr class="dimension-hate"><td>Hate Speech Detector</td><td><span class="mono">facebook/roberta-hate-speech</span></td><td>RoBERTa</td><td>DynaBench R4</td><td><strong>Adversarially collected hate speech</strong></td></tr>
-                  <tr class="dimension-spam"><td>Spam Detector</td><td><span class="mono">mrm8488/bert-tiny</span></td><td>BERT-tiny</td><td>SMS Spam Collection</td><td><strong>Manipulation and unsolicited content</strong></td></tr>
+                  <tr class="dimension-spam"><td>OpenAI Moderation</td><td><span class="mono">openai/omni-moderation-latest</span></td><td>omni-moderation</td><td>Proprietary (OpenAI)</td><td><strong>Multi-category safety</strong></td></tr>
                   <tr class="dimension-bias"><td>Bias Detector</td><td><span class="mono">valurank/distilroberta-bias</span></td><td>DistilRoBERTa</td><td>Wikipedia revisions</td><td><strong>Non-neutral language detection</strong></td></tr>
                 </tbody>
               </table>
               <p class="methodology-copy">
-                All models are accessed via the HuggingFace Inference API using a single read-access token. No model weights are downloaded or run locally.
+                4 models are accessed via the HuggingFace Inference API. OpenAI Moderation runs via the OpenAI API using a separate key. No model weights are downloaded or run locally.
               </p>
             </section>
 
