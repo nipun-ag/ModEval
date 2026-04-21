@@ -28,6 +28,41 @@ const lenientCard = document.getElementById("lenient-card");
 const consensusCard = document.getElementById("consensus-card");
 const exampleButtons = Array.from(document.querySelectorAll(".example-pill"));
 
+// Initialize column info icon tooltips
+function initColumnTooltips() {
+  let currentTooltip = null;
+
+  document.addEventListener("mouseover", (e) => {
+    if (e.target.classList.contains("col-info-icon")) {
+      const tooltipText = e.target.getAttribute("data-tooltip");
+      if (!tooltipText) return;
+
+      // Create or reuse tooltip element
+      if (!currentTooltip) {
+        currentTooltip = document.createElement("div");
+        currentTooltip.className = "header-tooltip";
+        document.body.appendChild(currentTooltip);
+      }
+
+      currentTooltip.textContent = tooltipText;
+      currentTooltip.style.display = "block";
+
+      // Position tooltip near the icon
+      const rect = e.target.getBoundingClientRect();
+      currentTooltip.style.left = rect.left + "px";
+      currentTooltip.style.top = rect.bottom + 8 + "px";
+    }
+  });
+
+  document.addEventListener("mouseout", (e) => {
+    if (e.target.classList.contains("col-info-icon") && currentTooltip) {
+      currentTooltip.style.display = "none";
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", initColumnTooltips);
+
 const MODEL_DISPLAY = {
   "HuggingFace toxic-bert": {
     name: "General Toxicity",
