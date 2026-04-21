@@ -711,6 +711,19 @@ textarea:focus {
   color: var(--red);
 }
 
+.status-disclaimer {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  font-family: "Inter", -apple-system, sans-serif;
+  text-align: right;
+  margin-top: 4px;
+  max-width: 220px;
+  line-height: 1.4;
+  margin: 4px 0 0;
+  padding: 0;
+}
+
 .batch-summary {
   padding: 12px 14px;
   border: 1px solid var(--border);

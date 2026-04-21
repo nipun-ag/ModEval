@@ -250,6 +250,16 @@ function escapeHtml(value) {
 function setStatus(message, state) {
   statusPill.textContent = message;
   statusPill.className = `status-pill ${state}`;
+
+  // Show/hide disclaimer based on completion state
+  const disclaimer = document.getElementById("status-disclaimer");
+  if (disclaimer) {
+    if (state === "success") {
+      disclaimer.style.display = "block";
+    } else {
+      disclaimer.style.display = "none";
+    }
+  }
 }
 
 function setAnalyzeLoading(isLoading) {
