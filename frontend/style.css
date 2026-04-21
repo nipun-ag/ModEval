@@ -713,13 +713,13 @@ textarea:focus {
 
 .status-disclaimer {
   display: block;
-  font-size: 10px;
+  font-size: 9px;
   color: var(--muted);
   font-family: "Inter", -apple-system, sans-serif;
   text-align: right;
   margin-top: 6px;
-  max-width: 260px;
-  line-height: 1.4;
+  max-width: 200px;
+  line-height: 1.3;
   margin: 6px 0 0;
   padding: 0;
 }
