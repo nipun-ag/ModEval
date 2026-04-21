@@ -931,6 +931,37 @@ thead th {
   text-align: left;
 }
 
+.header-with-tooltip {
+  position: relative;
+}
+
+.header-tooltip {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-top: 4px;
+  max-width: 220px;
+  color: var(--text-secondary);
+  font-family: "Inter", -apple-system, sans-serif;
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: normal;
+  word-wrap: break-word;
+  opacity: 0;
+  animation: fade-in 150ms ease forwards;
+  pointer-events: none;
+}
+
+.header-with-tooltip:hover .header-tooltip {
+  display: block;
+}
+
 tbody tr {
   opacity: 0;
   animation: fade-up 200ms ease forwards;

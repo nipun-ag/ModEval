@@ -245,12 +245,26 @@
                 <table>
                   <thead>
                     <tr>
-                      <th>Model</th>
-                      <th>Top Category</th>
-                      <th>Severity</th>
-                      <th>Confidence</th>
-                      <th>Action</th>
-                      <th title="How well this model's confidence matches what this platform's policy would expect for this type of content. Good Fit means the model behaves consistently with the platform's enforcement profile.">Platform Fit</th>
+                      <th class="header-with-tooltip">
+                        Model
+                        <div class="header-tooltip">The AI model that evaluated this content. Each model was trained on different data and detects a different type of violation.</div>
+                      </th>
+                      <th class="header-with-tooltip">
+                        Top Category
+                        <div class="header-tooltip">The violation type this model flagged as most likely. If the model found nothing suspicious, it shows the closest clean classification.</div>
+                      </th>
+                      <th class="header-with-tooltip">
+                        Severity
+                        <div class="header-tooltip">How harmful the content could be, rated <span class="mono">1</span> to <span class="mono">10</span>. Derived from the model's confidence score. <span class="mono">1-3</span> is low risk, <span class="mono">4-7</span> is medium, <span class="mono">8-10</span> is high.</div>
+                      </th>
+                      <th class="header-with-tooltip">
+                        Confidence
+                        <div class="header-tooltip">How certain the model is about its top category, from <span class="mono">0.00</span> (no confidence) to <span class="mono">1.00</span> (fully certain). A high confidence on a clean category means the model is sure the content is safe.</div>
+                      </th>
+                      <th class="header-with-tooltip">
+                        Action
+                        <div class="header-tooltip">The recommended moderation decision based on the model's confidence and your selected platform context and strictness level. Allow means no action needed. Review means a human should check. Remove means the content violates policy.</div>
+                      </th>
                     </tr>
                   </thead>
                   <tbody id="results-body"></tbody>

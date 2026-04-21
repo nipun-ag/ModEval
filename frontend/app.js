@@ -459,19 +459,6 @@ function renderResults(results) {
       <td class="action-cell">
         ${badge(result.action, actionTone(result.action))}
       </td>
-      <td class="alignment-cell">
-        <div class="alignment-inline">
-          <span class="alignment-icon ${result.aligned ? "aligned" : "misaligned"}">${result.aligned ? "✓" : "×"}</span>
-          ${badge(result.aligned ? "Good Fit" : "Poor Fit", result.aligned ? "aligned" : "misaligned")}
-          <span class="mono alignment-score ${(() => {
-            const score = Number(result.alignment_score || 0);
-            if (score >= 0.70) return "score-high";
-            if (score >= 0.40) return "score-medium";
-            return "score-low";
-          })()}">${Number(result.alignment_score || 0).toFixed(2)}</span>
-        </div>
-        ${result.error ? `<span class="metric-soft error-text">${escapeHtml(result.error)}</span>` : ""}
-      </td>
     </tr>
   `).join("");
 }
