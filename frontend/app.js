@@ -44,7 +44,17 @@ function initColumnTooltips() {
         document.body.appendChild(currentTooltip);
       }
 
-      currentTooltip.textContent = tooltipText;
+      // Split first sentence and wrap in <strong>
+      const firstPeriodIndex = tooltipText.indexOf(".");
+      let tooltipHTML;
+      if (firstPeriodIndex > 0) {
+        const firstSentence = tooltipText.substring(0, firstPeriodIndex + 1);
+        const restOfText = tooltipText.substring(firstPeriodIndex + 1).trim();
+        tooltipHTML = `<strong>${escapeHtml(firstSentence)}</strong>${restOfText ? " " + escapeHtml(restOfText) : ""}`;
+      } else {
+        tooltipHTML = escapeHtml(tooltipText);
+      }
+      currentTooltip.innerHTML = tooltipHTML;
       currentTooltip.style.display = "block";
 
       // Position tooltip above the icon, with fallback to below
