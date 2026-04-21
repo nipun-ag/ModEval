@@ -348,7 +348,12 @@ function switchTab(nextTab) {
 }
 
 function updateCounter() {
-  charCounter.textContent = `${textInput.value.length} / 500`;
+  const count = textInput.value.length;
+  charCounter.textContent = `${count} / 500`;
+  charCounter.classList.remove("counter-green", "counter-amber", "counter-red");
+  if (count < 300) charCounter.classList.add("counter-green");
+  else if (count < 450) charCounter.classList.add("counter-amber");
+  else charCounter.classList.add("counter-red");
 }
 
 function modelDisplay(modelName) {
@@ -470,7 +475,12 @@ function renderResults(results) {
         <div class="alignment-inline">
           <span class="alignment-icon ${result.aligned ? "aligned" : "misaligned"}">${result.aligned ? "✓" : "×"}</span>
           ${badge(result.aligned ? "Aligned" : "Misaligned", result.aligned ? "aligned" : "misaligned")}
-          <span class="mono">${Number(result.alignment_score || 0).toFixed(2)}</span>
+          <span class="mono alignment-score ${(() => {
+            const score = Number(result.alignment_score || 0);
+            if (score >= 0.70) return "score-high";
+            if (score >= 0.40) return "score-medium";
+            return "score-low";
+          })()}">${Number(result.alignment_score || 0).toFixed(2)}</span>
         </div>
         ${result.error ? `<span class="metric-soft error-text">${escapeHtml(result.error)}</span>` : ""}
       </td>
@@ -519,15 +529,24 @@ function renderInsights(insights, results) {
 }
 
 function renderExplainability(results) {
-  explainabilityList.innerHTML = results.map((result) => `
-    <article class="explanation-card">
+  explainabilityList.innerHTML = results.map((result, index) => {
+    const barColor = (() => {
+      const tone = actionTone(result.action);
+      if (tone === "allow") return "var(--green)";
+      if (tone === "review") return "var(--amber)";
+      return "var(--red)";
+    })();
+    return `
+    <article class="explanation-card" style="animation-delay:${index * 50}ms">
       <div class="explanation-head">
         <h4>${renderModelDisplay(result.model)}</h4>
         ${badge(result.action, actionTone(result.action))}
       </div>
+      <div class="confidence-bar" style="--confidence: ${(Number(result.confidence) * 100).toFixed(0)}%; --bar-color: ${barColor}"></div>
       <p class="explanation-text">${escapeHtml(result.explanation || "No explanation available.")}</p>
     </article>
-  `).join("");
+  `;
+  }).join("");
 }
 
 async function postJson(url, payload) {
@@ -553,6 +572,10 @@ form.addEventListener("submit", async (event) => {
   renderDisagreements([]);
   showPanelState("loading");
 
+  const progressBar = document.querySelector(".progress-bar");
+  progressBar.classList.remove("hidden");
+  progressBar.style.animation = "progress-bar 400ms ease";
+
   const payload = Object.fromEntries(new FormData(form).entries());
 
   try {
@@ -571,6 +594,8 @@ form.addEventListener("submit", async (event) => {
     setStatus("Request failed", "error");
   } finally {
     setAnalyzeLoading(false);
+    const progressBar = document.querySelector(".progress-bar");
+    progressBar.classList.add("hidden");
   }
 });
 
@@ -589,6 +614,10 @@ batchFileInput.addEventListener("change", async () => {
   }
 
   setStatus("Waiting for input", "loading");
+
+  const progressBar = document.querySelector(".progress-bar");
+  progressBar.classList.remove("hidden");
+  progressBar.style.animation = "progress-bar 400ms ease";
 
   try {
     const csvText = await file.text();
@@ -614,6 +643,8 @@ batchFileInput.addEventListener("change", async () => {
     batchSummary.innerHTML = `<p class="error-text">${escapeHtml(error.message)}</p>`;
     setStatus("Request failed", "error");
   } finally {
+    const progressBar = document.querySelector(".progress-bar");
+    progressBar.classList.add("hidden");
     batchFileInput.value = "";
   }
 });

@@ -15,7 +15,13 @@
       <div class="topbar-inner">
         <div class="brand-wordmark">Mod<span>Eval</span></div>
         <div class="topbar-status">
-          <span class="status-dot"></span>
+          <span class="status-dots">
+            <span class="status-dot"></span>
+            <span class="status-dot"></span>
+            <span class="status-dot"></span>
+            <span class="status-dot"></span>
+            <span class="status-dot"></span>
+          </span>
           <span>5 Models Active</span>
         </div>
       </div>
@@ -72,22 +78,27 @@
                       <div id="platform-context-panel" class="custom-select-panel hidden" role="listbox">
                         <button type="button" class="custom-select-option selected" data-value="Social Media">
                           <span class="custom-select-name">Social Media</span>
+                          <span class="modifier-badge">0.00</span>
                           <span class="custom-select-description">Public feeds, posts and comments (e.g., Facebook, Instagram, X)</span>
                         </button>
                         <button type="button" class="custom-select-option" data-value="Gaming">
                           <span class="custom-select-name">Gaming</span>
+                          <span class="modifier-badge">-0.10</span>
                           <span class="custom-select-description">In-game chat, voice and player profiles (e.g., Roblox, Discord, Twitch)</span>
                         </button>
                         <button type="button" class="custom-select-option" data-value="Professional">
                           <span class="custom-select-name">Professional</span>
+                          <span class="modifier-badge">+0.15</span>
                           <span class="custom-select-description">Workplace tools and business networks (e.g., LinkedIn, Slack)</span>
                         </button>
                         <button type="button" class="custom-select-option" data-value="Forum">
                           <span class="custom-select-name">Community / Forum</span>
+                          <span class="modifier-badge">-0.05</span>
                           <span class="custom-select-description">Interest groups and discussion boards (e.g., Reddit, Quora)</span>
                         </button>
                         <button type="button" class="custom-select-option" data-value="VR/Metaverse">
                           <span class="custom-select-name">VR / Metaverse</span>
+                          <span class="modifier-badge">-0.15</span>
                           <span class="custom-select-description">Immersive environments and spatial audio (e.g., VRChat, Horizon)</span>
                         </button>
                       </div>
@@ -138,14 +149,17 @@
                       <div class="custom-select-panel hidden" role="listbox">
                         <button type="button" class="custom-select-option" data-value="Strict">
                           <span class="custom-select-name">Strict</span>
+                          <span class="modifier-badge">+0.15</span>
                           <span class="custom-select-description">Lower tolerance, flags borderline content aggressively</span>
                         </button>
                         <button type="button" class="custom-select-option selected" data-value="Balanced">
                           <span class="custom-select-name">Balanced</span>
+                          <span class="modifier-badge">0.00</span>
                           <span class="custom-select-description">Default threshold, standard moderation sensitivity</span>
                         </button>
                         <button type="button" class="custom-select-option" data-value="Lenient">
                           <span class="custom-select-name">Lenient</span>
+                          <span class="modifier-badge">-0.15</span>
                           <span class="custom-select-description">Higher tolerance, flags only clear violations</span>
                         </button>
                       </div>
@@ -169,6 +183,7 @@
       <section class="results-panel">
         <div class="panel-inner">
           <div class="results-tabs-wrap">
+            <div class="progress-bar hidden" aria-hidden="true"></div>
             <div class="results-tabs" role="tablist" aria-label="Results navigation">
               <button type="button" id="analysis-tab" class="results-tab active" role="tab" aria-selected="true" aria-controls="analysis-view"><span>Analysis</span></button>
               <button type="button" id="methodology-tab" class="results-tab" role="tab" aria-selected="false" aria-controls="methodology-view"><span>How It Works</span></button>
@@ -502,7 +517,7 @@
 
               <article class="model-detail-card dim-red">
                 <div class="model-card-header">
-                  <h3 class="model-card-title">Toxicity Classifier</h3>
+                  <h3 class="model-card-title"><span class="live-indicator">●</span>Toxicity Classifier</h3>
                   <span class="model-card-arch">BERT</span>
                 </div>
                 <p class="model-card-creator">Unitary AI</p>
@@ -528,7 +543,7 @@
 
               <article class="model-detail-card dim-amber">
                 <div class="model-card-header">
-                  <h3 class="model-card-title">Offensive Language Detector</h3>
+                  <h3 class="model-card-title"><span class="live-indicator">●</span>Offensive Language Detector</h3>
                   <span class="model-card-arch">RoBERTa</span>
                 </div>
                 <p class="model-card-creator">Cardiff NLP</p>
@@ -552,7 +567,7 @@
 
               <article class="model-detail-card dim-red">
                 <div class="model-card-header">
-                  <h3 class="model-card-title">Hate Speech Detector</h3>
+                  <h3 class="model-card-title"><span class="live-indicator">●</span>Hate Speech Detector</h3>
                   <span class="model-card-arch">RoBERTa</span>
                 </div>
                 <p class="model-card-creator">Facebook AI Research</p>
@@ -576,7 +591,7 @@
 
               <article class="model-detail-card dim-blue">
                 <div class="model-card-header">
-                  <h3 class="model-card-title">OpenAI Moderation</h3>
+                  <h3 class="model-card-title"><span class="live-indicator">●</span>OpenAI Moderation</h3>
                   <span class="model-card-arch">omni-moderation</span>
                 </div>
                 <p class="model-card-creator">OpenAI</p>
@@ -602,7 +617,7 @@
 
               <article class="model-detail-card dim-purple">
                 <div class="model-card-header">
-                  <h3 class="model-card-title">Bias Detector</h3>
+                  <h3 class="model-card-title"><span class="live-indicator">●</span>Bias Detector</h3>
                   <span class="model-card-arch">DistilRoBERTa</span>
                 </div>
                 <p class="model-card-creator">Valurank</p>

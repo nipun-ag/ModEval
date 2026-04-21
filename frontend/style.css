@@ -75,7 +75,8 @@ button {
 .topbar {
   height: 56px;
   background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 2px solid;
+  border-image: linear-gradient(90deg, var(--accent), var(--purple)) 1;
 }
 
 .topbar-inner {
@@ -133,11 +134,41 @@ button {
 }
 
 .status-dot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 999px;
-  background: var(--green);
   animation: pulse-dot 1.8s ease-in-out infinite;
+}
+
+.status-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-dot:nth-child(1) {
+  background: #ef4444;
+  animation-delay: 0ms;
+}
+
+.status-dot:nth-child(2) {
+  background: #f59e0b;
+  animation-delay: 200ms;
+}
+
+.status-dot:nth-child(3) {
+  background: #ef4444;
+  animation-delay: 400ms;
+}
+
+.status-dot:nth-child(4) {
+  background: #3b82f6;
+  animation-delay: 600ms;
+}
+
+.status-dot:nth-child(5) {
+  background: #8b5cf6;
+  animation-delay: 800ms;
 }
 
 .workspace {
@@ -175,6 +206,20 @@ button {
   background: rgba(5, 10, 25, 0.4);
   backdrop-filter: blur(24px) saturate(150%);
   box-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-glow));
+  z-index: 100;
+}
+
+.progress-bar.hidden {
+  display: none;
 }
 
 .results-tab {
@@ -435,6 +480,26 @@ option {
   line-height: 1.4;
 }
 
+.custom-select-option {
+  position: relative;
+}
+
+.modifier-badge {
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  color: var(--muted);
+  background: var(--surface3);
+  padding: 2px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
 textarea {
   min-height: 188px;
   resize: vertical;
@@ -455,11 +520,31 @@ select:focus,
   box-shadow: 0 0 0 1px rgba(255,255,255,0.2);
 }
 
+textarea:focus {
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.2), 0 0 16px rgba(59, 130, 246, 0.3);
+}
+
 .counter-wrap {
   display: flex;
   justify-content: flex-end;
   color: var(--muted);
   font-size: 12px;
+}
+
+#char-counter {
+  transition: color 150ms ease;
+}
+
+#char-counter.counter-green {
+  color: var(--green);
+}
+
+#char-counter.counter-amber {
+  color: var(--amber);
+}
+
+#char-counter.counter-red {
+  color: var(--red);
 }
 
 .collapsible {
@@ -766,6 +851,26 @@ select:focus,
   box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
   position: relative;
   overflow: hidden;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+  opacity: 0;
+  animation: fade-up 200ms ease-out forwards;
+}
+
+.insight-card:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+.insight-card:nth-child(2) {
+  animation-delay: 50ms;
+}
+
+.insight-card:nth-child(3) {
+  animation-delay: 100ms;
+}
+
+.insight-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
 .insight-card::before {
@@ -829,6 +934,15 @@ thead th {
 tbody tr {
   opacity: 0;
   animation: fade-up 200ms ease forwards;
+  transition: background 150ms ease;
+}
+
+tbody tr:nth-child(even) {
+  background: rgba(20, 30, 60, 0.3);
+}
+
+tbody tr:hover {
+  background: var(--surface3);
 }
 
 tbody td {
@@ -944,6 +1058,18 @@ tbody td {
 
 .alignment-icon.misaligned {
   background: var(--red-light);
+  color: var(--red);
+}
+
+.alignment-score.score-high {
+  color: var(--green);
+}
+
+.alignment-score.score-medium {
+  color: var(--amber);
+}
+
+.alignment-score.score-low {
   color: var(--red);
 }
 
@@ -1178,9 +1304,31 @@ tbody td {
 .explanation-card {
   padding: 18px;
   border: 1px solid rgba(255, 255, 255, 0.06);
+  border-left: 3px solid transparent;
   border-radius: 10px;
   background: rgba(17, 17, 20, 0.88);
   backdrop-filter: blur(8px);
+  opacity: 0;
+  animation: fade-up 200ms ease-out forwards, border-pulse 300ms ease-out forwards;
+}
+
+.confidence-bar {
+  position: relative;
+  height: 2px;
+  width: 100%;
+  margin-top: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.confidence-bar::before {
+  content: "";
+  position: absolute;
+  height: 100%;
+  width: var(--confidence, 50%);
+  border-radius: 1px;
+  background: var(--bar-color, var(--accent));
 }
 
 .explanation-head {
@@ -1250,6 +1398,26 @@ tbody td {
   }
 }
 
+@keyframes progress-bar {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes border-pulse {
+  from {
+    border-left-color: transparent;
+  }
+
+  to {
+    border-left-color: var(--accent);
+  }
+}
+
 /* === Model Cards (Models tab) === */
 .model-cards-grid {
   display: grid;
@@ -1272,6 +1440,13 @@ tbody td {
   border-radius: 10px;
   background: rgba(17, 17, 20, 0.88);
   backdrop-filter: blur(8px);
+  transition: border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+}
+
+.model-detail-card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
 }
 
 .model-detail-card.dim-red    { border-left-color: var(--red); }
@@ -1292,6 +1467,17 @@ tbody td {
   font-size: 20px;
   color: var(--text);
   line-height: 1.2;
+}
+
+.live-indicator {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse-dot 1.8s ease-in-out infinite;
+  vertical-align: middle;
 }
 
 .model-card-arch {
