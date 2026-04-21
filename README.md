@@ -45,27 +45,27 @@ All five models are free and run via the HuggingFace Inference API. Each covers 
 
 | Display Name | Model | Architecture | Creator | Training Data | Safety Dimension |
 |---|---|---|---|---|---|
-| Toxicity Classifier | `unitary/toxic-bert` | BERT | Unitary AI | Jigsaw Toxic Comments | General toxicity baseline |
-| Offensive Language Detector | `cardiffnlp/twitter-roberta-base-offensive` | RoBERTa | Cardiff NLP | Twitter / SemEval 2019 | Social media offensive language |
-| Hate Speech Detector | `facebook/roberta-hate-speech-dynabench-r4-target` | RoBERTa | Facebook AI Research | DynaBench R4 (adversarial) | Identity-based hate speech |
-| OpenAI Moderation | omni-moderation-latest | omni-moderation | OpenAI | Proprietary | Multi-Category Safety |
-| Bias Detector | `valurank/distilroberta-bias` | DistilRoBERTa | Valurank | Wikipedia revisions (WNC) | Non-neutral language detection |
+| General Toxicity | `unitary/toxic-bert` | BERT | Unitary AI | Jigsaw Toxic Comments | General toxicity baseline |
+| Social Media Offensive | `cardiffnlp/twitter-roberta-base-offensive` | RoBERTa | Cardiff NLP | Twitter / SemEval 2019 | Social media offensive language |
+| Identity-Based Hate | `facebook/roberta-hate-speech-dynabench-r4-target` | RoBERTa | Facebook AI Research | DynaBench R4 (adversarial) | Identity-based hate speech |
+| OpenAI Moderation | omni-moderation-latest | Proprietary | OpenAI | Proprietary | Multi-Category Safety |
+| Language Bias | `valurank/distilroberta-bias` | DistilRoBERTa | Valurank | Wikipedia revisions (WNC) | Non-neutral language detection |
 
 ### Model Details
 
-**Toxicity Classifier — unitary/toxic-bert**
+**General Toxicity — unitary/toxic-bert**
 Multi-label classification covering 6 toxicity dimensions simultaneously. Trained on Wikipedia comments which skews toward formal English. Best general-purpose toxicity baseline, widely used in production T&S pipelines. May underperform on informal social media slang.
 
-**Offensive Language Detector — cardiffnlp/twitter-roberta-base-offensive**
+**Social Media Offensive — cardiffnlp/twitter-roberta-base-offensive**
 Specifically trained on real Twitter content making it better at detecting informal offensive language and slang. Twitter-specific training may miss platform-specific offensive patterns from other networks.
 
-**Hate Speech Detector — facebook/roberta-hate-speech-dynabench-r4-target**
+**Identity-Based Hate — facebook/roberta-hate-speech-dynabench-r4-target**
 Trained on adversarially collected data making it more robust against evasion attempts. Specifically targets identity-based hate rather than general toxicity. Binary hate/not-hate output provides less granularity than multi-label models.
 
 **OpenAI Moderation — omni-moderation-latest**
-Industry-standard moderation API covering 13 safety categories simultaneously. Proprietary training data curated by OpenAI. Continuously updated with latest safety research. Black box model with limited explainability compared to open-source alternatives.
+Industry-standard moderation API covering 13 safety categories simultaneously. Proprietary training data curated by OpenAI. Continuously updated with latest safety research. Black box model with limited explainability compared to open-source alternatives. Displayed with Proprietary architecture badge.
 
-**Bias Detector — valurank/distilroberta-bias**
+**Language Bias — valurank/distilroberta-bias**
 Unique training methodology using real Wikipedia editorial decisions where neutral editors removed biased language. Detects subtle linguistic bias rather than overt violations. May flag strongly opinionated but legitimate content as biased.
 
 ---
@@ -88,14 +88,14 @@ ModEval includes a built-in test case library with 90 pre-loaded content example
 
 ---
 
-## Platform Policies Supported
+## Platform Policy Categories Supported
 
-| Platform | Source |
+| Category | Description |
 |---|---|
-| Reddit | redditinc.com/policies/content-policy |
-| Discord | discord.com/guidelines (effective September 29, 2025) |
-| Facebook | transparency.meta.com/policies/community-standards |
-| Instagram | transparency.meta.com/policies/community-standards (unified November 2024) |
+| Social Media | Policy framework for social platforms (Reddit, Discord, Twitter, TikTok) |
+| Gaming | Policy framework for gaming and competitive platforms |
+| Professional | Policy framework for workplace, B2B, and professional services |
+| Forum | Policy framework for community forums, discussion boards, and open debate |
 | Custom | User-defined rules in plain text |
 
 ---
@@ -156,11 +156,12 @@ alignment_score = 1 - abs(model_confidence - policy_expected_threshold)
 - **Execute Analysis button** — full width, centered submit button
 - **Animated progress bar** — 400ms gradient bar that runs during analysis
 - **Decision Matrix** — comparison table with alternating row backgrounds, hover highlighting, color-coded action badges
-- **Color-coded alignment scores** — green (≥0.70), amber (0.40-0.69), red (<0.40) for policy alignment
+- **Per-column tooltips** — ? badges on all 5 Decision Matrix headers (Model, Top Category, Severity, Confidence, Action) with explanatory hover tooltips
 - **Insight Strip** — strictest model, most lenient model, consensus recommendation with hover lift effects
 - **Disagreement Banner** — high-contrast alert when models conflict
-- **Explainability Cards** — 2-column grid per-model breakdown with confidence bars
+- **Explainability Cards** — 2-column grid per-model breakdown with formatted labels (Top category, Recommended action, Context, Flagged) on separate lines, confidence bars, and border-pulse load animations
 - **Confidence bars** — thin horizontal bar under each model showing confidence score, colored by action
+- **Disclaimer line** — below Analysis Complete badge explaining that results reflect third-party model outputs
 - **Skeleton shimmer loading** — premium loading state while models run
 - **Model Cards** — detailed cards for all 5 models with architecture, training data, strengths, limitations, live indicators
 - **5 Models Active** indicator in navigation (5 colored dots with staggered animations)

@@ -69,11 +69,11 @@ Each model has an associated color used for card left borders and row accents:
 
 | Model | Color Class | Maps To |
 |---|---|---|
-| Toxicity Classifier | `.dim-red` | `--red` / `--red-light` |
-| Offensive Language Detector | `.dim-amber` | `--amber` / `--amber-light` |
-| Hate Speech Detector | `.dim-red` | `--red` / `--red-light` |
+| General Toxicity | `.dim-red` | `--red` / `--red-light` |
+| Social Media Offensive | `.dim-amber` | `--amber` / `--amber-light` |
+| Identity-Based Hate | `.dim-red` | `--red` / `--red-light` |
 | OpenAI Moderation | `.dim-blue` | `--accent` / `--accent-light` |
-| Bias Detector | `.dim-purple` | `--purple` / `--purple-light` |
+| Language Bias | `.dim-purple` | `--purple` / `--purple-light` |
 
 ---
 
@@ -167,6 +167,18 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Shows 5 colored dots (one per model) with staggered pulse animations instead of a single green dot
 - Dots animated with `pulse-dot` keyframe (1.8s each with 200ms stagger)
 
+### Column Tooltips (.col-info-icon)
+- Display: inline-flex badge on Decision Matrix column headers
+- Size: 14px circular element
+- Background: `--surface3`
+- Border: 1px `--border`
+- Font: JetBrains Mono 9px, `--muted` color, centered
+- Content: ? character
+- Cursor: help
+- Hover: Fixed-position tooltip appears above icon with frosted glass effect (backdrop-filter blur 8px, background rgba(10,15,30,0.85), box-shadow 0 4px 16px rgba(0,0,0,0.4))
+- Tooltip text: 12px Inter, `--text` color, max-width 180px, line-height 1.6
+- First sentence bolded: `--white` color, font-weight 600
+
 ### Example Category Pills (.example-pill)
 - Font: JetBrains Mono 11px
 - Default: `--surface2` background, `--border` border, `--text-secondary` text
@@ -229,14 +241,22 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Hover: translateY(-2px) lift with enhanced shadow (150ms ease transition)
 - Load animation: fade-up with staggered delays (50ms per card)
 
+### Results Panel Disclaimer (.status-disclaimer)
+- Appears directly below the ANALYSIS COMPLETE badge
+- Font: 9px Inter, `--muted` color
+- Text: "Results reflect third-party model outputs, not ModEval itself."
+- Styling: white-space nowrap, text-align right, max-width 320px, line-height 1.3
+- Visibility: Only shown when analysis completes successfully (when ANALYSIS COMPLETE badge is visible)
+
 ### Decision Matrix Table
 - No vertical borders anywhere
 - Horizontal dividers only: 1px `--border` between rows
-- Column headers: 11px uppercase `--muted` JetBrains Mono, `--border-strong` bottom border
+- Column headers: 11px uppercase `--muted` JetBrains Mono, `--border-strong` bottom border, each header has a ? icon badge (`.col-info-icon`) with hover tooltip
+- 5 columns: Model, Top Category, Severity, Confidence, Action
+- Column header tooltips: Fixed-position, frosted glass effect, appear above icons on hover
 - Row fade-in: staggered 50ms delay per row (fade-up keyframe)
 - Alternating row backgrounds: even rows get `--surface3` at 30% opacity
 - Row hover: full row background `--surface3` with 150ms ease transition
-- Platform Fit scores color-coded: green (≥0.70), amber (0.40-0.69), red (<0.40)
 
 ### Disagreement Banner (.disagreement-banner)
 - Background: `--white`
@@ -251,6 +271,13 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Subtle glassmorphism: backdrop-filter blur(8px), border rgba(255,255,255,0.06)
 - Card header: model name 13px font-weight 600 left, action badge right
 - Confidence bar (.confidence-bar): thin horizontal bar under model name, height 2px, width proportional to confidence score, colored by action (--green Allow, --amber Review, --red Remove)
+- Explanation content: Formatted with bold labels and separate lines
+  - **Top category:** followed by category name (bold label, 12px Inter font-weight 600 `--text`, margin-bottom 6px)
+  - **Recommended action:** followed by action description
+  - **Context:** strictness or platform-related information
+  - **Flagged:** categories above threshold
+  - Muted note: "No categories crossed threshold" displayed in `--muted` color
+  - Each section on its own <p> with 6px margin-bottom, 12px font-size, line-height 1.5
 - Load animation: fade-up + border-pulse (300ms) with staggered 50ms delays
 
 ### Model Cards (.model-detail-card)
