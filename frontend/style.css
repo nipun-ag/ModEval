@@ -1471,13 +1471,14 @@ tbody td {
 
 .live-indicator {
   display: inline-block;
-  width: 6px;
-  height: 6px;
-  margin-right: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: var(--green);
-  animation: pulse-dot 1.8s ease-in-out infinite;
+  background-color: var(--green);
+  margin-right: 8px;
   vertical-align: middle;
+  flex-shrink: 0;
+  animation: pulse-dot 1.8s ease-in-out infinite;
 }
 
 .model-card-arch {
