@@ -72,7 +72,7 @@ Each model has an associated color used for card left borders and row accents:
 | Toxicity Classifier | `.dim-red` | `--red` / `--red-light` |
 | Offensive Language Detector | `.dim-amber` | `--amber` / `--amber-light` |
 | Hate Speech Detector | `.dim-red` | `--red` / `--red-light` |
-| Spam Detector | `.dim-blue` | `--accent` / `--accent-light` |
+| OpenAI Moderation | `.dim-blue` | `--accent` / `--accent-light` |
 | Bias Detector | `.dim-purple` | `--purple` / `--purple-light` |
 
 ---
@@ -164,7 +164,8 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Font: JetBrains Mono 11px
 - Background: `--surface2`
 - Border: 1px `--border`
-- Green pulsing dot: animated with `pulse-dot` keyframe
+- Shows 5 colored dots (one per model) with staggered pulse animations instead of a single green dot
+- Dots animated with `pulse-dot` keyframe (1.8s each with 200ms stagger)
 
 ### Example Category Pills (.example-pill)
 - Font: JetBrains Mono 11px
@@ -172,12 +173,19 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Hover: category-specific `--x-light` background, matching border and text color
 - Border-radius: pill shape
 
+### Live Indicators (.live-indicator)
+- 7px CSS circle, `--green` background color
+- animated with `pulse-dot` keyframe (1.8s ease-in-out infinite)
+- margin-right: 8px, vertical-align: middle
+- Used on model card titles in Models tab to show active status
+
 ### Custom Select Dropdowns (.custom-select)
 - Trigger: 40px height, `--surface2` background, `--border` border, chevron right
 - Opens as modal overlay (not inline dropdown)
 - Modal panel: `--surface2` background, backdrop-filter blur(12px), box-shadow 0 8px 32px rgba(0,0,0,0.5)
 - Option name: 13px Inter font-weight 600 `--text`
 - Option description: 11px `--text-secondary` italic
+- Modifier badges (.modifier-badge): JetBrains Mono 10px, `--muted` text, `--surface3` background, positioned right of option name
 - Selected state: `--accent-light` background, 2px `--accent` left border
 - Animation: scales from trigger button position to center (modal-open keyframe)
 
@@ -187,6 +195,7 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Text: JetBrains Mono 12px uppercase, font-weight 600, letter-spacing 0.08em
 - Border-radius: 6px
 - Loading state: shimmer animation overlay + "Analyzing..." text
+- Batch Upload button removed; Execute Analysis is now full width
 
 ### Tab Navigation (.results-tabs)
 - Container: pill-shaped with glassmorphism (rgba(255,255,255,0.03), backdrop-filter blur(8px))
@@ -217,12 +226,17 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Eyebrow label: 10px uppercase `--muted` JetBrains Mono
 - Explainer: 11px italic `--muted`
 - Value: DM Serif Display or Inter 600 depending on content
+- Hover: translateY(-2px) lift with enhanced shadow (150ms ease transition)
+- Load animation: fade-up with staggered delays (50ms per card)
 
 ### Decision Matrix Table
 - No vertical borders anywhere
 - Horizontal dividers only: 1px `--border` between rows
 - Column headers: 11px uppercase `--muted` JetBrains Mono, `--border-strong` bottom border
 - Row fade-in: staggered 50ms delay per row (fade-up keyframe)
+- Alternating row backgrounds: even rows get `--surface3` at 30% opacity
+- Row hover: full row background `--surface3` with 150ms ease transition
+- Policy Alignment scores color-coded: green (≥0.70), amber (0.40-0.69), red (<0.40)
 
 ### Disagreement Banner (.disagreement-banner)
 - Background: `--white`
@@ -233,16 +247,19 @@ Never use for general reading text. Monospace signals "this is technical data."
 
 ### Explainability Cards (.explanation-card)
 - 2-column grid on desktop
-- `--surface2` background, 1px `--border` border, border-radius 10px, 18px padding
+- `--surface2` background, 1px `--border` border, border-left 3px transparent (pulses to `--accent` on load), border-radius 10px, 18px padding
 - Subtle glassmorphism: backdrop-filter blur(8px), border rgba(255,255,255,0.06)
 - Card header: model name 13px font-weight 600 left, action badge right
+- Confidence bar (.confidence-bar): thin horizontal bar under model name, height 2px, width proportional to confidence score, colored by action (--green Allow, --amber Review, --red Remove)
+- Load animation: fade-up + border-pulse (300ms) with staggered 50ms delays
 
 ### Model Cards (.model-detail-card)
 - 2-column grid, last card centered if odd
 - Left border 3px colored by model dimension
-- DM Serif Display for model name
+- DM Serif Display for model name (with pulsing live indicator dot)
 - JetBrains Mono for architecture badge
 - `--text-secondary` for body text
+- Hover: translateY(-3px) lift with enhanced shadow (150ms ease transition)
 
 ### Skeleton Loading
 - Table shows 5 skeleton rows while models run
@@ -256,10 +273,12 @@ Never use for general reading text. Monospace signals "this is technical data."
 
 | Animation | Duration | Easing | Trigger |
 |---|---|---|---|
-| `pulse-dot` | 1.8s infinite | ease-in-out | Status dot in topbar |
+| `pulse-dot` | 1.8s infinite | ease-in-out | Status dots in topbar + live indicators |
 | `shimmer` | 1.2-1.4s infinite | linear | Loading button + skeleton rows |
 | `fade-in` | 200ms | ease | Example textarea fill, results reveal |
-| `fade-up` | 200ms | ease | Table rows on results load (staggered) |
+| `fade-up` | 200ms | ease | Table rows, insight cards, explainability cards on load (staggered 50ms) |
+| `border-pulse` | 300ms | ease-out | Explainability cards border animation on load |
+| `progress-bar` | 400ms | ease | Loading progress bar during analysis |
 | `modal-open` | 200ms | ease | Modal panel appears from trigger position |
 | `modal-close` | 150ms | ease | Modal panel dismisses |
 

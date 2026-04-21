@@ -121,7 +121,6 @@ All thresholds are clamped between 0.10 and 0.90.
 | Gaming | -0.10 | Higher tolerance for competitive language |
 | Professional | +0.15 | Lower tolerance, reputational risk |
 | Community / Forum | -0.05 | Slightly higher tolerance for debate |
-| VR / Metaverse | -0.15 | Evolving norms, higher tolerance |
 
 ### Policy Alignment Scoring
 
@@ -152,15 +151,20 @@ alignment_score = 1 - abs(model_confidence - policy_expected_threshold)
 - **Premium dark theme** — enterprise-grade UI inspired by Vercel, Stripe, and OpenAI
 - **Four tabs** — Analysis, How It Works, Models, (Did You Know planned)
 - **Modal overlay selectors** — all three context dropdowns open as centered modals with blurred backdrop, animating from the trigger button position
+- **Modifier badges in dropdowns** — Platform Context and Strictness options show threshold modifier values
 - **Try an Example** — 100 pre-loaded test cases across 10 violation categories
 - **Analysis Context** — Platform Context, Content Type, and Strictness with descriptive option labels
-- **Decision Matrix** — comparison table with model chip badges, color-coded action badges, alignment scores
-- **Insight Strip** — strictest model, most lenient model, consensus recommendation with plain-English explainers
+- **Execute Analysis button** — full width, centered submit button
+- **Animated progress bar** — 400ms gradient bar that runs during analysis
+- **Decision Matrix** — comparison table with alternating row backgrounds, hover highlighting, color-coded action badges
+- **Color-coded alignment scores** — green (≥0.70), amber (0.40-0.69), red (<0.40) for policy alignment
+- **Insight Strip** — strictest model, most lenient model, consensus recommendation with hover lift effects
 - **Disagreement Banner** — high-contrast alert when models conflict
-- **Explainability Cards** — 2-column grid per-model breakdown
+- **Explainability Cards** — 2-column grid per-model breakdown with confidence bars
+- **Confidence bars** — thin horizontal bar under each model showing confidence score, colored by action
 - **Skeleton shimmer loading** — premium loading state while models run
-- **Model Cards** — detailed cards for all 5 models with architecture, training data, strengths, limitations, and HuggingFace links
-- **5 Models Active** indicator in navigation
+- **Model Cards** — detailed cards for all 5 models with architecture, training data, strengths, limitations, live indicators
+- **5 Models Active** indicator in navigation (5 colored dots with staggered animations)
 
 ---
 
@@ -186,13 +190,12 @@ modeval/
 │   ├── config.py
 │   ├── requirements.txt
 │   ├── routes/
-│   │   ├── analyze.py
-│   │   └── batch.py
+│   │   └── analyze.py
 │   ├── models/
 │   │   ├── hf_toxic_bert.py
 │   │   ├── hf_roberta_offensive.py
 │   │   ├── hf_hate_speech.py
-│   │   ├── hf_spam.py
+│   │   ├── openai_moderation.py
 │   │   └── hf_bias.py
 │   └── engine/
 │       ├── normalizer.py
@@ -217,16 +220,13 @@ modeval/
 ```json
 {
   "text": "string",
-  "platform_context": "Social Media | Gaming | Professional | Forum | VR/Metaverse",
+  "platform_context": "Social Media | Gaming | Professional | Forum",
   "content_type": "Original Post | Comment/Reply | Username | Bio | UGC",
   "strictness": "Strict | Balanced | Lenient",
   "policy": "Reddit | Discord | Facebook | Instagram | Custom",
   "custom_policy_text": "string (optional)"
 }
 ```
-
-### POST /batch-analyze
-Multiple inputs with same context settings. Returns aggregate flag rate and per-item results.
 
 ### GET /health
 Health check endpoint for Render uptime monitoring.
