@@ -31,7 +31,6 @@ const exampleButtons = Array.from(document.querySelectorAll(".example-pill"));
 // Initialize column info icon tooltips
 function initColumnTooltips() {
   let currentTooltip = null;
-  let blurOverlay = null;
 
   document.addEventListener("mouseover", (e) => {
     if (e.target.classList.contains("col-info-icon")) {
@@ -58,26 +57,6 @@ function initColumnTooltips() {
       currentTooltip.innerHTML = tooltipHTML;
       currentTooltip.style.display = "block";
 
-      // Create blur overlay
-      if (!blurOverlay) {
-        blurOverlay = document.createElement("div");
-        blurOverlay.id = "tooltip-blur-overlay";
-        blurOverlay.style.position = "fixed";
-        blurOverlay.style.top = "0";
-        blurOverlay.style.left = "0";
-        blurOverlay.style.width = "100%";
-        blurOverlay.style.height = "100%";
-        blurOverlay.style.backdropFilter = "blur(3px)";
-        blurOverlay.style.background = "rgba(0,0,0,0.15)";
-        blurOverlay.style.zIndex = "9998";
-        blurOverlay.style.pointerEvents = "none";
-        blurOverlay.style.opacity = "0";
-        blurOverlay.style.transition = "opacity 150ms ease";
-        document.body.appendChild(blurOverlay);
-      }
-      // Fade in blur overlay
-      blurOverlay.style.opacity = "1";
-
       // Position tooltip above the icon, with fallback to below
       const rect = e.target.getBoundingClientRect();
       const tooltipHeight = currentTooltip.offsetHeight || 60; // Estimate if not yet rendered
@@ -100,21 +79,8 @@ function initColumnTooltips() {
   });
 
   document.addEventListener("mouseout", (e) => {
-    if (e.target.classList.contains("col-info-icon")) {
-      if (currentTooltip) {
-        currentTooltip.style.display = "none";
-      }
-      if (blurOverlay) {
-        // Fade out blur overlay
-        blurOverlay.style.opacity = "0";
-        // Remove after fade completes
-        setTimeout(() => {
-          if (blurOverlay && blurOverlay.parentNode) {
-            blurOverlay.parentNode.removeChild(blurOverlay);
-            blurOverlay = null;
-          }
-        }, 150);
-      }
+    if (e.target.classList.contains("col-info-icon") && currentTooltip) {
+      currentTooltip.style.display = "none";
     }
   });
 }

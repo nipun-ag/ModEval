@@ -950,7 +950,7 @@ thead th {
 
 .header-tooltip {
   position: fixed;
-  background: var(--surface2);
+  background: rgba(10, 15, 30, 0.85);
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 8px 12px;
@@ -967,6 +967,8 @@ thead th {
   z-index: 9999;
   display: none;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .header-tooltip strong {
