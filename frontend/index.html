@@ -400,6 +400,59 @@
               <div class="section-heading stacked">
                 <div>
                   <p class="section-label mono-label">Section 4</p>
+                  <h3>Policy Alignment Engine</h3>
+                </div>
+              </div>
+              <p class="methodology-copy">
+                Each platform has a distinct enforcement profile. ModEval scores how closely each model's confidence matches what that platform's policy would expect — not just whether content is flagged.
+              </p>
+              <p class="section-label mono-label">Platform Policy Profiles</p>
+              <table class="methodology-table">
+                <thead>
+                  <tr>
+                    <th>Platform</th>
+                    <th>Zero Tolerance</th>
+                    <th>Deprioritized</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Reddit</td>
+                    <td style="background: var(--red-light)"><span class="mono">violence</span>, <span class="mono">self-harm</span>, <span class="mono">sexual/minors</span></td>
+                    <td style="background: var(--green-light)"><span class="mono">profanity</span>, <span class="mono">insult</span></td>
+                    <td>Broad free speech baseline</td>
+                  </tr>
+                  <tr>
+                    <td>Discord</td>
+                    <td style="background: var(--red-light)"><span class="mono">harassment/threatening</span>, <span class="mono">sexual/minors</span>, <span class="mono">hate</span></td>
+                    <td style="background: var(--green-light)"><span class="mono">profanity</span></td>
+                    <td>Community safety focused</td>
+                  </tr>
+                  <tr>
+                    <td>Facebook</td>
+                    <td style="background: var(--red-light)"><span class="mono">hate</span>, <span class="mono">violence</span>, <span class="mono">sexual</span>, <span class="mono">self-harm</span></td>
+                    <td style="background: var(--green-light)">none</td>
+                    <td>Strictest overall profile</td>
+                  </tr>
+                  <tr>
+                    <td>Instagram</td>
+                    <td style="background: var(--red-light)"><span class="mono">sexual/minors</span>, <span class="mono">harassment</span>, <span class="mono">identity_attack</span></td>
+                    <td style="background: var(--green-light)"><span class="mono">profanity</span>, <span class="mono">insult</span></td>
+                    <td>Youth audience focused</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="methodology-copy">
+                Zero tolerance categories set the expected threshold to <span class="mono">0.10</span> — the model should be highly confident. Deprioritized categories push the threshold to <span class="mono">0.90</span>. Everything else uses the platform's adjusted remove threshold. A model is marked Aligned if its alignment score is <span class="mono">0.70</span> or above.
+              </p>
+              <div class="formula-hero">alignment_score = 1 - abs(model_confidence - expected_threshold)</div>
+            </section>
+
+            <section class="methodology-section methodology-card">
+              <div class="section-heading stacked">
+                <div>
+                  <p class="section-label mono-label">Section 5</p>
                   <h3>Policy Alignment Scoring</h3>
                 </div>
               </div>
@@ -423,7 +476,7 @@
             <section class="methodology-section methodology-card">
               <div class="section-heading stacked">
                 <div>
-                  <p class="section-label mono-label">Section 5</p>
+                  <p class="section-label mono-label">Section 6</p>
                   <h3>Disagreement Detection</h3>
                 </div>
               </div>
@@ -446,7 +499,7 @@
             <section class="methodology-section methodology-card">
               <div class="section-heading stacked">
                 <div>
-                  <p class="section-label mono-label">Section 6</p>
+                  <p class="section-label mono-label">Section 7</p>
                   <h3>Why These Models</h3>
                 </div>
               </div>
@@ -470,7 +523,7 @@
             <section class="methodology-section methodology-card">
               <div class="section-heading stacked">
                 <div>
-                  <p class="section-label mono-label">Section 7</p>
+                  <p class="section-label mono-label">Section 8</p>
                   <h3>Known Limitations</h3>
                 </div>
               </div>
