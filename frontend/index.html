@@ -510,11 +510,11 @@
               </p>
               <table class="methodology-table model-rationale-table">
                 <tbody>
-                  <tr class="dimension-toxic"><td>Toxicity Classifier</td><td><span class="mono">unitary/toxic-bert</span></td><td>BERT</td><td>Jigsaw Toxic Comments dataset</td><td><strong>General toxicity baseline</strong></td></tr>
-                  <tr class="dimension-offensive"><td>Offensive Language Detector</td><td><span class="mono">cardiffnlp/roberta-offensive</span></td><td>RoBERTa</td><td>Twitter data</td><td><strong>Social media offensive language</strong></td></tr>
-                  <tr class="dimension-hate"><td>Hate Speech Detector</td><td><span class="mono">facebook/roberta-hate-speech</span></td><td>RoBERTa</td><td>DynaBench R4</td><td><strong>Adversarially collected hate speech</strong></td></tr>
-                  <tr class="dimension-spam"><td>OpenAI Moderation</td><td><span class="mono">openai/omni-moderation-latest</span></td><td>omni-moderation</td><td>Proprietary (OpenAI)</td><td><strong>Multi-category safety</strong></td></tr>
-                  <tr class="dimension-bias"><td>Bias Detector</td><td><span class="mono">valurank/distilroberta-bias</span></td><td>DistilRoBERTa</td><td>Wikipedia revisions</td><td><strong>Non-neutral language detection</strong></td></tr>
+                  <tr class="dimension-toxic"><td>General Toxicity</td><td><span class="mono">unitary/toxic-bert</span></td><td>BERT</td><td>Jigsaw Toxic Comments dataset</td><td><strong>General toxicity baseline</strong></td></tr>
+                  <tr class="dimension-offensive"><td>Social Media Offensive</td><td><span class="mono">cardiffnlp/roberta-offensive</span></td><td>RoBERTa</td><td>Twitter data</td><td><strong>Social media offensive language</strong></td></tr>
+                  <tr class="dimension-hate"><td>Identity-Based Hate</td><td><span class="mono">facebook/roberta-hate-speech</span></td><td>RoBERTa</td><td>DynaBench R4</td><td><strong>Adversarially collected hate speech</strong></td></tr>
+                  <tr class="dimension-spam"><td>OpenAI Moderation</td><td><span class="mono">openai/omni-moderation-latest</span></td><td>Proprietary</td><td>Proprietary (OpenAI)</td><td><strong>Multi-category safety</strong></td></tr>
+                  <tr class="dimension-bias"><td>Language Bias</td><td><span class="mono">valurank/distilroberta-bias</span></td><td>DistilRoBERTa</td><td>Wikipedia revisions</td><td><strong>Non-neutral language detection</strong></td></tr>
                 </tbody>
               </table>
               <p class="methodology-copy">
@@ -570,7 +570,7 @@
 
               <article class="model-detail-card dim-red">
                 <div class="model-card-header">
-                  <h3 class="model-card-title"><span class="live-indicator"></span>Toxicity Classifier</h3>
+                  <h3 class="model-card-title"><span class="live-indicator"></span>General Toxicity</h3>
                   <span class="model-card-arch">BERT</span>
                 </div>
                 <p class="model-card-creator">Unitary AI</p>
@@ -596,7 +596,7 @@
 
               <article class="model-detail-card dim-amber">
                 <div class="model-card-header">
-                  <h3 class="model-card-title"><span class="live-indicator"></span>Offensive Language Detector</h3>
+                  <h3 class="model-card-title"><span class="live-indicator"></span>Social Media Offensive</h3>
                   <span class="model-card-arch">RoBERTa</span>
                 </div>
                 <p class="model-card-creator">Cardiff NLP</p>
@@ -620,7 +620,7 @@
 
               <article class="model-detail-card dim-red">
                 <div class="model-card-header">
-                  <h3 class="model-card-title"><span class="live-indicator"></span>Hate Speech Detector</h3>
+                  <h3 class="model-card-title"><span class="live-indicator"></span>Identity-Based Hate</h3>
                   <span class="model-card-arch">RoBERTa</span>
                 </div>
                 <p class="model-card-creator">Facebook AI Research</p>
@@ -645,7 +645,7 @@
               <article class="model-detail-card dim-blue">
                 <div class="model-card-header">
                   <h3 class="model-card-title"><span class="live-indicator"></span>OpenAI Moderation</h3>
-                  <span class="model-card-arch">omni-moderation</span>
+                  <span class="model-card-arch">Proprietary</span>
                 </div>
                 <p class="model-card-creator">OpenAI</p>
                 <p class="model-card-detects">Detects: Multi-category content violations across 13 safety dimensions</p>
@@ -670,7 +670,7 @@
 
               <article class="model-detail-card dim-purple">
                 <div class="model-card-header">
-                  <h3 class="model-card-title"><span class="live-indicator"></span>Bias Detector</h3>
+                  <h3 class="model-card-title"><span class="live-indicator"></span>Language Bias</h3>
                   <span class="model-card-arch">DistilRoBERTa</span>
                 </div>
                 <p class="model-card-creator">Valurank</p>

@@ -30,27 +30,27 @@ const exampleButtons = Array.from(document.querySelectorAll(".example-pill"));
 
 const MODEL_DISPLAY = {
   "HuggingFace toxic-bert": {
-    name: "Toxicity Classifier",
+    name: "General Toxicity",
     subtitle: "unitary/toxic-bert",
     chip: "BERT",
   },
   "HuggingFace RoBERTa offensive": {
-    name: "Offensive Language Detector",
+    name: "Social Media Offensive",
     subtitle: "cardiffnlp/roberta-offensive",
     chip: "RoBERTa",
   },
   "HuggingFace Hate Speech": {
-    name: "Hate Speech Detector",
+    name: "Identity-Based Hate",
     subtitle: "facebook/roberta-hate-speech",
     chip: "facebook",
   },
-  "HuggingFace Spam Detector": {
-    name: "Spam Detector",
-    subtitle: "mrm8488/bert-tiny",
-    chip: "mrm8488",
+  "OpenAI Moderation": {
+    name: "OpenAI Moderation",
+    subtitle: "openai/omni-moderation-latest",
+    chip: "Proprietary",
   },
   "HuggingFace Bias Detector": {
-    name: "Bias Detector",
+    name: "Language Bias",
     subtitle: "valurank/distilroberta-bias",
     chip: "valurank",
   },
