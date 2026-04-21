@@ -717,10 +717,10 @@ textarea:focus {
   color: var(--muted);
   font-family: "Inter", -apple-system, sans-serif;
   text-align: right;
-  margin-top: 4px;
-  max-width: 220px;
+  margin-top: 6px;
+  max-width: 260px;
   line-height: 1.4;
-  margin: 4px 0 0;
+  margin: 6px 0 0;
   padding: 0;
 }
 
