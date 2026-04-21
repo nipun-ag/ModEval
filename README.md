@@ -72,11 +72,10 @@ Unique training methodology using real Wikipedia editorial decisions where neutr
 
 ## Try an Example
 
-ModEval includes a built-in test case library with 100 pre-loaded content examples across 10 violation categories:
+ModEval includes a built-in test case library with 90 pre-loaded content examples across 9 violation categories:
 
 | Category | What It Tests |
 |---|---|
-| Toxicity | General toxic and abusive language |
 | Harassment | Targeted threatening and intimidating content |
 | Hate Speech | Content targeting protected groups |
 | Spam | Scam, manipulative, and unsolicited content |
@@ -152,7 +151,7 @@ alignment_score = 1 - abs(model_confidence - policy_expected_threshold)
 - **Four tabs** — Analysis, How It Works, Models, (Did You Know planned)
 - **Modal overlay selectors** — all three context dropdowns open as centered modals with blurred backdrop, animating from the trigger button position
 - **Modifier badges in dropdowns** — Platform Context and Strictness options show threshold modifier values
-- **Try an Example** — 100 pre-loaded test cases across 10 violation categories
+- **Try an Example** — 90 pre-loaded test cases across 9 violation categories
 - **Analysis Context** — Platform Context, Content Type, and Strictness with descriptive option labels
 - **Execute Analysis button** — full width, centered submit button
 - **Animated progress bar** — 400ms gradient bar that runs during analysis

@@ -38,7 +38,6 @@
           <section class="example-section">
             <p class="section-label">Try an Example</p>
             <div class="example-row">
-              <button type="button" class="example-pill toxicity" data-category="Toxicity">Toxicity</button>
               <button type="button" class="example-pill harassment" data-category="Harassment">Harassment</button>
               <button type="button" class="example-pill hate-speech" data-category="Hate Speech">Hate Speech</button>
               <button type="button" class="example-pill spam" data-category="Spam">Spam</button>
@@ -251,7 +250,7 @@
                       <th>Severity</th>
                       <th>Confidence</th>
                       <th>Action</th>
-                      <th>Policy Alignment</th>
+                      <th title="How well this model's confidence matches what this platform's policy would expect for this type of content. Good Fit means the model behaves consistently with the platform's enforcement profile.">Platform Fit</th>
                     </tr>
                   </thead>
                   <tbody id="results-body"></tbody>
@@ -444,7 +443,7 @@
                 </tbody>
               </table>
               <p class="methodology-copy">
-                Zero tolerance categories set the expected threshold to <span class="mono">0.10</span> — the model should be highly confident. Deprioritized categories push the threshold to <span class="mono">0.90</span>. Everything else uses the platform's adjusted remove threshold. A model is marked Aligned if its alignment score is <span class="mono">0.70</span> or above.
+                Zero tolerance categories set the expected threshold to <span class="mono">0.10</span> — the model should be highly confident. Deprioritized categories push the threshold to <span class="mono">0.90</span>. Everything else uses the platform's adjusted remove threshold. A model shows Good Fit if its alignment score is <span class="mono">0.70</span> or above.
               </p>
               <div class="formula-hero">Alignment score = 1 - difference between model confidence and expected threshold</div>
               <p class="methodology-copy">
@@ -472,7 +471,7 @@
               </table>
               <pre class="methodology-code"><code><span class="code-key">alignment_score</span> <span class="code-punctuation">=</span> <span class="code-type">1</span> <span class="code-punctuation">-</span> <span class="code-type">abs</span><span class="code-punctuation">(</span><span class="code-key">model_confidence</span> <span class="code-punctuation">-</span> <span class="code-key">policy_expected_threshold</span><span class="code-punctuation">)</span></code></pre>
               <p class="methodology-copy">
-                Displayed as 0-1 with Aligned / Misaligned binary label.
+                Displayed as 0-1 with Good Fit / Poor Fit binary label.
               </p>
             </section>
 

@@ -58,9 +58,9 @@ Each status color has a solid variant and a light (background) variant.
 
 | State | Solid | Light | Usage |
 |---|---|---|---|
-| Allow / Safe | `--green` #10b981 | `--green-light` rgba(16,185,129,0.15) | Allow actions, aligned badges, safe content |
+| Allow / Safe | `--green` #10b981 | `--green-light` rgba(16,185,129,0.15) | Allow actions, good fit badges, safe content |
 | Review / Warning | `--amber` #f59e0b | `--amber-light` rgba(245,158,11,0.15) | Review actions, warnings, disagreement banners |
-| Remove / Danger | `--red` #ef4444 | `--red-light` rgba(239,68,68,0.15) | Remove actions, misaligned badges, violations |
+| Remove / Danger | `--red` #ef4444 | `--red-light` rgba(239,68,68,0.15) | Remove actions, poor fit badges, violations |
 | Bias / Special | `--purple` #8b5cf6 | `--purple-light` rgba(139,92,246,0.15) | Bias dimension, special indicators |
 
 ### Model Dimension Colors
@@ -209,8 +209,8 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Remove: `--red-light` background, `--red` text
 - Review: `--amber-light` background, `--amber` text
 - Allow: `--green-light` background, `--green` text
-- Aligned: `--green-light` background, `--green` text
-- Misaligned: `--red-light` background, `--red` text
+- Good Fit: `--green-light` background, `--green` text
+- Poor Fit: `--red-light` background, `--red` text
 
 ### Severity Indicators (.severity-value)
 - Circular element with number
@@ -236,7 +236,7 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Row fade-in: staggered 50ms delay per row (fade-up keyframe)
 - Alternating row backgrounds: even rows get `--surface3` at 30% opacity
 - Row hover: full row background `--surface3` with 150ms ease transition
-- Policy Alignment scores color-coded: green (≥0.70), amber (0.40-0.69), red (<0.40)
+- Platform Fit scores color-coded: green (≥0.70), amber (0.40-0.69), red (<0.40)
 
 ### Disagreement Banner (.disagreement-banner)
 - Background: `--white`
@@ -340,6 +340,6 @@ When adding a new component, follow this checklist:
 2. Font choice: Inter for reading, JetBrains Mono for data, DM Serif Display for headings only
 3. Borders: `--border` default, `--border-strong` for emphasis
 4. Interactive states: 150ms ease transition on all hover/focus/active states
-5. If the component shows a status (allow/review/remove/aligned/misaligned) use the existing `.badge` classes
+5. If the component shows a status (allow/review/remove/good-fit/poor-fit) use the existing `.badge` classes
 6. If the component is a card, use `--surface2` background with `--border` border and border-radius 10px
 7. Match left border color to semantic meaning using the existing dimension color classes
