@@ -344,7 +344,7 @@
               <p class="methodology-copy">
                 The models themselves are frozen -- thresholds adjust, not models. This mirrors how real Trust &amp; Safety pipelines work. A high-confidence toxicity score on a gaming platform may result in Review. The same score on a professional platform results in Remove. The model's output is identical -- the interpretation changes based on context.
               </p>
-              <div class="formula-hero">adjusted_threshold = base_threshold + platform_modifier + content_type_modifier + strictness_modifier</div>
+              <div class="formula-hero">Final threshold = Starting point + Platform adjustment + Content type adjustment + Strictness adjustment</div>
               <div class="methodology-grid">
                 <div class="methodology-subcard">
                   <p class="section-label mono-label">Default Action Thresholds</p>
@@ -446,7 +446,10 @@
               <p class="methodology-copy">
                 Zero tolerance categories set the expected threshold to <span class="mono">0.10</span> — the model should be highly confident. Deprioritized categories push the threshold to <span class="mono">0.90</span>. Everything else uses the platform's adjusted remove threshold. A model is marked Aligned if its alignment score is <span class="mono">0.70</span> or above.
               </p>
-              <div class="formula-hero">alignment_score = 1 - abs(model_confidence - expected_threshold)</div>
+              <div class="formula-hero">Alignment score = 1 - difference between model confidence and expected threshold</div>
+              <p class="methodology-copy">
+                A score of <span class="mono">1.0</span> means perfect alignment. The closer to <span class="mono">1.0</span>, the better the model matches what this category would expect.
+              </p>
             </section>
 
             <section class="methodology-section methodology-card">
