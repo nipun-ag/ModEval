@@ -573,8 +573,10 @@ form.addEventListener("submit", async (event) => {
   showPanelState("loading");
 
   const progressBar = document.querySelector(".progress-bar");
-  progressBar.classList.remove("hidden");
-  progressBar.style.animation = "progress-bar 400ms ease";
+  if (progressBar) {
+    progressBar.classList.remove("hidden");
+    progressBar.style.animation = "progress-bar 400ms ease";
+  }
 
   const payload = Object.fromEntries(new FormData(form).entries());
 
@@ -595,11 +597,11 @@ form.addEventListener("submit", async (event) => {
   } finally {
     setAnalyzeLoading(false);
     const progressBar = document.querySelector(".progress-bar");
-    progressBar.classList.add("hidden");
+    if (progressBar) progressBar.classList.add("hidden");
   }
 });
 
-batchButton.addEventListener("click", () => batchFileInput.click());
+if (batchButton) batchButton.addEventListener("click", () => batchFileInput.click());
 analysisTab.addEventListener("click", () => switchTab("analysis"));
 methodologyTab.addEventListener("click", () => switchTab("methodology"));
 modelsTab.addEventListener("click", () => switchTab("models"));
@@ -607,7 +609,7 @@ exampleButtons.forEach((button) => {
   button.addEventListener("click", () => applyExample(button.dataset.category, button));
 });
 
-batchFileInput.addEventListener("change", async () => {
+if (batchFileInput) batchFileInput.addEventListener("change", async () => {
   const [file] = batchFileInput.files;
   if (!file) {
     return;
@@ -616,8 +618,10 @@ batchFileInput.addEventListener("change", async () => {
   setStatus("Waiting for input", "loading");
 
   const progressBar = document.querySelector(".progress-bar");
-  progressBar.classList.remove("hidden");
-  progressBar.style.animation = "progress-bar 400ms ease";
+  if (progressBar) {
+    progressBar.classList.remove("hidden");
+    progressBar.style.animation = "progress-bar 400ms ease";
+  }
 
   try {
     const csvText = await file.text();
@@ -644,17 +648,21 @@ batchFileInput.addEventListener("change", async () => {
     setStatus("Request failed", "error");
   } finally {
     const progressBar = document.querySelector(".progress-bar");
-    progressBar.classList.add("hidden");
-    batchFileInput.value = "";
+    if (progressBar) progressBar.classList.add("hidden");
+    if (batchFileInput) batchFileInput.value = "";
   }
 });
 
-textInput.addEventListener("input", updateCounter);
-textInput.addEventListener("animationend", () => textInput.classList.remove("example-loaded"));
-contextToggle.addEventListener("click", () => {
-  const expanded = contextToggle.getAttribute("aria-expanded") === "true";
-  setSectionExpanded(contextToggle, contextContent, !expanded);
-});
+if (textInput) {
+  textInput.addEventListener("input", updateCounter);
+  textInput.addEventListener("animationend", () => textInput.classList.remove("example-loaded"));
+}
+if (contextToggle) {
+  contextToggle.addEventListener("click", () => {
+    const expanded = contextToggle.getAttribute("aria-expanded") === "true";
+    setSectionExpanded(contextToggle, contextContent, !expanded);
+  });
+}
 
 window.addEventListener("resize", () => {
   [contextContent].forEach((content) => {
