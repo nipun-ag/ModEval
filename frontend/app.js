@@ -47,10 +47,24 @@ function initColumnTooltips() {
       currentTooltip.textContent = tooltipText;
       currentTooltip.style.display = "block";
 
-      // Position tooltip near the icon
+      // Position tooltip above the icon, with fallback to below
       const rect = e.target.getBoundingClientRect();
-      currentTooltip.style.left = rect.left + "px";
-      currentTooltip.style.top = rect.bottom + 8 + "px";
+      const tooltipHeight = currentTooltip.offsetHeight || 60; // Estimate if not yet rendered
+      const viewportHeight = window.innerHeight;
+
+      const spaceAbove = rect.top;
+      const spaceBelow = viewportHeight - rect.bottom;
+
+      const horizontalCenter = rect.left + rect.width / 2;
+      currentTooltip.style.left = horizontalCenter - 90 + "px"; // Center the tooltip (180px wide, so 90px offset)
+
+      if (spaceAbove > tooltipHeight + 8) {
+        // Position above
+        currentTooltip.style.top = rect.top - tooltipHeight - 8 + "px";
+      } else {
+        // Fallback to below
+        currentTooltip.style.top = rect.bottom + 8 + "px";
+      }
     }
   });
 

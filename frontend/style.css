@@ -932,12 +932,20 @@ thead th {
 }
 
 .col-info-icon {
-  font-size: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--surface3);
+  border: 1px solid var(--border);
   color: var(--muted);
-  margin-left: 4px;
+  font-size: 9px;
+  font-family: "JetBrains Mono", monospace;
+  margin-left: 5px;
   cursor: help;
   vertical-align: middle;
-  display: inline-block;
 }
 
 .header-tooltip {
@@ -946,7 +954,7 @@ thead th {
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 8px 12px;
-  max-width: 200px;
+  max-width: 180px;
   color: var(--text-secondary);
   font-family: "Inter", -apple-system, sans-serif;
   font-size: 11px;
@@ -958,6 +966,7 @@ thead th {
   pointer-events: none;
   z-index: 9999;
   display: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 tbody tr {
