@@ -572,6 +572,56 @@ function renderInsights(insights, results) {
   consensusCard.dataset.tone = actionTone(insights.consensus_action || "neutral");
 }
 
+function formatExplanation(text) {
+  if (!text) return "<p>No explanation available.</p>";
+
+  // Filter out sentences containing "policy loaded" or "Policy note:"
+  let filtered = text
+    .split(/(?<=[.!?])\s+/)
+    .filter(sentence => !/(policy loaded|policy note:)/i.test(sentence))
+    .join(" ");
+
+  const sections = [];
+  let remaining = filtered;
+
+  // Define patterns to match
+  const patterns = [
+    { regex: /Top category:\s*([^.]*)\./i, label: "Top category" },
+    { regex: /Recommended action:\s*([^.]*)\./i, label: "Recommended action" },
+    { regex: /Categories above threshold:\s*([^.]*)\./i, label: "Flagged categories" },
+    { regex: /(Social Media|Gaming|Professional|Forum|Community)(?:\s+context)?[:\s]*([^.]*)\./i, label: "Context", isContext: true }
+  ];
+
+  // Extract and remove matched sections
+  for (const pattern of patterns) {
+    const match = remaining.match(pattern.regex);
+    if (match) {
+      const value = pattern.isContext ? match[2] || match[1] : match[1];
+      sections.push({
+        label: pattern.label,
+        value: value.trim()
+      });
+      remaining = remaining.replace(match[0], "").trim();
+    }
+  }
+
+  // Add any remaining text
+  if (remaining) {
+    sections.push({
+      label: null,
+      value: remaining
+    });
+  }
+
+  return sections.map(section => {
+    if (section.label) {
+      return `<p><strong>${escapeHtml(section.label)}</strong> ${escapeHtml(section.value)}</p>`;
+    } else {
+      return `<p>${escapeHtml(section.value)}</p>`;
+    }
+  }).join("");
+}
+
 function renderExplainability(results) {
   explainabilityList.innerHTML = results.map((result, index) => {
     const barColor = (() => {
@@ -587,7 +637,7 @@ function renderExplainability(results) {
         ${badge(result.action, actionTone(result.action))}
       </div>
       <div class="confidence-bar" style="--confidence: ${(Number(result.confidence) * 100).toFixed(0)}%; --bar-color: ${barColor}"></div>
-      <p class="explanation-text">${escapeHtml(result.explanation || "No explanation available.")}</p>
+      <div class="explanation-text">${formatExplanation(result.explanation)}</div>
     </article>
   `;
   }).join("");
@@ -623,6 +673,7 @@ form.addEventListener("submit", async (event) => {
   }
 
   const payload = Object.fromEntries(new FormData(form).entries());
+  payload.policy = selectedPlatform;
 
   try {
     const data = await postJson("/analyze", payload);
