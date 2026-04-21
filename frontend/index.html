@@ -418,28 +418,28 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td>Reddit</td>
-                    <td style="background: var(--red-light)"><span class="mono">violence</span>, <span class="mono">self-harm</span>, <span class="mono">sexual/minors</span></td>
+                    <td>Social Media</td>
+                    <td style="background: var(--red-light)"><span class="mono">violence</span>, <span class="mono">self-harm</span>, <span class="mono">sexual/minors</span>, <span class="mono">hate</span></td>
                     <td style="background: var(--green-light)"><span class="mono">profanity</span>, <span class="mono">insult</span></td>
-                    <td>Broad free speech baseline</td>
+                    <td>High visibility, broad enforcement</td>
                   </tr>
                   <tr>
-                    <td>Discord</td>
-                    <td style="background: var(--red-light)"><span class="mono">harassment/threatening</span>, <span class="mono">sexual/minors</span>, <span class="mono">hate</span></td>
-                    <td style="background: var(--green-light)"><span class="mono">profanity</span></td>
-                    <td>Community safety focused</td>
+                    <td>Gaming</td>
+                    <td style="background: var(--red-light)"><span class="mono">sexual/minors</span>, <span class="mono">harassment/threatening</span></td>
+                    <td style="background: var(--green-light)"><span class="mono">profanity</span>, <span class="mono">insult</span>, <span class="mono">toxicity</span></td>
+                    <td>Competitive context, tolerance for trash talk</td>
                   </tr>
                   <tr>
-                    <td>Facebook</td>
-                    <td style="background: var(--red-light)"><span class="mono">hate</span>, <span class="mono">violence</span>, <span class="mono">sexual</span>, <span class="mono">self-harm</span></td>
+                    <td>Professional</td>
+                    <td style="background: var(--red-light)"><span class="mono">hate</span>, <span class="mono">violence</span>, <span class="mono">sexual</span>, <span class="mono">self-harm</span>, <span class="mono">harassment</span></td>
                     <td style="background: var(--green-light)">none</td>
-                    <td>Strictest overall profile</td>
+                    <td>Reputational risk, strictest profile</td>
                   </tr>
                   <tr>
-                    <td>Instagram</td>
-                    <td style="background: var(--red-light)"><span class="mono">sexual/minors</span>, <span class="mono">harassment</span>, <span class="mono">identity_attack</span></td>
-                    <td style="background: var(--green-light)"><span class="mono">profanity</span>, <span class="mono">insult</span></td>
-                    <td>Youth audience focused</td>
+                    <td>Forum</td>
+                    <td style="background: var(--red-light)"><span class="mono">violence</span>, <span class="mono">self-harm</span>, <span class="mono">sexual/minors</span></td>
+                    <td style="background: var(--green-light)"><span class="mono">profanity</span>, <span class="mono">insult</span>, <span class="mono">bias</span></td>
+                    <td>Open debate culture, moderate tolerance</td>
                   </tr>
                 </tbody>
               </table>
@@ -457,14 +457,14 @@
                 </div>
               </div>
               <p class="methodology-copy">
-                After a model produces a context-adjusted action, ModEval scores how well that output aligns with the selected platform's known policy. Each platform has predefined zero-tolerance categories (always Remove regardless of score) and deprioritized categories (threshold raised by +0.20).
+                After a model produces a context-adjusted action, ModEval scores how well that output aligns with the selected policy category's enforcement profile. Each category has predefined zero-tolerance violations (always Remove regardless of score) and deprioritized categories (threshold raised by +0.20).
               </p>
               <table class="methodology-table">
                 <tbody>
-                  <tr><td>Reddit</td><td>🛡 violence, self-harm, sexual/minors</td><td>Deprioritized: profanity, insult</td></tr>
-                  <tr><td>Discord</td><td>🛡 harassment/threatening, sexual/minors, hate</td><td>Deprioritized: profanity</td></tr>
-                  <tr><td>Facebook</td><td>🛡 hate, violence, sexual, self-harm</td><td>Deprioritized: none</td></tr>
-                  <tr><td>Instagram</td><td>🛡 sexual/minors, harassment, identity_attack</td><td>Deprioritized: profanity, insult</td></tr>
+                  <tr><td>Social Media</td><td>🛡 violence, self-harm, sexual/minors, hate</td><td>Deprioritized: profanity, insult</td></tr>
+                  <tr><td>Gaming</td><td>🛡 sexual/minors, harassment/threatening</td><td>Deprioritized: profanity, insult, toxicity</td></tr>
+                  <tr><td>Professional</td><td>🛡 hate, violence, sexual, self-harm, harassment</td><td>Deprioritized: none</td></tr>
+                  <tr><td>Forum</td><td>🛡 violence, self-harm, sexual/minors</td><td>Deprioritized: profanity, insult, bias</td></tr>
                 </tbody>
               </table>
               <pre class="methodology-code"><code><span class="code-key">alignment_score</span> <span class="code-punctuation">=</span> <span class="code-type">1</span> <span class="code-punctuation">-</span> <span class="code-type">abs</span><span class="code-punctuation">(</span><span class="code-key">model_confidence</span> <span class="code-punctuation">-</span> <span class="code-key">policy_expected_threshold</span><span class="code-punctuation">)</span></code></pre>
