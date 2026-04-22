@@ -638,7 +638,7 @@ textarea:focus {
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  transition: background 150ms ease, border-color 150ms ease, color 150ms ease, opacity 150ms ease;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease, opacity 150ms ease, box-shadow 150ms ease, transform 150ms ease;
 }
 
 .primary-button {
@@ -659,6 +659,7 @@ textarea:focus {
 .primary-button:active {
   border-color: rgba(255,255,255,0.15);
   background: linear-gradient(135deg, var(--accent) 0%, #2563eb 100%);
+  box-shadow: 0 2px 8px var(--accent-light), inset 0 1px 0 rgba(255,255,255,0.2);
   transform: scale(0.97);
 }
 
