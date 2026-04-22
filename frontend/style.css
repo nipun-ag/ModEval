@@ -516,8 +516,8 @@ select:focus,
 .secondary-button:focus,
 .section-toggle:focus {
   outline: none;
-  border-color: rgba(255,255,255,0.2);
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.2);
+  border-color: rgba(255,255,255,0.15);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.15);
 }
 
 textarea:focus {
@@ -648,7 +648,12 @@ textarea:focus {
   transform: translateY(-1px);
 }
 
-.primary-button:active,
+.primary-button:active {
+  border-color: rgba(255,255,255,0.15);
+  background: linear-gradient(135deg, var(--accent) 0%, #2563eb 100%);
+  transform: scale(0.97);
+}
+
 .secondary-button:active {
   transform: scale(0.97);
 }
