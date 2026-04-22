@@ -20,6 +20,11 @@ const modelsView = document.getElementById("models-view");
 const contextToggle = document.getElementById("context-toggle");
 const contextContent = document.getElementById("context-content");
 const analyzeButton = document.getElementById("analyze-button");
+
+analyzeButton.addEventListener("mousedown", () => {
+  analyzeButton.classList.add("loading");
+});
+
 const resultsEmpty = document.getElementById("results-empty");
 const skeletonState = document.getElementById("skeleton-state");
 const resultsContent = document.getElementById("results-content");
