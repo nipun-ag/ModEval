@@ -616,22 +616,20 @@ function formatExplanation(text) {
 
 function renderExplainability(results) {
   explainabilityList.innerHTML = results.map((result, index) => {
-    const barColor = (() => {
-      const tone = actionTone(result.action);
-      if (tone === "allow") return "var(--green)";
-      if (tone === "review") return "var(--amber)";
-      return "var(--red)";
-    })();
+    const tone = actionTone(result.action);
+    const pulseColor = tone === "allow" ? "var(--green)" : tone === "review" ? "var(--amber)" : "var(--red)";
+    const barColor = pulseColor;
+
     return `
-    <article class="explanation-card" style="animation-delay:${index * 50}ms">
-      <div class="explanation-head">
-        <h4>${renderModelDisplay(result.model)}</h4>
-        ${badge(result.action, actionTone(result.action))}
-      </div>
-      <div class="confidence-bar" style="--confidence: ${(Number(result.confidence) * 100).toFixed(0)}%; --bar-color: ${barColor}"></div>
-      <div class="explanation-text">${formatExplanation(result.explanation)}</div>
-    </article>
-  `;
+      <article class="explanation-card" style="animation-delay: ${index * 50}ms; --pulse-color: ${pulseColor}">
+        <div class="explanation-head">
+          <h4>${renderModelDisplay(result.model)}</h4>
+          ${badge(result.action, tone)}
+        </div>
+        <div class="confidence-bar" style="--confidence: ${(Number(result.confidence) * 100).toFixed(0)}%; --bar-color: ${barColor}"></div>
+        <div class="explanation-text">${formatExplanation(result.explanation)}</div>
+      </article>
+    `;
   }).join("");
 }
 
