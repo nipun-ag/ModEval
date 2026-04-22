@@ -512,12 +512,17 @@ textarea.example-loaded {
 
 textarea:focus,
 select:focus,
-.primary-button:focus,
 .secondary-button:focus,
 .section-toggle:focus {
   outline: none;
   border-color: rgba(255,255,255,0.15);
   box-shadow: 0 0 0 1px rgba(255,255,255,0.15);
+}
+
+.primary-button:focus {
+  outline: none;
+  border-color: rgba(255,255,255,0.15);
+  box-shadow: 0 4px 16px var(--accent-light), inset 0 1px 0 rgba(255,255,255,0.2), 0 0 0 1px rgba(255,255,255,0.15);
 }
 
 textarea:focus {
