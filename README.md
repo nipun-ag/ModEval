@@ -1,6 +1,6 @@
 # ModEval — Context & Policy-Aware AI Moderation Evaluation System
 
-**Live:** [modeval.onrender.com](https://modeval.onrender.com) &nbsp;|&nbsp; **Built by:** [Nipun Aggarwal](https://bynipun.com) &nbsp;|&nbsp; **Status:** Live
+**Live:** [modeval.bynipun.com](https://modeval.bynipun.com) &nbsp;|&nbsp; **Built by:** [Nipun Aggarwal](https://bynipun.com) &nbsp;|&nbsp; **Status:** Live
 
 ---
 
@@ -157,7 +157,7 @@ alignment_score = 1 - abs(model_confidence - policy_expected_threshold)
 - **Decision Matrix** — comparison table with model chip badges, color-coded action badges, alignment scores
 - **Insight Strip** — strictest model, most lenient model, consensus recommendation with plain-English explainers
 - **Disagreement Banner** — high-contrast alert when models conflict
-- **Explainability Cards** — 2-column grid per-model breakdown
+- **AI Consensus Summary** — GPT-4o-mini analyzes all 5 model results and generates a 2-3 sentence plain English interpretation, surfacing model agreements, disagreements, and safety recommendation
 - **Skeleton shimmer loading** — premium loading state while models run
 - **Model Cards** — detailed cards for all 5 models with architecture, training data, strengths, limitations, and HuggingFace links
 - **5 Models Active** indicator in navigation
@@ -214,6 +214,7 @@ modeval/
 
 ### POST /analyze
 
+**Request:**
 ```json
 {
   "text": "string",
@@ -224,6 +225,10 @@ modeval/
   "custom_policy_text": "string (optional)"
 }
 ```
+
+**Response:**
+Contains `results` array with per-model analysis, `disagreements` object, `insights` object, and:
+- `"ai_summary": "string — GPT-4o-mini generated plain English interpretation of all model results"`
 
 ### POST /batch-analyze
 Multiple inputs with same context settings. Returns aggregate flag rate and per-item results.
@@ -253,6 +258,7 @@ Open `http://127.0.0.1:5000`
 
 ```
 HF_API_KEY=your_huggingface_token
+OPENAI_API_KEY=your_openai_api_key
 ```
 
 Free token at huggingface.co/settings/tokens. Read access only. Single key covers all five models. Never commit this file.
@@ -281,7 +287,6 @@ Free token at huggingface.co/settings/tokens. Read access only. Single key cover
 - **Prompt injection resistance testing** — Test whether policy instructions can be overridden via adversarial input in the custom policy field
 - **Multilingual support** — Extend coverage to non-English content using multilingual model variants
 - **Paid API integrations** — AWS Comprehend, Azure Content Moderator, and Clarifai for enterprise-grade comparison
-- **Custom domain** — Deploy under a dedicated domain name
 - **G2-style model marketplace** — Long-term vision: aggregate benchmark data across all analyses to build the first independent public leaderboard ranking moderation APIs by accuracy, strictness, and policy alignment across platforms and violation categories
 
 ---
