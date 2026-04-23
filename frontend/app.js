@@ -20,6 +20,11 @@ const modelsView = document.getElementById("models-view");
 const contextToggle = document.getElementById("context-toggle");
 const contextContent = document.getElementById("context-content");
 const analyzeButton = document.getElementById("analyze-button");
+
+analyzeButton.addEventListener("mousedown", () => {
+  analyzeButton.classList.add("loading");
+});
+
 const resultsEmpty = document.getElementById("results-empty");
 const skeletonState = document.getElementById("skeleton-state");
 const resultsContent = document.getElementById("results-content");
@@ -28,47 +33,94 @@ const lenientCard = document.getElementById("lenient-card");
 const consensusCard = document.getElementById("consensus-card");
 const exampleButtons = Array.from(document.querySelectorAll(".example-pill"));
 
+// Initialize column info icon tooltips
+function initColumnTooltips() {
+  let currentTooltip = null;
+
+  document.addEventListener("mouseover", (e) => {
+    if (e.target.classList.contains("col-info-icon")) {
+      const tooltipText = e.target.getAttribute("data-tooltip");
+      if (!tooltipText) return;
+
+      // Create or reuse tooltip element
+      if (!currentTooltip) {
+        currentTooltip = document.createElement("div");
+        currentTooltip.className = "header-tooltip";
+        document.body.appendChild(currentTooltip);
+      }
+
+      // Split first sentence and wrap in <strong>
+      const firstPeriodIndex = tooltipText.indexOf(".");
+      let tooltipHTML;
+      if (firstPeriodIndex > 0) {
+        const firstSentence = tooltipText.substring(0, firstPeriodIndex + 1);
+        const restOfText = tooltipText.substring(firstPeriodIndex + 1).trim();
+        tooltipHTML = `<strong>${escapeHtml(firstSentence)}</strong>${restOfText ? " " + escapeHtml(restOfText) : ""}`;
+      } else {
+        tooltipHTML = escapeHtml(tooltipText);
+      }
+      currentTooltip.innerHTML = tooltipHTML;
+      currentTooltip.style.display = "block";
+
+      // Position tooltip above the icon, with fallback to below
+      const rect = e.target.getBoundingClientRect();
+      const tooltipHeight = currentTooltip.offsetHeight || 60; // Estimate if not yet rendered
+      const viewportHeight = window.innerHeight;
+
+      const spaceAbove = rect.top;
+      const spaceBelow = viewportHeight - rect.bottom;
+
+      const horizontalCenter = rect.left + rect.width / 2;
+      currentTooltip.style.left = horizontalCenter - 90 + "px"; // Center the tooltip (180px wide, so 90px offset)
+
+      if (spaceAbove > tooltipHeight + 8) {
+        // Position above
+        currentTooltip.style.top = rect.top - tooltipHeight - 8 + "px";
+      } else {
+        // Fallback to below
+        currentTooltip.style.top = rect.bottom + 8 + "px";
+      }
+    }
+  });
+
+  document.addEventListener("mouseout", (e) => {
+    if (e.target.classList.contains("col-info-icon") && currentTooltip) {
+      currentTooltip.style.display = "none";
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", initColumnTooltips);
+
 const MODEL_DISPLAY = {
   "HuggingFace toxic-bert": {
-    name: "Toxicity Classifier",
+    name: "General Toxicity",
     subtitle: "unitary/toxic-bert",
     chip: "BERT",
   },
   "HuggingFace RoBERTa offensive": {
-    name: "Offensive Language Detector",
+    name: "Social Media Offensive",
     subtitle: "cardiffnlp/roberta-offensive",
     chip: "RoBERTa",
   },
   "HuggingFace Hate Speech": {
-    name: "Hate Speech Detector",
+    name: "Identity-Based Hate",
     subtitle: "facebook/roberta-hate-speech",
     chip: "facebook",
   },
-  "HuggingFace Spam Detector": {
-    name: "Spam Detector",
-    subtitle: "mrm8488/bert-tiny",
-    chip: "mrm8488",
+  "OpenAI Moderation": {
+    name: "OpenAI Moderation",
+    subtitle: "openai/omni-moderation-latest",
+    chip: "Proprietary",
   },
   "HuggingFace Bias Detector": {
-    name: "Bias Detector",
+    name: "Language Bias",
     subtitle: "valurank/distilroberta-bias",
     chip: "valurank",
   },
 };
 
 const EXAMPLE_LIBRARY = {
-  Toxicity: [
-    "You are absolutely pathetic and worthless, nobody wants you here",
-    "What the fuck is wrong with you, are you actually this stupid",
-    "Nobody likes you, just disappear already you miserable loser",
-    "You're a complete waste of space and everyone fucking knows it",
-    "Shut your stupid mouth before someone shuts it for you",
-    "You're too damn dumb to understand anything, just give up already",
-    "Go crawl back under the rock you came from you piece of shit",
-    "You disgust me, you absolute brain-dead moron",
-    "People like you make this world a worse place to live in",
-    "You're a joke and everyone around you is laughing behind your back",
-  ],
   Harassment: [
     "I know where you live and I will find you, don't think I won't",
     "You better watch your back walking home tonight, I'm serious",
@@ -203,6 +255,16 @@ function escapeHtml(value) {
 function setStatus(message, state) {
   statusPill.textContent = message;
   statusPill.className = `status-pill ${state}`;
+
+  // Show/hide disclaimer based on completion state
+  const disclaimer = document.getElementById("status-disclaimer");
+  if (disclaimer) {
+    if (state === "success") {
+      disclaimer.style.display = "block";
+    } else {
+      disclaimer.style.display = "none";
+    }
+  }
 }
 
 function setAnalyzeLoading(isLoading) {
@@ -348,7 +410,12 @@ function switchTab(nextTab) {
 }
 
 function updateCounter() {
-  charCounter.textContent = `${textInput.value.length} / 500`;
+  const count = textInput.value.length;
+  charCounter.textContent = `${count} / 500`;
+  charCounter.classList.remove("counter-green", "counter-amber", "counter-red");
+  if (count < 300) charCounter.classList.add("counter-green");
+  else if (count < 450) charCounter.classList.add("counter-amber");
+  else charCounter.classList.add("counter-red");
 }
 
 function modelDisplay(modelName) {
@@ -466,14 +533,6 @@ function renderResults(results) {
       <td class="action-cell">
         ${badge(result.action, actionTone(result.action))}
       </td>
-      <td class="alignment-cell">
-        <div class="alignment-inline">
-          <span class="alignment-icon ${result.aligned ? "aligned" : "misaligned"}">${result.aligned ? "✓" : "×"}</span>
-          ${badge(result.aligned ? "Aligned" : "Misaligned", result.aligned ? "aligned" : "misaligned")}
-          <span class="mono">${Number(result.alignment_score || 0).toFixed(2)}</span>
-        </div>
-        ${result.error ? `<span class="metric-soft error-text">${escapeHtml(result.error)}</span>` : ""}
-      </td>
     </tr>
   `).join("");
 }
@@ -518,16 +577,124 @@ function renderInsights(insights, results) {
   consensusCard.dataset.tone = actionTone(insights.consensus_action || "neutral");
 }
 
-function renderExplainability(results) {
-  explainabilityList.innerHTML = results.map((result) => `
-    <article class="explanation-card">
-      <div class="explanation-head">
-        <h4>${renderModelDisplay(result.model)}</h4>
-        ${badge(result.action, actionTone(result.action))}
-      </div>
-      <p class="explanation-text">${escapeHtml(result.explanation || "No explanation available.")}</p>
-    </article>
-  `).join("");
+function generateInsight(action, confidence, flagged) {
+  const tone = actionTone(action);
+  const conf = parseFloat(confidence);
+  const hasFlags = flagged && flagged.toLowerCase() !== "none" && flagged.trim() !== "";
+  const category = hasFlags ? flagged : null;
+
+  if (tone === "allow" && !hasFlags) {
+    if (conf < 0.10) return "No harmful patterns detected. Content cleared across all checked categories.";
+    return "No significant flags raised. Content appears safe for this platform context.";
+  }
+
+  if (tone === "allow" && hasFlags) {
+    return `${capitalize(category)} detected but below removal threshold. Content allowed under current strictness settings.`;
+  }
+
+  if (tone === "review") {
+    if (hasFlags) return `${capitalize(category)} patterns present but inconclusive. Recommend human review before action.`;
+    return "Ambiguous signal. No dominant category flagged — manual review advised.";
+  }
+
+  if (tone === "remove" && hasFlags && conf >= 0.80) {
+    return `Strong ${category} signal detected with high confidence. Automatic removal recommended.`;
+  }
+
+  if (tone === "remove" && hasFlags && conf < 0.80) {
+    return `${capitalize(category)} patterns detected. Confidence is moderate — removal flagged but human review may refine this.`;
+  }
+
+  if (tone === "remove" && !hasFlags) {
+    return "Model flagged this content for removal based on combined signal patterns, though no single dominant category was identified.";
+  }
+
+  return "Insufficient signal to generate a clear interpretation.";
+}
+
+function capitalize(str) {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function generateConsensusSummary(results, insights, disagreements) {
+  if (!results || results.length === 0) return "";
+
+  const total = results.length;
+  const actions = { allow: [], review: [], remove: [] };
+  results.forEach(r => {
+    const tone = actionTone(r.action);
+    if (actions[tone]) actions[tone].push(r.model);
+  });
+
+  const removeCount = actions.remove.length;
+  const reviewCount = actions.review.length;
+  const allowCount = actions.allow.length;
+  const consensus = insights?.consensus_action || "";
+
+  // Build verdict sentence
+  let verdict = "";
+  if (removeCount === total) {
+    verdict = `All ${total} models recommend removal.`;
+  } else if (allowCount === total) {
+    verdict = `All ${total} models cleared this content.`;
+  } else if (removeCount > allowCount && removeCount > reviewCount) {
+    verdict = `${removeCount} of ${total} models recommend removal.`;
+  } else if (allowCount > removeCount && allowCount > reviewCount) {
+    verdict = `${allowCount} of ${total} models cleared this content.`;
+  } else {
+    verdict = `Models are split — ${removeCount} remove, ${reviewCount} review, ${allowCount} allow.`;
+  }
+
+  // Collect all flagged categories from explanations
+  const allCategories = [];
+  results.forEach(r => {
+    const match = /Categories above[\d\s.:]+(.+?)(?:\.|$)/i.exec(r.explanation || "");
+    if (match) {
+      const cats = match[1].match(/([\w][\w\/.-]+)\s*\([\d.]+\)/g) || [];
+      cats.forEach(c => {
+        const name = c.replace(/\s*\([\d.]+\)/, "").trim();
+        if (name) allCategories.push(name);
+      });
+    } else if (r.top_category) {
+      allCategories.push(r.top_category);
+    }
+  });
+
+  const categoryCounts = {};
+  allCategories.forEach(c => { categoryCounts[c] = (categoryCounts[c] || 0) + 1; });
+  const primaryCategory = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1])[0];
+  const signalSentence = primaryCategory
+    ? `Primary signal: ${primaryCategory[0]}.`
+    : "No dominant signal category identified.";
+
+  // Build disagreement sentence
+  let disagreementSentence = "";
+  if (disagreements && disagreements.length > 0) {
+    const hasActionMismatch = disagreements.some(d => d.type === "Action Mismatch");
+    if (hasActionMismatch && reviewCount > 0) {
+      const reviewModels = actions.review.map(m => {
+        const d = modelDisplay(m);
+        return d.title;
+      }).join(", ");
+      disagreementSentence = `Notable disagreement: ${reviewModels} flagged for review only.`;
+    } else if (hasActionMismatch && allowCount > 0) {
+      const allowModels = actions.allow.map(m => {
+        const d = modelDisplay(m);
+        return d.title;
+      }).join(", ");
+      disagreementSentence = `Notable disagreement: ${allowModels} cleared this content.`;
+    }
+  }
+
+  return [verdict, signalSentence, disagreementSentence].filter(Boolean).join(" ");
+}
+
+function renderExplainability(results, insights, disagreements, aiSummary) {
+  const summary = aiSummary || generateConsensusSummary(results, insights, disagreements);
+  explainabilityList.innerHTML = summary
+    ? `<div class="consensus-summary">${escapeHtml(summary)}</div>`
+    : "";
 }
 
 async function postJson(url, payload) {
@@ -553,14 +720,21 @@ form.addEventListener("submit", async (event) => {
   renderDisagreements([]);
   showPanelState("loading");
 
+  const progressBar = document.querySelector(".progress-bar");
+  if (progressBar) {
+    progressBar.classList.remove("hidden");
+    progressBar.style.animation = "progress-bar 400ms ease";
+  }
+
   const payload = Object.fromEntries(new FormData(form).entries());
+  payload.policy = selectedPlatform;
 
   try {
     const data = await postJson("/analyze", payload);
     renderResults(data.results || []);
     renderDisagreements(data.disagreements || []);
     renderInsights(data.insights || {}, data.results || []);
-    renderExplainability(data.results || []);
+    renderExplainability(data.results || [], data.insights || {}, data.disagreements || [], data.ai_summary || "");
     showPanelState("results");
     setStatus("Analysis complete", "success");
   } catch (error) {
@@ -571,10 +745,12 @@ form.addEventListener("submit", async (event) => {
     setStatus("Request failed", "error");
   } finally {
     setAnalyzeLoading(false);
+    const progressBar = document.querySelector(".progress-bar");
+    if (progressBar) progressBar.classList.add("hidden");
   }
 });
 
-batchButton.addEventListener("click", () => batchFileInput.click());
+if (batchButton) batchButton.addEventListener("click", () => batchFileInput.click());
 analysisTab.addEventListener("click", () => switchTab("analysis"));
 methodologyTab.addEventListener("click", () => switchTab("methodology"));
 modelsTab.addEventListener("click", () => switchTab("models"));
@@ -582,13 +758,19 @@ exampleButtons.forEach((button) => {
   button.addEventListener("click", () => applyExample(button.dataset.category, button));
 });
 
-batchFileInput.addEventListener("change", async () => {
+if (batchFileInput) batchFileInput.addEventListener("change", async () => {
   const [file] = batchFileInput.files;
   if (!file) {
     return;
   }
 
   setStatus("Waiting for input", "loading");
+
+  const progressBar = document.querySelector(".progress-bar");
+  if (progressBar) {
+    progressBar.classList.remove("hidden");
+    progressBar.style.animation = "progress-bar 400ms ease";
+  }
 
   try {
     const csvText = await file.text();
@@ -614,16 +796,22 @@ batchFileInput.addEventListener("change", async () => {
     batchSummary.innerHTML = `<p class="error-text">${escapeHtml(error.message)}</p>`;
     setStatus("Request failed", "error");
   } finally {
-    batchFileInput.value = "";
+    const progressBar = document.querySelector(".progress-bar");
+    if (progressBar) progressBar.classList.add("hidden");
+    if (batchFileInput) batchFileInput.value = "";
   }
 });
 
-textInput.addEventListener("input", updateCounter);
-textInput.addEventListener("animationend", () => textInput.classList.remove("example-loaded"));
-contextToggle.addEventListener("click", () => {
-  const expanded = contextToggle.getAttribute("aria-expanded") === "true";
-  setSectionExpanded(contextToggle, contextContent, !expanded);
-});
+if (textInput) {
+  textInput.addEventListener("input", updateCounter);
+  textInput.addEventListener("animationend", () => textInput.classList.remove("example-loaded"));
+}
+if (contextToggle) {
+  contextToggle.addEventListener("click", () => {
+    const expanded = contextToggle.getAttribute("aria-expanded") === "true";
+    setSectionExpanded(contextToggle, contextContent, !expanded);
+  });
+}
 
 window.addEventListener("resize", () => {
   [contextContent].forEach((content) => {

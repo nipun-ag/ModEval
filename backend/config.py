@@ -55,21 +55,21 @@ STRICTNESS_MODIFIERS = {
 
 
 PREDEFINED_POLICIES = {
-    "Reddit": {
-        "zero_tolerance": {"violence", "self-harm", "sexual/minors"},
+    "Social Media": {
+        "zero_tolerance": {"violence", "self-harm", "sexual/minors", "hate"},
         "deprioritized": {"profanity", "insult"},
     },
-    "Discord": {
-        "zero_tolerance": {"harassment/threatening", "sexual/minors", "hate"},
-        "deprioritized": {"profanity"},
+    "Gaming": {
+        "zero_tolerance": {"sexual/minors", "harassment/threatening"},
+        "deprioritized": {"profanity", "insult", "toxicity"},
     },
-    "Facebook": {
-        "zero_tolerance": {"hate", "violence", "sexual", "self-harm"},
+    "Professional": {
+        "zero_tolerance": {"hate", "violence", "sexual", "self-harm", "harassment"},
         "deprioritized": set(),
     },
-    "Instagram": {
-        "zero_tolerance": {"sexual/minors", "harassment", "identity_attack"},
-        "deprioritized": {"profanity", "insult"},
+    "Forum": {
+        "zero_tolerance": {"violence", "self-harm", "sexual/minors"},
+        "deprioritized": {"profanity", "insult", "bias"},
     },
 }
 
