@@ -158,6 +158,7 @@ alignment_score = 1 - abs(model_confidence - policy_expected_threshold)
 - **Insight Strip** — strictest model, most lenient model, consensus recommendation with plain-English explainers
 - **Disagreement Banner** — high-contrast alert when models conflict
 - **AI Consensus Summary** — GPT-4o-mini analyzes all 5 model results and generates a 2-3 sentence plain English interpretation, surfacing model agreements, disagreements, and safety recommendation
+- **AI Interpretation Layer (Section 6.5)** — Documents the GPT-4o-mini synthesis layer, inputs, outputs, and fallback behavior
 - **Skeleton shimmer loading** — premium loading state while models run
 - **Model Cards** — detailed cards for all 5 models with architecture, training data, strengths, limitations, and HuggingFace links
 - **5 Models Active** indicator in navigation
