@@ -577,60 +577,124 @@ function renderInsights(insights, results) {
   consensusCard.dataset.tone = actionTone(insights.consensus_action || "neutral");
 }
 
-function formatExplanation(text) {
-  if (!text) return "<p>No explanation available.</p>";
+function generateInsight(action, confidence, flagged) {
+  const tone = actionTone(action);
+  const conf = parseFloat(confidence);
+  const hasFlags = flagged && flagged.toLowerCase() !== "none" && flagged.trim() !== "";
+  const category = hasFlags ? flagged : null;
 
-  // Split on ". " (period + space) to get sentences
-  const sentences = text.split(". ");
-  const output = [];
+  if (tone === "allow" && !hasFlags) {
+    if (conf < 0.10) return "No harmful patterns detected. Content cleared across all checked categories.";
+    return "No significant flags raised. Content appears safe for this platform context.";
+  }
 
-  for (let sentence of sentences) {
-    // Skip sentences containing "policy loaded" or "Policy note:"
-    if (/policy loaded|policy note:/i.test(sentence)) {
-      continue;
+  if (tone === "allow" && hasFlags) {
+    return `${capitalize(category)} detected but below removal threshold. Content allowed under current strictness settings.`;
+  }
+
+  if (tone === "review") {
+    if (hasFlags) return `${capitalize(category)} patterns present but inconclusive. Recommend human review before action.`;
+    return "Ambiguous signal. No dominant category flagged — manual review advised.";
+  }
+
+  if (tone === "remove" && hasFlags && conf >= 0.80) {
+    return `Strong ${category} signal detected with high confidence. Automatic removal recommended.`;
+  }
+
+  if (tone === "remove" && hasFlags && conf < 0.80) {
+    return `${capitalize(category)} patterns detected. Confidence is moderate — removal flagged but human review may refine this.`;
+  }
+
+  if (tone === "remove" && !hasFlags) {
+    return "Model flagged this content for removal based on combined signal patterns, though no single dominant category was identified.";
+  }
+
+  return "Insufficient signal to generate a clear interpretation.";
+}
+
+function capitalize(str) {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function generateConsensusSummary(results, insights, disagreements) {
+  if (!results || results.length === 0) return "";
+
+  const total = results.length;
+  const actions = { allow: [], review: [], remove: [] };
+  results.forEach(r => {
+    const tone = actionTone(r.action);
+    if (actions[tone]) actions[tone].push(r.model);
+  });
+
+  const removeCount = actions.remove.length;
+  const reviewCount = actions.review.length;
+  const allowCount = actions.allow.length;
+  const consensus = insights?.consensus_action || "";
+
+  // Build verdict sentence
+  let verdict = "";
+  if (removeCount === total) {
+    verdict = `All ${total} models recommend removal.`;
+  } else if (allowCount === total) {
+    verdict = `All ${total} models cleared this content.`;
+  } else if (removeCount > allowCount && removeCount > reviewCount) {
+    verdict = `${removeCount} of ${total} models recommend removal.`;
+  } else if (allowCount > removeCount && allowCount > reviewCount) {
+    verdict = `${allowCount} of ${total} models cleared this content.`;
+  } else {
+    verdict = `Models are split — ${removeCount} remove, ${reviewCount} review, ${allowCount} allow.`;
+  }
+
+  // Collect all flagged categories from explanations
+  const allCategories = [];
+  results.forEach(r => {
+    const match = /Categories above[\d\s.:]+(.+?)(?:\.|$)/i.exec(r.explanation || "");
+    if (match) {
+      const cats = match[1].match(/([\w][\w\/.-]+)\s*\([\d.]+\)/g) || [];
+      cats.forEach(c => {
+        const name = c.replace(/\s*\([\d.]+\)/, "").trim();
+        if (name) allCategories.push(name);
+      });
+    } else if (r.top_category) {
+      allCategories.push(r.top_category);
     }
+  });
 
-    // Reconstruct period if not the last sentence
-    if (!sentence.endsWith(".") && !sentence.endsWith("?") && !sentence.endsWith("!")) {
-      sentence = sentence + ".";
-    }
+  const categoryCounts = {};
+  allCategories.forEach(c => { categoryCounts[c] = (categoryCounts[c] || 0) + 1; });
+  const primaryCategory = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1])[0];
+  const signalSentence = primaryCategory
+    ? `Primary signal: ${primaryCategory[0]}.`
+    : "No dominant signal category identified.";
 
-    // Check each sentence for patterns
-    if (sentence.toLowerCase().startsWith("top category:")) {
-      const rest = sentence.substring("top category:".length).trim();
-      output.push(`<p><strong>Top category</strong> ${escapeHtml(rest)}</p>`);
-    } else if (sentence.toLowerCase().startsWith("recommended action:")) {
-      const rest = sentence.substring("recommended action:".length).trim();
-      output.push(`<p><strong>Recommended action</strong> ${escapeHtml(rest)}</p>`);
-    } else if (/strictness/i.test(sentence)) {
-      output.push(`<p><strong>Context</strong> ${escapeHtml(sentence)}</p>`);
-    } else if (/categories above/i.test(sentence)) {
-      output.push(`<p><strong>Flagged</strong> ${escapeHtml(sentence)}</p>`);
-    } else if (/no categories crossed/i.test(sentence)) {
-      output.push(`<p class="muted-note">${escapeHtml(sentence)}</p>`);
+  // Build disagreement sentence
+  let disagreementSentence = "";
+  if (disagreements && disagreements.length > 0) {
+    const hasActionMismatch = disagreements.some(d => d.type === "Action Mismatch");
+    if (hasActionMismatch && reviewCount > 0) {
+      const reviewModels = actions.review.map(m => {
+        const d = modelDisplay(m);
+        return d.title;
+      }).join(", ");
+      disagreementSentence = `Notable disagreement: ${reviewModels} flagged for review only.`;
+    } else if (hasActionMismatch && allowCount > 0) {
+      const allowModels = actions.allow.map(m => {
+        const d = modelDisplay(m);
+        return d.title;
+      }).join(", ");
+      disagreementSentence = `Notable disagreement: ${allowModels} cleared this content.`;
     }
   }
 
-  return output.length > 0 ? output.join("") : "<p>No explanation available.</p>";
+  return [verdict, signalSentence, disagreementSentence].filter(Boolean).join(" ");
 }
 
-function renderExplainability(results) {
-  explainabilityList.innerHTML = results.map((result, index) => {
-    const tone = actionTone(result.action);
-    const pulseColor = tone === "allow" ? "var(--green)" : tone === "review" ? "var(--amber)" : "var(--red)";
-    const barColor = pulseColor;
-
-    return `
-      <article class="explanation-card" style="animation-delay: ${index * 50}ms; --pulse-color: ${pulseColor}">
-        <div class="explanation-head">
-          <h4>${renderModelDisplay(result.model)}</h4>
-          ${badge(result.action, tone)}
-        </div>
-        <div class="confidence-bar" style="--confidence: ${(Number(result.confidence) * 100).toFixed(0)}%; --bar-color: ${barColor}"></div>
-        <div class="explanation-text">${formatExplanation(result.explanation)}</div>
-      </article>
-    `;
-  }).join("");
+function renderExplainability(results, insights, disagreements, aiSummary) {
+  const summary = aiSummary || generateConsensusSummary(results, insights, disagreements);
+  explainabilityList.innerHTML = summary
+    ? `<div class="consensus-summary">${escapeHtml(summary)}</div>`
+    : "";
 }
 
 async function postJson(url, payload) {
@@ -670,7 +734,7 @@ form.addEventListener("submit", async (event) => {
     renderResults(data.results || []);
     renderDisagreements(data.disagreements || []);
     renderInsights(data.insights || {}, data.results || []);
-    renderExplainability(data.results || []);
+    renderExplainability(data.results || [], data.insights || {}, data.disagreements || [], data.ai_summary || "");
     showPanelState("results");
     setStatus("Analysis complete", "success");
   } catch (error) {

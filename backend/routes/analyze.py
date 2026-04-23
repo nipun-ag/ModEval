@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+import openai
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from flask import Blueprint, jsonify, request
@@ -56,6 +58,39 @@ def run_models(text: str) -> list[dict]:
     return sorted(results, key=lambda item: order.index(item["model"]))
 
 
+def generate_ai_summary(results: list[dict], context: dict) -> str:
+    """Generate a plain English summary of model results using GPT-4o-mini."""
+    try:
+        client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+        model_lines = []
+        for r in results:
+            if not r.get("error"):
+                model_lines.append(
+                    f"- {r['model']}: action={r.get('action','?')}, "
+                    f"top_category={r.get('top_category','?')}, "
+                    f"confidence={r.get('confidence','?')}"
+                )
+
+        models_text = "\n".join(model_lines)
+        platform = context.get("platform_context", "Social Media")
+
+        prompt = f"""You are a Trust & Safety analyst. Given these 5 AI moderation model results for a piece of content on {platform}, write a 2-3 sentence plain English interpretation. Focus on what the models agree on, what they disagree on, and what it means for content safety. Be concise and direct. Do not use bullet points.
+
+Model results:
+{models_text}"""
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=150,
+            temperature=0.3,
+        )
+        return response.choices[0].message.content.strip()
+    except Exception:
+        return ""
+
+
 def build_response(payload: dict) -> dict:
     """Build the full API response for one text input."""
     thresholds = calculate_context_adjustment(
@@ -101,10 +136,13 @@ def build_response(payload: dict) -> dict:
         )
         normalized_results.append(result)
 
+    ai_summary = generate_ai_summary(normalized_results, payload)
+
     return {
         "results": normalized_results,
         "disagreements": detect_disagreements(normalized_results),
         "insights": build_insights(normalized_results),
+        "ai_summary": ai_summary,
     }
 
 

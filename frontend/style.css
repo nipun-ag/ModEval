@@ -28,13 +28,18 @@
 
 html {
   font-size: 14px;
+  background-color: #00030a;
+  scrollbar-gutter: stable;
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  background-color: #00030a;
   background: var(--bg);
   color: var(--text);
+  overflow-x: hidden;
   font-family: "Inter", -apple-system, sans-serif;
   letter-spacing: -0.015em;
   -webkit-font-smoothing: antialiased;
@@ -212,9 +217,10 @@ button {
   position: absolute;
   top: 0;
   left: 0;
-  height: 3px;
+  height: 1px;
   width: 100%;
-  background: linear-gradient(90deg, var(--accent), var(--accent-glow));
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.5;
   z-index: 100;
 }
 
@@ -1447,6 +1453,18 @@ tbody td {
 .explanation-card strong {
   color: var(--text);
   font-weight: 600;
+}
+
+.consensus-summary {
+  grid-column: 1 / -1;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text);
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border-left: 3px solid var(--accent);
+  margin-bottom: 4px;
 }
 
 .error-text {
