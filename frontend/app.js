@@ -7,7 +7,6 @@ const disagreementBanner = document.getElementById("disagreement-banner");
 const explainabilityList = document.getElementById("explainability-list");
 const strictestModel = document.getElementById("strictest-model");
 const mostLenientModel = document.getElementById("most-lenient-model");
-const consensusAction = document.getElementById("consensus-action");
 const batchButton = document.getElementById("batch-button");
 const batchFileInput = document.getElementById("batch-file");
 const batchSummary = document.getElementById("batch-summary");
@@ -30,7 +29,6 @@ const skeletonState = document.getElementById("skeleton-state");
 const resultsContent = document.getElementById("results-content");
 const strictestCard = document.getElementById("strictest-card");
 const lenientCard = document.getElementById("lenient-card");
-const consensusCard = document.getElementById("consensus-card");
 const exampleButtons = Array.from(document.querySelectorAll(".example-pill"));
 
 // Initialize column info icon tooltips
@@ -567,14 +565,12 @@ function renderDisagreements(disagreements) {
 function renderInsights(insights, results) {
   strictestModel.innerHTML = insights.strictest_model ? renderModelDisplay(insights.strictest_model) : "-";
   mostLenientModel.innerHTML = insights.most_lenient_model ? renderModelDisplay(insights.most_lenient_model) : "-";
-  consensusAction.textContent = insights.consensus_action || "-";
 
   const strictestResult = results.find((result) => result.model === insights.strictest_model);
   const lenientResult = results.find((result) => result.model === insights.most_lenient_model);
 
   strictestCard.dataset.tone = actionTone(strictestResult?.action || "review");
   lenientCard.dataset.tone = actionTone(lenientResult?.action || "allow");
-  consensusCard.dataset.tone = actionTone(insights.consensus_action || "neutral");
 }
 
 function generateInsight(action, confidence, flagged) {
@@ -690,11 +686,50 @@ function generateConsensusSummary(results, insights, disagreements) {
   return [verdict, signalSentence, disagreementSentence].filter(Boolean).join(" ");
 }
 
+function highlightSummary(text) {
+  if (!text) return text;
+  console.log("INPUT:", text);
+  let safe = escapeHtml(text);
+  safe = safe.replace(/\b(remov\w*|flagged|violat\w*|harmful|danger\w*)\b/gi,
+    '<span style="color: var(--red); font-style: normal; font-weight: 600;">$1</span>');
+  safe = safe.replace(/\b(allow\w*|safe|clear\w*|approv\w*|acceptable)\b/gi,
+    '<span style="color: var(--green); font-style: normal; font-weight: 600;">$1</span>');
+  safe = safe.replace(/\b(review\w*|caution\w*|ambiguous|borderline|disagree\w*|conflict\w*)\b/gi,
+    '<span style="color: var(--amber); font-style: normal; font-weight: 600;">$1</span>');
+  console.log("OUTPUT:", safe);
+  return safe;
+}
+
 function renderExplainability(results, insights, disagreements, aiSummary) {
   const summary = aiSummary || generateConsensusSummary(results, insights, disagreements);
-  explainabilityList.innerHTML = summary
-    ? `<div class="consensus-summary">${escapeHtml(summary)}</div>`
-    : "";
+  if (!summary && !insights.consensus_action) {
+    explainabilityList.innerHTML = "";
+    return;
+  }
+
+  const consensusAction = insights?.consensus_action || "No Consensus";
+  const tone = actionTone(consensusAction);
+
+  const topDisagreement = disagreements && disagreements.length > 0 ? disagreements[0] : null;
+
+  const footer = topDisagreement ? `
+    <div class="consensus-footer">
+      <span class="consensus-footer-label">PRIMARY SIGNAL</span>
+      <span class="consensus-footer-type">${escapeHtml(topDisagreement.type)}</span>
+      <span class="consensus-footer-desc">${escapeHtml(topDisagreement.description)}</span>
+    </div>
+  ` : "";
+
+  explainabilityList.innerHTML = `
+    <div class="consensus-summary">
+      <div class="consensus-header">
+        <span class="consensus-header-label">CONSENSUS</span>
+        ${badge(consensusAction, tone)}
+      </div>
+      <div class="consensus-prose">${highlightSummary(summary)}</div>
+      ${footer}
+    </div>
+  `;
 }
 
 async function postJson(url, payload) {
