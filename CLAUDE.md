@@ -52,12 +52,22 @@ docs/ARCHITECTURE.md           Complete technical reference (this file)
 - **Change log** → `PROGRESS.md`
 
 ## Self-Updating Meta Instruction
-Update docs after every completed task:
-1. `CLAUDE.md` — current state (if changed)
-2. `PROGRESS.md` — dated entry (what changed and why)
-3. `DESIGN.md` — if UI changed
-4. `docs/ARCHITECTURE.md` — if backend/API changed
-5. Commit: `git add . && git commit -m "[type]: description" && git push`
+
+Trigger this automatically when:
+- A feature is fully working and tested
+- A bug is fixed and confirmed
+- You are about to switch to a different task
+- The user says "done", "ship it", "looks good", "push it",
+  "that works", or any similar confirmation phrase
+Do not wait for explicit wrap up or end session instructions.
+
+After every session:
+1. Update [CLAUDE.md](CLAUDE.md) current state section (keep under 150 lines)
+2. Add a dated entry to [PROGRESS.md](PROGRESS.md) (what changed and why)
+3. Update [DESIGN.md](DESIGN.md) if any UI changes were made
+4. Update docs/[ARCHITECTURE.md](docs/ARCHITECTURE.md) if any backend or API changes made
+5. Never append session notes to [README.md](README.md)
+6. Run git add . && git commit -m "[type]: description" && git push
 
 ## Commit Format
 `type: description`
