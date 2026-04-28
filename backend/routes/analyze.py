@@ -86,8 +86,10 @@ Model results:
             max_tokens=150,
             temperature=0.3,
         )
+        print(f"AI Summary generated: {response.choices[0].message.content[:100]}")
         return response.choices[0].message.content.strip()
-    except Exception:
+    except Exception as e:
+        print(f"AI Summary failed: {e}")
         return ""
 
 

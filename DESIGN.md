@@ -1,8 +1,6 @@
 # ModEval — Design System Documentation
 
-**Version:** Current (April 2026)
 **Theme:** Atmospheric Dark — Premium enterprise UI inspired by Vercel, Stripe, and OpenAI
-**Maintained by:** Nipun Aggarwal
 
 ---
 
