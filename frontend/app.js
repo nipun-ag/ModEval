@@ -10,12 +10,6 @@ const mostLenientModel = document.getElementById("most-lenient-model");
 const batchButton = document.getElementById("batch-button");
 const batchFileInput = document.getElementById("batch-file");
 const batchSummary = document.getElementById("batch-summary");
-const analysisTab = document.getElementById("analysis-tab");
-const methodologyTab = document.getElementById("methodology-tab");
-const modelsTab = document.getElementById("models-tab");
-const analysisView = document.getElementById("analysis-view");
-const methodologyView = document.getElementById("methodology-view");
-const modelsView = document.getElementById("models-view");
 const contextToggle = document.getElementById("context-toggle");
 const contextContent = document.getElementById("context-content");
 const analyzeButton = document.getElementById("analyze-button");
@@ -378,40 +372,9 @@ function initializeModalSelects() {
   });
 }
 
-function switchTab(nextTab) {
-  if (activeTab === nextTab) {
-    return;
-  }
-
-  const views = { analysis: analysisView, methodology: methodologyView, models: modelsView };
-  const buttons = { analysis: analysisTab, methodology: methodologyTab, models: modelsTab };
-
-  const currentView = views[activeTab];
-  const nextView = views[nextTab];
-  const currentButton = buttons[activeTab];
-  const nextButton = buttons[nextTab];
-
-  currentView.classList.add("fading");
-  window.setTimeout(() => {
-    currentView.classList.add("hidden");
-    currentView.classList.remove("fading", "active");
-    if (nextView) {
-      nextView.classList.remove("hidden");
-      nextView.classList.add("fading");
-      void nextView.offsetWidth;
-      nextView.classList.add("active");
-      nextView.classList.remove("fading");
-      nextView.scrollTop = 0;
-    }
-  }, 150);
-
-  currentButton.classList.remove("active");
-  currentButton.setAttribute("aria-selected", "false");
-  if (nextButton) {
-    nextButton.classList.add("active");
-    nextButton.setAttribute("aria-selected", "true");
-  }
-  activeTab = nextTab;
+function switchTab(tab) {
+  // Legacy function - tabs now handled by topbar nav
+  // Kept for backwards compatibility only
 }
 
 function updateCounter() {
@@ -909,9 +872,6 @@ form.addEventListener("submit", async (event) => {
 });
 
 if (batchButton) batchButton.addEventListener("click", () => batchFileInput.click());
-analysisTab.addEventListener("click", () => switchTab("analysis"));
-methodologyTab.addEventListener("click", () => switchTab("methodology"));
-modelsTab.addEventListener("click", () => switchTab("models"));
 if (breakdownTrigger) {
   breakdownTrigger.addEventListener("click", () => {
     setBreakdownExpanded(!breakdownAccordion.classList.contains("open"));
