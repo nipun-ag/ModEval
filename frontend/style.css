@@ -2306,21 +2306,6 @@ tbody td {
   color: var(--muted);
   text-align: center;
 }
-.verdict-ai-snippet {
-  align-items: flex-start;
-}
-.ai-snippet-body {
-  border-left: 2px solid var(--accent);
-  padding-left: 16px;
-}
-.ai-snippet-body p {
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  font-style: italic;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  margin: 0;
-}
 
 /* === DONUT CHART === */
 .donut-wrapper {
@@ -2438,5 +2423,3 @@ tbody td {
   border-radius: 50%;
   display: inline-block;
 }
-
-/* (scatter plot CSS removed) */
