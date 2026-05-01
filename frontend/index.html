@@ -230,10 +230,6 @@
               <button class="lower-tab" id="lower-tab-breakdown" data-target="lower-panel-breakdown">Model Breakdown</button>
               <button class="lower-tab" id="lower-tab-insights" data-target="lower-panel-insights">Insights</button>
             </div>
-              <button class="lower-tab active" id="lower-tab-summary" data-target="lower-panel-summary">Summary</button>
-              <button class="lower-tab" id="lower-tab-breakdown" data-target="lower-panel-breakdown">Model Breakdown</button>
-              <button class="lower-tab" id="lower-tab-insights" data-target="lower-panel-insights">Insights</button>
-            </div>
             <div id="results-content" class="results-content hidden">
               <div class="lower-panel" id="lower-panel-summary">
               <section class="consensus-hero" id="consensus-hero">
@@ -420,7 +416,7 @@
         </div>
       </div>
     </div>
-    <div id="how-it-works-panel" style="display:none; padding:48px; width:100%;">
+    <div id="how-it-works-panel" style="display:none; padding:48px; width:100%; min-height:100vh; background:var(--bg); overflow-y:auto;">
       <section class="methodology-hero">
         <p class="section-label">System Methodology</p>
         <h2>How It Works</h2>
@@ -737,7 +733,7 @@
         </div>
       </section>
     </div>
-    <div id="models-panel" style="display:none; padding:48px; width:100%;">
+    <div id="models-panel" style="display:none; padding:48px; width:100%; min-height:100vh; background:var(--bg); overflow-y:auto;">
       <section class="methodology-hero">
         <p class="section-label">Inference Pipeline</p>
         <h2>Models</h2>
