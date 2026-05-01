@@ -889,12 +889,6 @@ form.addEventListener("submit", async (event) => {
       gaugeFill.style.stroke = gaugeColor;
     }
 
-    // --- AI Snippet ---
-    const aiSnippet = document.getElementById('ai-snippet-text');
-    if (aiSnippet && data.ai_summary) {
-      const firstSentence = data.ai_summary.split('.')[0] + '.';
-      aiSnippet.textContent = firstSentence;
-    }
 
     // (scatter plot removed)
 

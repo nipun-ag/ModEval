@@ -2284,12 +2284,13 @@ tbody td {
 /* === VERDICT VISUALS ROW === */
 .verdict-visuals-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr 1fr;
   gap: 32px;
   align-items: end;
   padding-top: 32px;
   border-top: 1px solid var(--border);
   margin-top: 8px;
+  justify-items: center;
 }
 .verdict-visual-item {
   display: flex;
@@ -2418,6 +2419,8 @@ tbody td {
   gap: 20px;
   padding-top: 16px;
   justify-content: center;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
 }
 .verdict-legend-item {
   display: flex;
