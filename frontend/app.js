@@ -873,6 +873,19 @@ form.addEventListener("submit", async (event) => {
       if (st) st.classList.add('active');
       if (sp) sp.classList.remove('hidden');
     }
+
+    const lowerTabs = document.getElementById('results-lower-tabs');
+    if (lowerTabs) {
+      lowerTabs.classList.remove('hidden');
+      document.querySelectorAll('.lower-tab')
+        .forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.lower-panel')
+        .forEach(p => p.classList.add('hidden'));
+      const st = document.getElementById('lower-tab-summary');
+      const sp = document.getElementById('lower-panel-summary');
+      if (st) st.classList.add('active');
+      if (sp) sp.classList.remove('hidden');
+    }
   } catch (error) {
     renderResults([]);
     renderInsights({}, []);
