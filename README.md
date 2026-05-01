@@ -151,9 +151,13 @@ alignment_score = 1 - abs(model_confidence - policy_expected_threshold)
 
 - **Premium dark theme** — enterprise-grade UI inspired by Vercel, Stripe, and OpenAI
 - **Four tabs** — Analysis, How It Works, Models, (Did You Know planned)
+- **Topbar navigation** — ANALYSIS (active) and BENCHMARK (locked) tabs for switching between analysis workspace and benchmark preview
 - **Modal overlay selectors** — all three context dropdowns open as centered modals with blurred backdrop, animating from the trigger button position
 - **Try an Example** — 100 pre-loaded test cases across 10 violation categories
 - **Analysis Context** — Platform Context, Content Type, and Strictness with descriptive option labels
+- **Consensus Hero Card** — leads results with large action word (ALLOW/REVIEW/REMOVE), AI summary subtitle, and verdict visuals
+- **Verdict Visuals Row** — donut chart showing model vote distribution, severity arc gauge (1-10), and action legend
+- **Model Breakdown Accordion** — collapsed-by-default accordion wrapping the decision matrix table for cleaner information hierarchy
 - **Decision Matrix** — comparison table with model chip badges, color-coded action badges, alignment scores
 - **Insight Strip** — strictest model, most lenient model, consensus recommendation with plain-English explainers
 - **Disagreement Banner** — high-contrast alert when models conflict
@@ -162,6 +166,8 @@ alignment_score = 1 - abs(model_confidence - policy_expected_threshold)
 - **Skeleton shimmer loading** — premium loading state while models run
 - **Model Cards** — detailed cards for all 5 models with architecture, training data, strengths, limitations, and HuggingFace links
 - **5 Models Active** indicator in navigation
+- **Benchmark Placeholder Panel** — preview of upcoming benchmark features with skeleton leaderboard and feature preview cards
+- **Ambient glow blobs** — subtle blue and purple glow layers behind results panel for visual depth
 
 ---
 
