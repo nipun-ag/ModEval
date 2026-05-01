@@ -233,6 +233,55 @@
                 <span class="consensus-hero-eyebrow">AGGREGATED CONSENSUS</span>
                 <div class="consensus-hero-action" id="hero-action">REVIEW</div>
                 <p class="consensus-hero-subtitle" id="hero-subtitle"></p>
+                <div class="verdict-visuals-row">
+
+  <div class="verdict-visual-item">
+    <div class="donut-wrapper">
+      <svg class="donut-svg" viewBox="0 0 120 120"
+           xmlns="http://www.w3.org/2000/svg">
+        <circle class="donut-track" cx="60" cy="60" r="50"/>
+        <circle class="donut-seg donut-seg-remove"
+                cx="60" cy="60" r="50" id="donut-remove"/>
+        <circle class="donut-seg donut-seg-review"
+                cx="60" cy="60" r="50" id="donut-review"/>
+        <circle class="donut-seg donut-seg-allow"
+                cx="60" cy="60" r="50" id="donut-allow"/>
+      </svg>
+      <div class="donut-center-label">
+        <span class="donut-fraction" id="donut-fraction">
+          0/5
+        </span>
+        <span class="donut-action-label"
+              id="donut-action-label">--</span>
+      </div>
+    </div>
+    <span class="verdict-visual-label">MODEL VOTES</span>
+  </div>
+
+  <div class="verdict-visual-item">
+    <div class="gauge-container">
+      <svg class="gauge-svg" viewBox="0 0 140 80"
+           xmlns="http://www.w3.org/2000/svg">
+        <path class="gauge-track"
+              d="M 10 70 A 60 60 0 0 1 130 70"/>
+        <path class="gauge-fill" id="gauge-fill-path"
+              d="M 10 70 A 60 60 0 0 1 130 70"/>
+      </svg>
+      <div class="gauge-number-wrap">
+        <span class="gauge-number" id="gauge-number">0</span>
+      </div>
+    </div>
+    <span class="verdict-visual-label">SEVERITY</span>
+  </div>
+
+  <div class="verdict-visual-item verdict-ai-snippet">
+    <span class="verdict-visual-label">AI INSIGHT</span>
+    <div class="ai-snippet-body">
+      <p id="ai-snippet-text">--</p>
+    </div>
+  </div>
+
+</div>
               </section>
 
               <div id="breakdown-accordion" class="breakdown-accordion">
@@ -244,6 +293,7 @@
                   <span class="breakdown-chevron" aria-hidden="true">▾</span>
                 </div>
                 <div id="breakdown-body" class="breakdown-body">
+                  <div class="confidence-bars" id="confidence-bars"></div>
                   <section class="matrix-section">
                     <div class="section-heading">
                       <p class="section-label mono-label">Decision Matrix</p>
