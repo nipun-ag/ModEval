@@ -2410,6 +2410,30 @@ tbody td {
   line-height: 1;
 }
 
+/* === VERDICT ACTION LEGEND === */
+.verdict-action-legend {
+  display: flex;
+  gap: 20px;
+  padding-top: 16px;
+  justify-content: center;
+}
+.verdict-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.verdict-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
 /* === SCATTER PLOT === */
 .scatter-svg {
   width: 100%;

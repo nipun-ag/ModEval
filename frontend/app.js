@@ -997,21 +997,7 @@ form.addEventListener("submit", async (event) => {
 
       svg += '</svg>';
 
-      // Legend
-      const legend = `
-        <div class="scatter-legend">
-          <span class="scatter-legend-item" style="color:#10b981">
-            ● ALLOW — safe content
-          </span>
-          <span class="scatter-legend-item" style="color:#f59e0b">
-            ● REVIEW — needs checking
-          </span>
-          <span class="scatter-legend-item" style="color:#ef4444">
-            ● REMOVE — violation
-          </span>
-        </div>`;
-
-      scatterContainer.innerHTML = svg + legend;
+      scatterContainer.innerHTML = svg;
     }
 
     setBreakdownExpanded(false);
