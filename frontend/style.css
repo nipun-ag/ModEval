@@ -2410,70 +2410,22 @@ tbody td {
   line-height: 1;
 }
 
-/* === CATEGORY HEATMAP === */
-.category-heatmap {
-  padding: 16px 0 24px 0;
+/* === SCATTER PLOT === */
+.scatter-svg {
+  width: 100%;
+  height: auto;
+  display: block;
 }
-.heatmap-grid {
-  display: grid;
-  gap: 4px;
-  margin-bottom: 16px;
-  overflow-x: auto;
-}
-.heatmap-corner {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  text-transform: uppercase;
-  color: var(--muted);
+.scatter-legend {
   display: flex;
-  align-items: flex-end;
-  padding-bottom: 4px;
+  gap: 24px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
 }
-.heatmap-col-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  text-transform: uppercase;
-  color: var(--muted);
-  text-align: center;
-  padding: 4px 2px;
-  line-height: 1.3;
-  word-break: break-word;
-}
-.heatmap-row-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  text-transform: uppercase;
-  color: var(--muted);
-  display: flex;
-  align-items: center;
-  padding-right: 8px;
-  line-height: 1.3;
-}
-.heatmap-cell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 32px;
-  border-radius: 3px;
+.scatter-legend-item {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
-  font-weight: 500;
-}
-.heatmap-legend-low {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  color: var(--muted);
   text-transform: uppercase;
-}
-.heatmap-legend-mid {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  color: var(--amber);
-  text-transform: uppercase;
-}
-.heatmap-legend-high {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  color: var(--red);
-  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }

@@ -896,65 +896,120 @@ form.addEventListener("submit", async (event) => {
       aiSnippet.textContent = firstSentence;
     }
 
-    // --- Category Heatmap ---
-    const heatmapContainer = document.getElementById('confidence-bars');
-    if (heatmapContainer && data.results.length > 0) {
-      heatmapContainer.innerHTML = '';
+    // --- Model Scatter Plot ---
+    const scatterContainer = document.getElementById('confidence-bars');
+    if (scatterContainer && data.results.length > 0) {
+      scatterContainer.innerHTML = '';
 
-      // Collect all unique categories across models
-      const allCategories = [];
-      data.results.forEach(r => {
-        if (r.raw_scores) {
-          Object.keys(r.raw_scores).forEach(cat => {
-            if (!allCategories.includes(cat)) allCategories.push(cat);
-          });
-        }
+      const W = 500, H = 260;
+      const pad = { top: 20, right: 20, bottom: 40, left: 44 };
+      const plotW = W - pad.left - pad.right;
+      const plotH = H - pad.top - pad.bottom;
+
+      const actionColor = a => {
+        const action = (a || '').toLowerCase();
+        if (action === 'remove') return '#ef4444';
+        if (action === 'review') return '#f59e0b';
+        return '#10b981';
+      };
+
+      let svg = `<svg class="scatter-svg" viewBox="0 0 ${W} ${H}" 
+        xmlns="http://www.w3.org/2000/svg">`;
+
+      // Background
+      svg += `<rect width="${W}" height="${H}" fill="transparent"/>`;
+
+      // Quadrant dividers (confidence 0.5, severity 5)
+      const qx = pad.left + plotW * 0.5;
+      const qy = pad.top + plotH * 0.5;
+      svg += `<line x1="${qx}" y1="${pad.top}" x2="${qx}" 
+        y2="${pad.top + plotH}" 
+        stroke="rgba(150,200,255,0.08)" stroke-width="1" 
+        stroke-dasharray="4 4"/>`;
+      svg += `<line x1="${pad.left}" y1="${qy}" 
+        x2="${pad.left + plotW}" y2="${qy}" 
+        stroke="rgba(150,200,255,0.08)" stroke-width="1" 
+        stroke-dasharray="4 4"/>`;
+
+      // Quadrant labels
+      const qlStyle = 'font-family="JetBrains Mono" font-size="9" fill="#64748b"';
+      svg += `<text ${qlStyle} x="${pad.left + 6}" y="${pad.top + 14}">HIGH RISK</text>`;
+      svg += `<text ${qlStyle} x="${qx + 6}" y="${pad.top + 14}">CERTAIN RISK</text>`;
+      svg += `<text ${qlStyle} x="${pad.left + 6}" y="${qy + plotH/2 - 4}">UNCERTAIN</text>`;
+      svg += `<text ${qlStyle} x="${qx + 6}" y="${qy + plotH/2 - 4}">LOW RISK</text>`;
+
+      // X axis ticks
+      [0, 0.25, 0.5, 0.75, 1.0].forEach(v => {
+        const x = pad.left + v * plotW;
+        svg += `<line x1="${x}" y1="${pad.top + plotH}" 
+          x2="${x}" y2="${pad.top + plotH + 4}" 
+          stroke="rgba(150,200,255,0.15)" stroke-width="1"/>`;
+        svg += `<text font-family="JetBrains Mono" font-size="9" 
+          fill="#64748b" x="${x}" y="${pad.top + plotH + 16}" 
+          text-anchor="middle">${v.toFixed(2)}</text>`;
       });
 
-      if (allCategories.length === 0) {
-        heatmapContainer.style.display = 'none';
-        return;
-      }
-
-      let html = '<div class="category-heatmap">';
-      
-      // Column headers (categories)
-      html += '<div class="heatmap-grid" style="grid-template-columns: 140px repeat(' + allCategories.length + ', 1fr)">';
-      html += '<div class="heatmap-corner">MODEL / CATEGORY</div>';
-      allCategories.forEach(cat => {
-        html += '<div class="heatmap-col-label">' + cat.replace(/_/g, ' ') + '</div>';
+      // Y axis ticks
+      [1, 3, 5, 7, 10].forEach(v => {
+        const y = pad.top + plotH - ((v - 1) / 9) * plotH;
+        svg += `<line x1="${pad.left - 4}" y1="${y}" 
+          x2="${pad.left}" y2="${y}" 
+          stroke="rgba(150,200,255,0.15)" stroke-width="1"/>`;
+        svg += `<text font-family="JetBrains Mono" font-size="9" 
+          fill="#64748b" x="${pad.left - 8}" y="${y + 3}" 
+          text-anchor="end">${v}</text>`;
       });
 
-      // Rows (models)
-      data.results.forEach(r => {
-        const abbr = r.model.replace('HuggingFace ', '').split(' ').slice(0,2).join(' ');
-        html += '<div class="heatmap-row-label">' + abbr + '</div>';
-        allCategories.forEach(cat => {
-          const score = r.raw_scores && r.raw_scores[cat] != null 
-            ? r.raw_scores[cat] : 0;
-          const intensity = Math.round(score * 10) / 10;
-          const bgColor = score > 0.7 
-            ? 'rgba(239,68,68,' + (0.2 + score * 0.6) + ')'
-            : score > 0.4 
-            ? 'rgba(245,158,11,' + (0.2 + score * 0.5) + ')'
-            : 'rgba(255,255,255,0.03)';
-          const textColor = score > 0.4 ? '#fdfcff' : '#64748b';
-          html += '<div class="heatmap-cell" style="background:' + bgColor + ';color:' + textColor + '">' 
-            + (score > 0.01 ? intensity.toFixed(1) : '—') + '</div>';
-        });
+      // Axis labels
+      svg += `<text font-family="JetBrains Mono" font-size="9" 
+        fill="#64748b" x="${pad.left + plotW / 2}" 
+        y="${H - 4}" text-anchor="middle">CONFIDENCE</text>`;
+      svg += `<text font-family="JetBrains Mono" font-size="9" 
+        fill="#64748b" 
+        transform="rotate(-90, 11, ${pad.top + plotH / 2})" 
+        x="11" y="${pad.top + plotH / 2}" 
+        text-anchor="middle">SEVERITY</text>`;
+
+      // Plot each model as a dot
+      data.results.forEach((r, i) => {
+        const cx = pad.left + (r.confidence || 0) * plotW;
+        const cy = pad.top + plotH - (((r.severity || 1) - 1) / 9) * plotH;
+        const color = actionColor(r.action);
+        const label = r.model.replace('HuggingFace ', '')
+          .split(' ').slice(0, 2).join(' ');
+
+        // Glow circle
+        svg += `<circle cx="${cx}" cy="${cy}" r="14" 
+          fill="${color}" opacity="0.1"/>`;
+        // Main dot
+        svg += `<circle cx="${cx}" cy="${cy}" r="7" 
+          fill="${color}" opacity="0.9"
+          stroke="rgba(255,255,255,0.2)" stroke-width="1"/>`;
+        // Label
+        const labelX = cx > pad.left + plotW - 60 ? cx - 8 : cx + 12;
+        const anchor = cx > pad.left + plotW - 60 ? 'end' : 'start';
+        svg += `<text font-family="JetBrains Mono" font-size="9" 
+          fill="#94a3b8" x="${labelX}" y="${cy - 10}" 
+          text-anchor="${anchor}">${label}</text>`;
       });
 
-      html += '</div>';
+      svg += '</svg>';
 
       // Legend
-      html += '<div class="matrix-legend">';
-      html += '<span class="heatmap-legend-low">Low</span>';
-      html += '<span class="heatmap-legend-mid">Medium</span>';
-      html += '<span class="heatmap-legend-high">High</span>';
-      html += '</div>';
+      const legend = `
+        <div class="scatter-legend">
+          <span class="scatter-legend-item" style="color:#10b981">
+            ● ALLOW
+          </span>
+          <span class="scatter-legend-item" style="color:#f59e0b">
+            ● REVIEW
+          </span>
+          <span class="scatter-legend-item" style="color:#ef4444">
+            ● REMOVE
+          </span>
+        </div>`;
 
-      html += '</div>';
-      heatmapContainer.innerHTML = html;
+      scatterContainer.innerHTML = svg + legend;
     }
 
     setBreakdownExpanded(false);
