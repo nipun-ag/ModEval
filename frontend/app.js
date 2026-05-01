@@ -896,51 +896,65 @@ form.addEventListener("submit", async (event) => {
       aiSnippet.textContent = firstSentence;
     }
 
-    // --- Model Agreement Matrix ---
-    const matrixContainer = document.getElementById('confidence-bars');
-    if (matrixContainer && data.results.length > 0) {
-      matrixContainer.innerHTML = '';
-      
-      const models = data.results;
-      const n = models.length;
-      
-      // Build matrix HTML
-      let html = '<div class="agreement-matrix">';
-      
-      // Header row with model name abbreviations
-      html += '<div class="matrix-grid" style="grid-template-columns: 120px repeat(' + n + ', 1fr)">';
-      html += '<div class="matrix-corner"></div>';
-      models.forEach(m => {
-        const abbr = m.model.split(' ').map(w => w[0]).join('').substring(0, 3).toUpperCase();
-        html += '<div class="matrix-col-label">' + abbr + '</div>';
+    // --- Category Heatmap ---
+    const heatmapContainer = document.getElementById('confidence-bars');
+    if (heatmapContainer && data.results.length > 0) {
+      heatmapContainer.innerHTML = '';
+
+      // Collect all unique categories across models
+      const allCategories = [];
+      data.results.forEach(r => {
+        if (r.raw_scores) {
+          Object.keys(r.raw_scores).forEach(cat => {
+            if (!allCategories.includes(cat)) allCategories.push(cat);
+          });
+        }
       });
+
+      if (allCategories.length === 0) {
+        heatmapContainer.style.display = 'none';
+        return;
+      }
+
+      let html = '<div class="category-heatmap">';
       
-      // Data rows
-      models.forEach((rowModel, i) => {
-        const abbr = rowModel.model.split(' ').map(w => w[0]).join('').substring(0, 3).toUpperCase();
-        html += '<div class="matrix-row-label">' + abbr + '</div>';
-        models.forEach((colModel, j) => {
-          if (i === j) {
-            html += '<div class="matrix-cell matrix-cell-self">—</div>';
-          } else {
-            const agree = rowModel.action.toLowerCase() === colModel.action.toLowerCase();
-            const cellClass = agree ? 'matrix-cell-agree' : 'matrix-cell-disagree';
-            const icon = agree ? '✓' : '✗';
-            html += '<div class="matrix-cell ' + cellClass + '">' + icon + '</div>';
-          }
+      // Column headers (categories)
+      html += '<div class="heatmap-grid" style="grid-template-columns: 140px repeat(' + allCategories.length + ', 1fr)">';
+      html += '<div class="heatmap-corner">MODEL / CATEGORY</div>';
+      allCategories.forEach(cat => {
+        html += '<div class="heatmap-col-label">' + cat.replace(/_/g, ' ') + '</div>';
+      });
+
+      // Rows (models)
+      data.results.forEach(r => {
+        const abbr = r.model.replace('HuggingFace ', '').split(' ').slice(0,2).join(' ');
+        html += '<div class="heatmap-row-label">' + abbr + '</div>';
+        allCategories.forEach(cat => {
+          const score = r.raw_scores && r.raw_scores[cat] != null 
+            ? r.raw_scores[cat] : 0;
+          const intensity = Math.round(score * 10) / 10;
+          const bgColor = score > 0.7 
+            ? 'rgba(239,68,68,' + (0.2 + score * 0.6) + ')'
+            : score > 0.4 
+            ? 'rgba(245,158,11,' + (0.2 + score * 0.5) + ')'
+            : 'rgba(255,255,255,0.03)';
+          const textColor = score > 0.4 ? '#fdfcff' : '#64748b';
+          html += '<div class="heatmap-cell" style="background:' + bgColor + ';color:' + textColor + '">' 
+            + (score > 0.01 ? intensity.toFixed(1) : '—') + '</div>';
         });
       });
-      
+
       html += '</div>';
-      
+
       // Legend
       html += '<div class="matrix-legend">';
-      html += '<span class="matrix-legend-item agree">✓ Agree</span>';
-      html += '<span class="matrix-legend-item disagree">✗ Disagree</span>';
+      html += '<span class="heatmap-legend-low">Low</span>';
+      html += '<span class="heatmap-legend-mid">Medium</span>';
+      html += '<span class="heatmap-legend-high">High</span>';
       html += '</div>';
-      
+
       html += '</div>';
-      matrixContainer.innerHTML = html;
+      heatmapContainer.innerHTML = html;
     }
 
     setBreakdownExpanded(false);

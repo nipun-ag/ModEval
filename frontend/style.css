@@ -2410,70 +2410,70 @@ tbody td {
   line-height: 1;
 }
 
-/* === MODEL AGREEMENT MATRIX === */
-.agreement-matrix {
+/* === CATEGORY HEATMAP === */
+.category-heatmap {
   padding: 16px 0 24px 0;
 }
-.matrix-grid {
+.heatmap-grid {
   display: grid;
-  gap: 6px;
+  gap: 4px;
   margin-bottom: 16px;
+  overflow-x: auto;
 }
-.matrix-corner {
-  width: 120px;
-}
-.matrix-col-label {
+.heatmap-corner {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-size: 9px;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 4px;
+}
+.heatmap-col-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
   text-transform: uppercase;
   color: var(--muted);
   text-align: center;
-  padding: 4px 0;
+  padding: 4px 2px;
+  line-height: 1.3;
+  word-break: break-word;
 }
-.matrix-row-label {
+.heatmap-row-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-size: 9px;
   text-transform: uppercase;
   color: var(--muted);
   display: flex;
   align-items: center;
-  width: 120px;
+  padding-right: 8px;
+  line-height: 1.3;
 }
-.matrix-cell {
+.heatmap-cell {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 36px;
-  border-radius: 4px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  font-weight: 600;
-  transition: opacity 150ms ease;
-}
-.matrix-cell-self {
-  background: rgba(255,255,255,0.03);
-  color: var(--muted);
-  font-size: 16px;
-}
-.matrix-cell-agree {
-  background: var(--green-light);
-  color: var(--green);
-}
-.matrix-cell-disagree {
-  background: var(--red-light);
-  color: var(--red);
-}
-.matrix-legend {
-  display: flex;
-  gap: 24px;
-  padding-top: 8px;
-  border-top: 1px solid var(--border);
-}
-.matrix-legend-item {
+  height: 32px;
+  border-radius: 3px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: 500;
 }
-.matrix-legend-item.agree { color: var(--green); }
-.matrix-legend-item.disagree { color: var(--red); }
+.heatmap-legend-low {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.heatmap-legend-mid {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--amber);
+  text-transform: uppercase;
+}
+.heatmap-legend-high {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--red);
+  text-transform: uppercase;
+}
