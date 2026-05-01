@@ -6,6 +6,29 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ## 2026-05-02
 
+**feat: integrate 4 enterprise APIs with 9-model parallel pipeline and graceful degradation**
+
+Changes shipped:
+- Add 4 enterprise API wrappers: Perspective API (Google), Azure Content Safety (Microsoft), AWS Comprehend (Amazon), Google NLP (Google)
+- Expand analysis pipeline from 5 to 9 models running in parallel with per-model failure isolation
+- Implement graceful degradation: models without configured credentials show "Not Configured" instead of errors
+- Filter disabled models from consensus calculation, disagreement detection, and insight generation
+- Update normalizer to handle disabled models with dedicated schema (disabled: True, action: "Disabled")
+- Support dynamic model counts instead of hardcoding "5 models" — donut chart and status pill now reflect actual active count
+- Restructure decision matrix into two tiers: Enterprise APIs (5 models) and Open Source Models (4 HuggingFace + OpenAI)
+- Render tier headers with uppercase labels, disabled models shown at 0.4 opacity
+- Add 4 new enterprise model detail cards to Models tab with strengths/limitations
+- Create .env.example documenting all enterprise API credential requirements
+- Add boto3 to requirements.txt for AWS Comprehend integration
+
+**Rationale:** Enterprise moderation APIs enable larger organizations to plug in their preferred vendors while maintaining ModEval's comparative analysis. Graceful degradation ensures analysis continues even when credentials are missing, making the tool usable in any deployment scenario. Tier separation makes clear which models are cloud APIs vs. open source, guiding selection decisions.
+
+**Testing approach:** Analysis runs end-to-end with zero enterprise credentials configured. All 5 HuggingFace models run normally, 4 enterprise show as "Not Configured". Consensus and insights generated only from active models. Donut chart reflects accurate active count.
+
+---
+
+## 2026-05-02
+
 **style: navigation overhaul and lower tab system**
 
 Changes shipped:

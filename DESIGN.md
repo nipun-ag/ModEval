@@ -241,10 +241,19 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Value: DM Serif Display or Inter 600 depending on content
 
 ### Decision Matrix Table
+- Rendered in two tiers: Enterprise APIs and Open Source Models
+- Tier headers span full width with:
+  - Background: `--surface3`
+  - Text: 10px uppercase `--muted` JetBrains Mono
+  - Borders: 1px `--border` top and bottom
 - No vertical borders anywhere
 - Horizontal dividers only: 1px `--border` between rows
 - Column headers: 11px uppercase `--muted` JetBrains Mono, `--border-strong` bottom border
 - Row fade-in: staggered 50ms delay per row (fade-up keyframe)
+- Disabled models (missing credentials):
+  - Full-width "Not Configured" cell instead of action/confidence/alignment
+  - Row opacity: 0.4
+  - Text: var(--muted) color
 
 ### Disagreement Banner (.disagreement-banner)
 - Background: `--white`

@@ -156,7 +156,18 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
 3. Update modifier tables after changes
 
 ## Current Project State
-- 5 models live and running (OpenAI + 4 HuggingFace)
+- 9 models live and running in parallel:
+  - 4 Enterprise APIs: Perspective API, Azure Content Safety, AWS Comprehend, Google NLP
+  - 4 HuggingFace models: toxic-bert, RoBERTa offensive, hate-speech, bias-detector
+  - 1 Proprietary: OpenAI Moderation
+- Graceful degradation with disabled model handling:
+  - Models without configured credentials show "Not Configured" instead of errors
+  - Consensus, disagreements, and insights calculated only from active models
+  - Dynamic model count in topbar reflects configured credentials
+- Decision matrix rendered in two tiers:
+  - Enterprise APIs tier with 5 vendor models
+  - Open Source Models tier with 4 HuggingFace + OpenAI
+  - Disabled models show gray rows at 0.4 opacity
 - Context Engine with platform, content type, strictness modifiers
 - Policy alignment scoring for Reddit, Discord, Facebook, Instagram
 - Disagreement detection and banner
@@ -169,7 +180,7 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
   - Consensus hero card leads results with large action word, AI summary subtitle, donut chart, severity gauge, and action legend
   - Results panel has three lower tabs: Summary, Model Breakdown, Insights — hidden until analysis runs
   - Summary tab: consensus hero + donut + gauge + legend
-  - Model Breakdown tab: decision matrix table (no accordion)
+  - Model Breakdown tab: decision matrix with tier rendering (no accordion)
   - Insights tab: strictest/most lenient cards + AI summary
   - Benchmark placeholder panel with coming soon state and 3 feature preview cards
   - Ambient glow blobs on results panel background

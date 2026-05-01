@@ -147,9 +147,62 @@ modeval/
 
 ## Model Details
 
-All models run through the HuggingFace Inference API or OpenAI API (depending on the model). Each covers a distinct safety dimension.
+**9 models total, running in parallel:**
+- 4 Enterprise APIs (optional, credentials required)
+- 4 HuggingFace open-source models (always available)
+- 1 OpenAI proprietary model (requires API key)
 
-### 1. OpenAI Moderation
+Models without configured credentials are gracefully disabled and filtered from consensus/disagreement/insight calculations. The decision matrix renders them in two tiers for clarity.
+
+### Enterprise APIs (Optional, Tier 1)
+
+These are third-party cloud APIs that require credentials. If credentials are missing, the model shows "Not Configured" with no analysis failure.
+
+#### 1. Perspective API (Google)
+- **API:** Google Perspective API
+- **Architecture:** Proprietary classifier (Google/Jigsaw)
+- **Training Data:** Online comments, public datasets
+- **Safety Dimensions:** Toxicity, Severe toxicity, Identity attack, Insult, Threat, Sexual content
+- **Output Schema:** 6 independent scored attributes (0-1 confidence each)
+- **Strengths:** Production-grade, used in journalism/civic platforms, widely trusted
+- **Limitations:** English-primary, requires referrer header, quota-limited free tier
+- **Credentials:** `PERSPECTIVE_API_KEY` environment variable
+
+#### 2. Azure Content Safety (Microsoft)
+- **API:** Microsoft Azure Content Safety API
+- **Architecture:** Proprietary neural classifier
+- **Training Data:** Microsoft proprietary enterprise dataset
+- **Safety Dimensions:** Hate, Violence, Sexual, Self-Harm (severity 0-6)
+- **Output Schema:** 4 categories with severity normalized to 0-1
+- **Strengths:** Enterprise SLA, SOC2 compliant, designed for T&S pipelines
+- **Limitations:** Only 4 categories, severity normalization required, paid service
+- **Credentials:** `AZURE_CS_KEY` and `AZURE_CS_ENDPOINT` environment variables
+
+#### 3. AWS Comprehend (Amazon)
+- **API:** AWS Comprehend DetectToxicContent
+- **Architecture:** AWS managed NLP service
+- **Training Data:** Amazon proprietary dataset
+- **Safety Dimensions:** Violence, Hate, Harassment, Sexual, Insult, Profanity
+- **Output Schema:** 6 toxic content labels with confidence scores
+- **Strengths:** AWS ecosystem integration, enterprise support, pay-per-use
+- **Limitations:** Requires AWS account/IAM, slightly higher latency, boto3 dependency
+- **Credentials:** `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` environment variables
+
+#### 4. Google NLP (Google Cloud)
+- **API:** Google Cloud Natural Language API moderateText endpoint
+- **Architecture:** REST API (Google proprietary)
+- **Training Data:** Google proprietary dataset
+- **Safety Dimensions:** 8 categories including Toxic, Sexual, Weapons, Illicit Drugs
+- **Output Schema:** Multi-label moderation categories with confidence (0-1)
+- **Strengths:** Broader category coverage (8 dimensions), Google Cloud integration
+- **Limitations:** Paid service, newer moderateText endpoint less documented
+- **Credentials:** `GOOGLE_NLP_KEY` environment variable
+
+### Open Source & Proprietary Models (Tier 2)
+
+Always available, no credentials required.
+
+#### 5. OpenAI Moderation
 - **API:** OpenAI Moderation API
 - **Architecture:** Proprietary classification model (not disclosed)
 - **Training Data:** Internal OpenAI dataset
@@ -158,7 +211,7 @@ All models run through the HuggingFace Inference API or OpenAI API (depending on
 - **Strengths:** Production-grade, high accuracy, covers edge cases OpenAI has seen
 - **Limitations:** Proprietary, may not align with platform-specific policies
 
-### 2. Toxicity Classifier (HuggingFace: unitary/toxic-bert)
+#### 6. Toxicity Classifier (HuggingFace: unitary/toxic-bert)
 - **Architecture:** BERT (12-layer, 768-hidden, 12-head)
 - **Creator:** Unitary AI
 - **Training Data:** Jigsaw Toxic Comments dataset (Wikipedia talk page comments)
@@ -167,7 +220,7 @@ All models run through the HuggingFace Inference API or OpenAI API (depending on
 - **Strengths:** Widely used in production, covers 6 toxicity dimensions, general-purpose
 - **Limitations:** Trained on formal Wikipedia comments, may underperform on informal slang
 
-### 3. Offensive Language Detector (HuggingFace: cardiffnlp/twitter-roberta-base-offensive)
+#### 7. Offensive Language Detector (HuggingFace: cardiffnlp/twitter-roberta-base-offensive)
 - **Architecture:** RoBERTa-base (24-layer, 1024-hidden, 16-head)
 - **Creator:** Cardiff NLP
 - **Training Data:** Twitter / SemEval-2019 Task 6 (offensive language identification)
@@ -176,7 +229,7 @@ All models run through the HuggingFace Inference API or OpenAI API (depending on
 - **Strengths:** Twitter-specific training, excellent for slang and informal tone
 - **Limitations:** May overfit to Twitter conventions, may miss platform-specific patterns from other networks
 
-### 4. Hate Speech Detector (HuggingFace: facebook/roberta-hate-speech-dynabench-r4-target)
+#### 8. Hate Speech Detector (HuggingFace: facebook/roberta-hate-speech-dynabench-r4-target)
 - **Architecture:** RoBERTa-base
 - **Creator:** Facebook AI Research
 - **Training Data:** DynaBench R4 — adversarially collected hate speech examples
@@ -185,7 +238,7 @@ All models run through the HuggingFace Inference API or OpenAI API (depending on
 - **Strengths:** Adversarial training makes it robust to evasion, focuses on hate not general offense
 - **Limitations:** Binary hate/not-hate less granular, only 3-class output
 
-### 5. Spam Detector (HuggingFace: mrm8488/bert-tiny-finetuned-sms-spam-detection)
+#### 9. Spam Detector (HuggingFace: mrm8488/bert-tiny-finetuned-sms-spam-detection)
 - **Architecture:** BERT-tiny (2-layer, 128-hidden, 2-head) — only 4.4M parameters
 - **Creator:** Manuel Romero
 - **Training Data:** SMS Spam Collection dataset
@@ -194,7 +247,7 @@ All models run through the HuggingFace Inference API or OpenAI API (depending on
 - **Strengths:** Extremely lightweight, 98% validation accuracy, fastest model
 - **Limitations:** SMS-trained, may miss sophisticated social media spam patterns
 
-### 6. Bias Detector (HuggingFace: valurank/distilroberta-bias)
+#### 10. Bias Detector (HuggingFace: valurank/distilroberta-bias)
 - **Architecture:** DistilRoBERTa (6-layer, 768-hidden, 12-head) — 40% smaller than RoBERTa
 - **Creator:** Valurank
 - **Training Data:** Wikipedia Neutrality Comments (WNC) — real editorial decisions to remove biased language
