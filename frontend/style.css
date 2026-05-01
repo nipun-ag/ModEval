@@ -21,80 +21,6 @@
   --muted: #64748b;
   --white: #ffffff;
 }
-/* === LOWER TABS === */
-.results-lower-tabs {
-  display: flex;
-  gap: 0;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 32px;
-}
-.results-lower-tabs.hidden {
-  display: none;
-}
-.lower-tab {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  background: none;
-  border: none;
-  padding: 12px 20px;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  transition: color 150ms ease, border-color 150ms ease;
-}
-.lower-tab:hover {
-  color: var(--text-secondary);
-}
-.lower-tab.active {
-  color: var(--text);
-  border-bottom: 2px solid var(--accent);
-}
-.lower-panel {
-  display: block;
-}
-.lower-panel.hidden {
-  display: none;
-}
-/* === LOWER TABS === */
-.results-lower-tabs {
-  display: flex;
-  gap: 0;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 32px;
-}
-.results-lower-tabs.hidden {
-  display: none;
-}
-.lower-tab {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  background: none;
-  border: none;
-  padding: 12px 20px;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  transition: color 150ms ease, border-color 150ms ease;
-}
-.lower-tab:hover {
-  color: var(--text-secondary);
-}
-.lower-tab.active {
-  color: var(--text);
-  border-bottom: 2px solid var(--accent);
-}
-.lower-panel {
-  display: block;
-}
-.lower-panel.hidden {
-  display: none;
-}
 
 * {
   box-sizing: border-box;
@@ -1059,68 +985,6 @@ textarea:focus {
   color: var(--text-secondary);
   font-size: 13px;
   line-height: 1.6;
-}
-
-.breakdown-accordion {
-  margin: 24px 0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-
-.breakdown-trigger {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 0;
-  cursor: pointer;
-  transition: background 150ms ease, color 150ms ease;
-}
-
-.breakdown-trigger-left {
-  display: flex;
-  align-items: center;
-}
-
-.breakdown-trigger:hover .breakdown-title {
-  color: var(--text);
-}
-
-.breakdown-title {
-  color: var(--text);
-  font-family: "DM Serif Display", serif;
-  font-size: 20px;
-}
-
-.breakdown-count {
-  margin-left: 12px;
-  padding: 3px 8px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--surface2);
-  color: var(--muted);
-  font-family: "JetBrains Mono", monospace;
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.breakdown-chevron {
-  color: var(--muted);
-  font-size: 14px;
-  transition: transform 150ms ease;
-}
-
-.breakdown-body {
-  display: none;
-}
-
-.breakdown-accordion.open .breakdown-chevron {
-  transform: rotate(180deg);
-}
-
-.breakdown-accordion.open .breakdown-body {
-  display: block;
-  padding-bottom: 24px;
 }
 
 .insights-strip {
@@ -2344,11 +2208,6 @@ tbody td {
     font-size: 48px;
   }
 
-  .breakdown-trigger-left {
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
   .benchmark-lock-card {
     padding: 28px;
     margin: 0 16px;
@@ -2496,4 +2355,41 @@ tbody td {
   height: 8px;
   border-radius: 50%;
   display: inline-block;
+}
+/* === LOWER TABS === */
+.results-lower-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+}
+.results-lower-tabs.hidden {
+  display: none !important;
+}
+.lower-tab {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  background: none;
+  border: none;
+  padding: 12px 20px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+.lower-tab:hover {
+  color: var(--text-secondary);
+}
+.lower-tab.active {
+  color: var(--text);
+  border-bottom: 2px solid var(--accent);
+}
+.lower-panel {
+  display: block;
+}
+.lower-panel.hidden {
+  display: none !important;
 }

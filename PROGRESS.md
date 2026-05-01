@@ -4,6 +4,29 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-05-02
+
+**style: navigation overhaul and lower tab system**
+
+Changes shipped:
+- Topbar expanded from 2 tabs (Analysis, Benchmark) to 4 tabs: Analysis, Benchmark (locked), How It Works, Models
+- How It Works and Models moved from results panel tab strip to full-page panels accessed from topbar
+- Old results-tabs strip removed entirely
+- Results panel restructured with three lower tabs: Summary, Model Breakdown, Insights -- hidden until analysis runs
+- Summary tab: consensus hero card, donut chart, severity gauge, action legend
+- Model Breakdown tab: decision matrix table rendered directly, accordion wrapper removed
+- Insights tab: strictest/most lenient cards and AI summary
+- Donut chart and severity gauge added to verdict card with SVG-based rendering and JS population after results load
+- Verdict action legend (REMOVE/REVIEW/ALLOW dots) added below gauge
+- Removed breakdown accordion -- no longer needed with dedicated tab
+- Multiple JS crash bugs fixed: duplicate const declarations, null addEventListener calls on removed tab elements, workspace display grid vs empty string conflict
+- results-lower-tabs moved inside results-content for correct show/hide behavior
+- AGENTS.md and CLAUDE.md updated with new component IDs and current project state
+
+**Rationale:** Phase 0 of UX overhaul shifts navigation to topbar for discoverability, eliminates visual accordion complexity in favor of dedicated tabs, adds verdict visualization clarity with charts and gauge, and fixes architectural issues with panel visibility. Frontend now clearly separates analysis results (lower tabs) from methodology (topbar panels).
+
+---
+
 ## 2026-05-01
 
 **style: overhaul analysis results hierarchy and add benchmark placeholder**

@@ -44,6 +44,13 @@ docs/ARCHITECTURE.md           Complete technical reference (this file)
 - **Normalizer schema** fields — frontend depends on exact names
 - **CSS variable names** in `style.css` — JS references some
 - **Font imports** — DM Serif Display, Inter, JetBrains Mono (branding)
+- **Donut chart SVG IDs** — donut-remove, donut-review, donut-allow, donut-fraction, donut-action-label
+- **Gauge SVG IDs** — gauge-fill-path, gauge-number
+- **Lower tabs IDs** — results-lower-tabs, lower-tab-summary, lower-tab-breakdown, lower-tab-insights
+- **Lower panel IDs** — lower-panel-summary, lower-panel-breakdown, lower-panel-insights
+- **Topbar nav IDs** — nav-analysis, nav-benchmark, nav-how-it-works, nav-models
+- **Panel IDs** — benchmark-panel, how-it-works-panel, models-panel
+All these are referenced in app.js and must not be renamed or removed.
 
 ## Where to Find Things
 - **Technical architecture, APIs, models** → `docs/ARCHITECTURE.md`
@@ -118,8 +125,17 @@ After every session:
 - Disagreement detection and banner
 - AI Consensus Summary via GPT-4o-mini
 - 100 pre-loaded test cases across 10 violation categories
-- Results panel now leads with a consensus hero and collapsed model breakdown accordion
-- Topbar includes ANALYSIS and locked BENCHMARK navigation; Benchmark shows a v2 placeholder panel
+- Phase 0 UX overhaul complete:
+  - Topbar navigation with 4 tabs: ANALYSIS (active), BENCHMARK (locked), HOW IT WORKS, MODELS
+  - HOW IT WORKS and MODELS are full-page panels accessed from topbar, not results tabs
+  - Panel padding increased to 48px
+  - Consensus hero card leads results with large action word, AI summary subtitle, donut chart, severity gauge, and action legend
+  - Results panel has three lower tabs: Summary, Model Breakdown, Insights — hidden until analysis runs
+  - Summary tab: consensus hero + donut + gauge + legend
+  - Model Breakdown tab: decision matrix table (no accordion)
+  - Insights tab: strictest/most lenient cards + AI summary
+  - Benchmark placeholder panel with coming soon state and 3 feature preview cards
+  - Ambient glow blobs on results panel background
 - Deployed on Render at modeval.bynipun.com
 
 ## Known Limitations

@@ -28,8 +28,6 @@ const lenientCard = document.getElementById("lenient-card");
 const consensusHero = document.getElementById("consensus-hero");
 const heroAction = document.getElementById("hero-action");
 const heroSubtitle = document.getElementById("hero-subtitle");
-const breakdownAccordion = document.getElementById("breakdown-accordion");
-const breakdownTrigger = document.getElementById("breakdown-trigger");
 const exampleButtons = Array.from(document.querySelectorAll(".example-pill"));
 
 // Initialize column info icon tooltips
@@ -462,10 +460,6 @@ function setHeroState(action, summary) {
   heroAction.style.color = color;
 }
 
-function setBreakdownExpanded(expanded) {
-  breakdownAccordion.classList.toggle("open", expanded);
-}
-
 function setPrimaryView(view) {
   const showBenchmark = view === "benchmark";
   if (workspace) workspace.style.display = 
@@ -521,9 +515,6 @@ function showPanelState(state) {
   resultsEmpty.classList.toggle("hidden", state !== "empty");
   skeletonState.classList.toggle("hidden", state !== "loading");
   resultsContent.classList.toggle("hidden", state !== "results");
-  if (state !== "results") {
-    setBreakdownExpanded(false);
-  }
 }
 
 function renderResults(results) {
@@ -856,8 +847,6 @@ form.addEventListener("submit", async (event) => {
       gaugeFill.style.stroke = gaugeColor;
     }
 
-
-    setBreakdownExpanded(false);
     showPanelState("results");
     setStatus("Analysis complete", "success");
 
@@ -889,17 +878,6 @@ form.addEventListener("submit", async (event) => {
 });
 
 if (batchButton) batchButton.addEventListener("click", () => batchFileInput.click());
-if (breakdownTrigger) {
-  breakdownTrigger.addEventListener("click", () => {
-    setBreakdownExpanded(!breakdownAccordion.classList.contains("open"));
-  });
-  breakdownTrigger.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      setBreakdownExpanded(!breakdownAccordion.classList.contains("open"));
-    }
-  });
-}
 exampleButtons.forEach((button) => {
   button.addEventListener("click", () => applyExample(button.dataset.category, button));
 });
@@ -984,7 +962,6 @@ window.addEventListener("resize", () => {
 updateCounter();
 initializeModalSelects();
 setSectionExpanded(contextToggle, contextContent, false);
-setBreakdownExpanded(false);
 setHeroState("Review", "");
 setPrimaryView("analysis");
 showPanelState("empty");
