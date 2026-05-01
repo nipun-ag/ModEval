@@ -896,33 +896,51 @@ form.addEventListener("submit", async (event) => {
       aiSnippet.textContent = firstSentence;
     }
 
-    // --- Confidence Bars ---
-    const barsContainer = document.getElementById('confidence-bars');
-    if (barsContainer) {
-      barsContainer.innerHTML = '';
-      data.results.forEach(result => {
-        const action = (result.action || 'allow').toLowerCase();
-        const actionClass = 'action-' + action;
-        const badgeClass = action === 'remove' ? 'badge-remove' :
-                           action === 'review' ? 'badge-review' :
-                           'badge-allow';
-        const widthPct = Math.round((result.confidence || 0) * 100) + '%';
-        const score = (result.confidence || 0).toFixed(2);
-        const row = document.createElement('div');
-        row.className = 'conf-bar-row';
-        row.innerHTML = `
-          <span class="conf-bar-label">${result.model}</span>
-          <div class="conf-bar-track">
-            <div class="conf-bar-fill ${actionClass}"
-                 style="width:${widthPct}"></div>
-          </div>
-          <span class="conf-bar-score ${actionClass}">${score}</span>
-          <span class="badge ${badgeClass}">
-            ${(result.action || 'ALLOW').toUpperCase()}
-          </span>
-        `;
-        barsContainer.appendChild(row);
+    // --- Model Agreement Matrix ---
+    const matrixContainer = document.getElementById('confidence-bars');
+    if (matrixContainer && data.results.length > 0) {
+      matrixContainer.innerHTML = '';
+      
+      const models = data.results;
+      const n = models.length;
+      
+      // Build matrix HTML
+      let html = '<div class="agreement-matrix">';
+      
+      // Header row with model name abbreviations
+      html += '<div class="matrix-grid" style="grid-template-columns: 120px repeat(' + n + ', 1fr)">';
+      html += '<div class="matrix-corner"></div>';
+      models.forEach(m => {
+        const abbr = m.model.split(' ').map(w => w[0]).join('').substring(0, 3).toUpperCase();
+        html += '<div class="matrix-col-label">' + abbr + '</div>';
       });
+      
+      // Data rows
+      models.forEach((rowModel, i) => {
+        const abbr = rowModel.model.split(' ').map(w => w[0]).join('').substring(0, 3).toUpperCase();
+        html += '<div class="matrix-row-label">' + abbr + '</div>';
+        models.forEach((colModel, j) => {
+          if (i === j) {
+            html += '<div class="matrix-cell matrix-cell-self">—</div>';
+          } else {
+            const agree = rowModel.action.toLowerCase() === colModel.action.toLowerCase();
+            const cellClass = agree ? 'matrix-cell-agree' : 'matrix-cell-disagree';
+            const icon = agree ? '✓' : '✗';
+            html += '<div class="matrix-cell ' + cellClass + '">' + icon + '</div>';
+          }
+        });
+      });
+      
+      html += '</div>';
+      
+      // Legend
+      html += '<div class="matrix-legend">';
+      html += '<span class="matrix-legend-item agree">✓ Agree</span>';
+      html += '<span class="matrix-legend-item disagree">✗ Disagree</span>';
+      html += '</div>';
+      
+      html += '</div>';
+      matrixContainer.innerHTML = html;
     }
 
     setBreakdownExpanded(false);
