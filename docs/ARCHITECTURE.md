@@ -668,4 +668,82 @@ frontend/app.js
 - **Webhooks** — Add `backend/routes/webhooks.py` for async processing
 - **Analytics** — Add database layer (PostgreSQL) to track analyses without storing content
 - **Export** — Add CSV/PDF download route
-- **Multilingual** — Swap models for multilingual variants (xlm-roberta, etc.)
+
+---
+
+## Phase 0 Frontend Components
+
+### Navigation Structure
+The topbar (.topbar-nav) has four items:
+- ANALYSIS -- shows .workspace (38/62 split panels)
+- BENCHMARK [locked] -- shows #benchmark-panel
+- HOW IT WORKS -- shows #how-it-works-panel
+- MODELS -- shows #models-panel
+
+Each click hides all other panels and shows the target.
+Switching is handled by showPanel() and setActiveNav() 
+in frontend/app.js.
+
+### Full-Page Panels
+All panels are direct children of .app-shell:
+- .workspace -- the main analysis grid (default visible)
+- #benchmark-panel -- coming soon placeholder
+- #how-it-works-panel -- methodology content
+- #models-panel -- model cards content
+
+### Results Panel Lower Tabs
+After analysis runs, three lower tabs appear inside 
+.results-content:
+
+- results-lower-tabs: hidden until results load, 
+  shown by JS after showPanelState("results")
+- lower-panel-summary: consensus hero + donut + 
+  gauge + legend (default active tab)
+- lower-panel-breakdown: decision matrix table 
+  rendered directly, no accordion wrapper
+- lower-panel-insights: insight cards + AI summary
+
+Tab switching handled by click handlers on 
+.lower-tab elements in frontend/app.js.
+
+### Verdict Hero Card (.consensus-hero)
+Populated by JS after results load:
+- Eyebrow: "AGGREGATED CONSENSUS"
+- Large action word: ALLOW/REVIEW/REMOVE in 
+  DM Serif Display 64px, colored by action
+- AI summary subtitle (first 2 sentences)
+- Verdict visuals row (donut + gauge)
+- Border-left colored by action (green/amber/red)
+
+### Verdict Visuals Row (.verdict-visuals-row)
+Two-column grid inside .consensus-hero:
+- Donut chart: SVG 120px showing model vote 
+  distribution. IDs: donut-remove, donut-review, 
+  donut-allow, donut-fraction, donut-action-label.
+  Uses stroke-dasharray/dashoffset technique.
+- Severity gauge: SVG semicircle arc 140x80px.
+  IDs: gauge-fill-path, gauge-number.
+  Arc fills proportionally, colored green/amber/red 
+  by severity range (1-3 green, 4-7 amber, 8-10 red).
+
+### Benchmark Placeholder (#benchmark-panel)
+- Heading and description of v2 benchmark feature
+- Blurred skeleton leaderboard table behind lock overlay
+- Three feature preview cards: Leaderboard, 
+  Failure Analysis, Recommendation Engine
+- All labeled "COMING IN V2"
+
+### Component IDs Referenced in app.js
+These IDs must never be renamed:
+- nav-analysis, nav-benchmark, nav-how-it-works, 
+  nav-models (topbar nav items)
+- benchmark-panel, how-it-works-panel, models-panel 
+  (full-page panels)
+- results-lower-tabs, lower-tab-summary, 
+  lower-tab-breakdown, lower-tab-insights (lower tabs)
+- lower-panel-summary, lower-panel-breakdown, 
+  lower-panel-insights (lower panels)
+- donut-remove, donut-review, donut-allow, 
+  donut-fraction, donut-action-label (donut chart)
+- gauge-fill-path, gauge-number (severity gauge)
+- hero-action, hero-subtitle (consensus hero)

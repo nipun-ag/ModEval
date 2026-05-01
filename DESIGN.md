@@ -128,12 +128,17 @@ Never use for general reading text. Monospace signals "this is technical data."
 
 ```
 .app-shell (max-width: 1280px, centered)
-├── .topbar (fixed height, --surface background, 1px --border bottom)
+├── .topbar (fixed height, --surface background)
 │   ├── .brand-wordmark (left)
+│   ├── .topbar-nav (center) — ANALYSIS, BENCHMARK, 
+│   │   HOW IT WORKS, MODELS
 │   └── .topbar-status (right)
-└── .workspace (CSS Grid: 38% / 62%)
-    ├── .input-panel (left)
-    └── .results-panel (right)
+├── .workspace (CSS Grid: 38% / 62%) — Analysis mode
+│   ├── .input-panel (left)
+│   └── .results-panel (right)
+├── #benchmark-panel — Benchmark mode (hidden by default)
+├── #how-it-works-panel — How It Works (hidden by default)
+└── #models-panel — Models (hidden by default)
 ```
 
 ### Panel Split
@@ -158,7 +163,7 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Backdrop blur: `blur(12px)`
 - No box-shadow
 - Brand wordmark: "Mod" in `--text`, "Eval" in `--accent`
-- Includes `.topbar-nav` between wordmark and status pill with `ANALYSIS` active state and locked `BENCHMARK` placeholder nav
+- Includes .topbar-nav with four items: ANALYSIS (active state), BENCHMARK (locked), HOW IT WORKS, MODELS -- clicking each shows its respective panel and hides all others
 
 ### Status Pill (.topbar-status)
 - Font: JetBrains Mono 11px
@@ -188,12 +193,28 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Border-radius: 6px
 - Loading state: shimmer animation overlay + "Analyzing..." text
 
-### Tab Navigation (.results-tabs)
-- Container: pill-shaped with glassmorphism (rgba(255,255,255,0.03), backdrop-filter blur(8px))
-- Active tab: `--white` text, 1.5px `--accent` underline spanning text width only
-- Inactive tab: `#666666` text, hover `#999999`
-- Tab switch transition: 150ms fade + 5px upward slide (translateY)
-- Remains scoped to in-panel views only: `Analysis`, `How It Works`, `Models`
+### Topbar Navigation (.topbar-nav)
+- Four items: ANALYSIS, BENCHMARK [locked], HOW IT WORKS, MODELS
+- Font: JetBrains Mono 11px uppercase
+- Active item: var(--text) color, 1.5px var(--accent) bottom border
+- Locked item: var(--muted), opacity 0.5, cursor default
+- Clicking switches between .workspace and the respective full-page panel
+
+### Lower Tab Strip (.results-lower-tabs)
+- Appears only after analysis results load
+- Hidden by default, shown when results render
+- Three tabs: Summary, Model Breakdown, Insights
+- Font: JetBrains Mono 11px uppercase
+- Active tab: var(--text), 2px var(--accent) bottom border
+- Inactive tab: var(--muted)
+- Border-bottom: 1px var(--border)
+
+### Lower Panels (.lower-panel)
+- Summary: consensus hero + donut chart + severity gauge + action legend
+- Model Breakdown: decision matrix table directly (no accordion wrapper)
+- Insights: insight cards + AI summary card
+- Hidden/shown by lower tab clicks
+- All start hidden, Summary shown by default when results load
 
 ### Action Badges (.badge)
 - Font: JetBrains Mono 11px uppercase font-weight 600
@@ -249,10 +270,18 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Primary decision uses DM Serif Display at 64px
 - Subtitle shows the first two sentences of the AI summary for quick scanability
 
-### Breakdown Accordion (.breakdown-accordion)
-- Wraps the full decision matrix and starts collapsed on every fresh result
-- Trigger row uses DM Serif Display for the title and JetBrains Mono for the model count chip
-- Chevron rotates on open; body reveals the existing matrix without changing its rendering logic
+### Verdict Visuals Row (.verdict-visuals-row)
+- Two-column grid inside .consensus-hero
+- Column 1: SVG donut chart (120px) showing model vote distribution -- segments colored by action
+- Column 2: SVG semicircle arc gauge (140x80px) showing average severity 1-10
+- Both populated by JS after results load
+- Colored green/amber/red by action/severity range
+
+### Verdict Action Legend (.verdict-action-legend)
+- Row of three items below the visuals row
+- REMOVE (red dot), REVIEW (amber dot), ALLOW (green dot)
+- Font: JetBrains Mono 10px uppercase var(--muted)
+- Dot: 8px circle colored by action
 
 ### Benchmark Placeholder
 - Lives outside `.workspace` and is toggled from the topbar nav
