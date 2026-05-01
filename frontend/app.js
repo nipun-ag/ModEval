@@ -861,9 +861,9 @@ form.addEventListener("submit", async (event) => {
     showPanelState("results");
     setStatus("Analysis complete", "success");
 
-    const lowerTabs = document.getElementById('results-lower-tabs');
-    if (lowerTabs) {
-      lowerTabs.classList.remove('hidden');
+    const lowerTabsEl = document.getElementById('results-lower-tabs');
+    if (lowerTabsEl) {
+      lowerTabsEl.classList.remove('hidden');
       document.querySelectorAll('.lower-tab')
         .forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.lower-panel')
@@ -874,9 +874,9 @@ form.addEventListener("submit", async (event) => {
       if (sp) sp.classList.remove('hidden');
     }
 
-    const lowerTabs = document.getElementById('results-lower-tabs');
-    if (lowerTabs) {
-      lowerTabs.classList.remove('hidden');
+    const lowerTabsEl2 = document.getElementById('results-lower-tabs');
+    if (lowerTabsEl2) {
+      lowerTabsEl2.classList.remove('hidden');
       document.querySelectorAll('.lower-tab')
         .forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.lower-panel')
@@ -1063,9 +1063,9 @@ showPanelState("empty");
       });
     });
 })();
-const lowerTabs = document.getElementById('results-lower-tabs');
-if (lowerTabs) {
-  lowerTabs.classList.remove('hidden');
+const lowerTabsEl = document.getElementById('results-lower-tabs');
+if (lowerTabsEl) {
+  lowerTabsEl.classList.remove('hidden');
 }
 
 const lowerTabSummary = document.getElementById('lower-tab-summary');
