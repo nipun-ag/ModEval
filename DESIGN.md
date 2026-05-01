@@ -245,19 +245,20 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Value: DM Serif Display or Inter 600 depending on content
 
 ### Decision Matrix Table
-- Rendered in two tiers: Enterprise APIs and Open Source Models
-- Tier headers span full width with:
-  - Background: `--surface3`
-  - Text: 10px uppercase `--muted` JetBrains Mono
-  - Borders: 1px `--border` top and bottom
+- Rendered as two fully separate tables with individual section labels and column headers
+- Section 1: "ENTERPRISE APIS" — Perspective API, Azure Content Safety, AWS Comprehend, Google NLP, OpenAI Moderation
+- Section 2: "OPEN SOURCE MODELS" — Toxicity Classifier, Offensive Language Detector, Hate Speech Detector, Spam Detector, Bias Detector
+- Section label (.matrix-section-label): JetBrains Mono 10px uppercase, var(--muted), padding 20px 0 10px 0
+- Divider (.matrix-section-divider): 1px var(--border-strong), margin 8px 0 between sections
+- Each table has its own full column header row
+- Column headers: 11px uppercase var(--muted) JetBrains Mono, var(--border-strong) bottom border
 - No vertical borders anywhere
-- Horizontal dividers only: 1px `--border` between rows
-- Column headers: 11px uppercase `--muted` JetBrains Mono, `--border-strong` bottom border
-- Row fade-in: staggered 50ms delay per row (fade-up keyframe)
-- Disabled models (missing credentials):
-  - Full-width "Not Configured" cell instead of action/confidence/alignment
-  - Row opacity: 0.4
-  - Text: var(--muted) color
+- Horizontal dividers only: 1px var(--border) between rows
+- Row fade-up animation resets index to 0 at start of each table (staggered 50ms per row)
+- Disabled models (.matrix-row-disabled):
+  - Entire row opacity: 0.4
+  - MODEL cell: model name in var(--muted)
+  - Remaining columns: single colspan "Not Configured" cell in JetBrains Mono 11px italic var(--muted)
 
 ### Disagreement Banner (.disagreement-banner)
 - Background: `--white`

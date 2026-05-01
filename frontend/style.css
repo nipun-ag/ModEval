@@ -2408,3 +2408,45 @@ tr.tier-header {
   color: var(--muted);
   display: inline-block;
 }
+
+/* Matrix section wrapper */
+.matrix-section {
+  margin-bottom: 0;
+}
+
+/* Section label above each table */
+.matrix-section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+  padding: 20px 0 10px 0;
+}
+
+/* Divider between the two sections */
+.matrix-section-divider {
+  height: 1px;
+  background: var(--border-strong);
+  margin: 8px 0 0 0;
+}
+
+/* Disabled model row */
+.matrix-row-disabled {
+  opacity: 0.4;
+}
+
+/* Not Configured cell */
+.matrix-not-configured {
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-style: italic;
+}
+
+/* Decision matrix table styling */
+.decision-matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+}

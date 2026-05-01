@@ -560,32 +560,62 @@ function showPanelState(state) {
 
 function renderResults(results) {
   if (!results.length) {
-    resultsBody.innerHTML = `
-      <tr class="empty-row">
-        <td colspan="6">No model output available.</td>
-      </tr>
-    `;
+    resultsBody.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--muted);">No model output available.</div>`;
     return;
   }
 
   let html = "";
 
-  // Enterprise APIs tier
-  html += `<tr class="tier-header"><td colspan="6"><span class="tier-label">ENTERPRISE APIS</span></td></tr>`;
-  ENTERPRISE_MODELS.forEach((modelName, index) => {
+  // Enterprise APIs section
+  html += `
+    <div class="matrix-section">
+      <div class="matrix-section-label">ENTERPRISE APIS</div>
+      <table class="decision-matrix-table">
+        <thead>
+          <tr>
+            <th>
+              MODEL
+              <span class="col-info-icon" data-tooltip="The AI model that evaluated this content. Each model was trained on different data and detects a different type of violation.">?</span>
+            </th>
+            <th>
+              CATEGORY
+              <span class="col-info-icon" data-tooltip="The violation type this model flagged as most likely. If the model found nothing suspicious, it shows the closest clean classification.">?</span>
+            </th>
+            <th>
+              SEVERITY
+              <span class="col-info-icon" data-tooltip="How harmful the content could be, rated 1 to 10. Derived from the model's confidence score. 1-3 is low risk, 4-7 is medium, 8-10 is high.">?</span>
+            </th>
+            <th>
+              CONFIDENCE
+              <span class="col-info-icon" data-tooltip="How certain the model is about its top category, from 0.00 (no confidence) to 1.00 (fully certain). A high confidence on a clean category means the model is sure the content is safe.">?</span>
+            </th>
+            <th>
+              ALIGNMENT
+              <span class="col-info-icon" data-tooltip="How well the model's decision aligns with your chosen policy rules, from 0.00 (misaligned) to 1.00 (perfectly aligned).">?</span>
+            </th>
+            <th>
+              ACTION
+              <span class="col-info-icon" data-tooltip="The recommended moderation decision based on the model's confidence and your selected platform context and strictness level. Allow means no action needed. Review means a human should check. Remove means the content violates policy.">?</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+
+  let enterpriseRowIndex = 0;
+  ENTERPRISE_MODELS.forEach((modelName) => {
     const result = results.find(r => r.model === modelName);
     if (result) {
       if (result.disabled) {
         html += `
-          <tr style="animation-delay:${index * 50}ms; opacity: 0.4;">
-            <td colspan="6">
-              <span class="metric-soft">${escapeHtml(modelName)} — Not Configured</span>
-            </td>
+          <tr class="matrix-row-disabled" style="animation-delay:${enterpriseRowIndex * 50}ms">
+            <td style="color: var(--muted);">${escapeHtml(modelName)}</td>
+            <td colspan="5"><span class="matrix-not-configured">Not Configured</span></td>
           </tr>
         `;
       } else {
         html += `
-          <tr style="animation-delay:${index * 50}ms">
+          <tr style="animation-delay:${enterpriseRowIndex * 50}ms">
             <td>
               ${renderModelDisplay(result.model, true)}
               <span class="metric-soft">${result.error ? "Model unavailable" : "Live inference"}</span>
@@ -597,7 +627,11 @@ function renderResults(results) {
               <span class="severity-value mono ${severityTone(Number(result.severity))}">${escapeHtml(result.severity)}</span>
             </td>
             <td>
-              <span class="mono">${Number(result.confidence).toFixed(2)}</span>
+              <span class="mono">${Number(result.confidence).toFixed(4)}</span>
+            </td>
+            <td>
+              ${badge(result.aligned ? "Aligned" : "Misaligned", result.aligned ? "allow" : "remove")}
+              <span class="metric-soft">${Number(result.alignment_score).toFixed(2)}</span>
             </td>
             <td class="action-cell">
               ${badge(result.action, actionTone(result.action))}
@@ -605,25 +639,65 @@ function renderResults(results) {
           </tr>
         `;
       }
+      enterpriseRowIndex++;
     }
   });
 
-  // Open Source Models tier
-  html += `<tr class="tier-header"><td colspan="6"><span class="tier-label">OPEN SOURCE MODELS</span></td></tr>`;
-  OPENSOURCE_MODELS.forEach((modelName, index) => {
+  html += `
+        </tbody>
+      </table>
+    </div>
+
+    <div class="matrix-section-divider"></div>
+
+    <div class="matrix-section">
+      <div class="matrix-section-label">OPEN SOURCE MODELS</div>
+      <table class="decision-matrix-table">
+        <thead>
+          <tr>
+            <th>
+              MODEL
+              <span class="col-info-icon" data-tooltip="The AI model that evaluated this content. Each model was trained on different data and detects a different type of violation.">?</span>
+            </th>
+            <th>
+              CATEGORY
+              <span class="col-info-icon" data-tooltip="The violation type this model flagged as most likely. If the model found nothing suspicious, it shows the closest clean classification.">?</span>
+            </th>
+            <th>
+              SEVERITY
+              <span class="col-info-icon" data-tooltip="How harmful the content could be, rated 1 to 10. Derived from the model's confidence score. 1-3 is low risk, 4-7 is medium, 8-10 is high.">?</span>
+            </th>
+            <th>
+              CONFIDENCE
+              <span class="col-info-icon" data-tooltip="How certain the model is about its top category, from 0.00 (no confidence) to 1.00 (fully certain). A high confidence on a clean category means the model is sure the content is safe.">?</span>
+            </th>
+            <th>
+              ALIGNMENT
+              <span class="col-info-icon" data-tooltip="How well the model's decision aligns with your chosen policy rules, from 0.00 (misaligned) to 1.00 (perfectly aligned).">?</span>
+            </th>
+            <th>
+              ACTION
+              <span class="col-info-icon" data-tooltip="The recommended moderation decision based on the model's confidence and your selected platform context and strictness level. Allow means no action needed. Review means a human should check. Remove means the content violates policy.">?</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+
+  let opensourceRowIndex = 0;
+  OPENSOURCE_MODELS.forEach((modelName) => {
     const result = results.find(r => r.model === modelName);
     if (result) {
       if (result.disabled) {
         html += `
-          <tr style="animation-delay:${(ENTERPRISE_MODELS.length + index) * 50}ms; opacity: 0.4;">
-            <td colspan="6">
-              <span class="metric-soft">${escapeHtml(modelName)} — Not Configured</span>
-            </td>
+          <tr class="matrix-row-disabled" style="animation-delay:${opensourceRowIndex * 50}ms">
+            <td>${escapeHtml(modelName)}</td>
+            <td colspan="5"><span class="matrix-not-configured">Not Configured</span></td>
           </tr>
         `;
       } else {
         html += `
-          <tr style="animation-delay:${(ENTERPRISE_MODELS.length + index) * 50}ms">
+          <tr style="animation-delay:${opensourceRowIndex * 50}ms">
             <td>
               ${renderModelDisplay(result.model, true)}
               <span class="metric-soft">${result.error ? "Model unavailable" : "Live inference"}</span>
@@ -635,7 +709,11 @@ function renderResults(results) {
               <span class="severity-value mono ${severityTone(Number(result.severity))}">${escapeHtml(result.severity)}</span>
             </td>
             <td>
-              <span class="mono">${Number(result.confidence).toFixed(2)}</span>
+              <span class="mono">${Number(result.confidence).toFixed(4)}</span>
+            </td>
+            <td>
+              ${badge(result.aligned ? "Aligned" : "Misaligned", result.aligned ? "allow" : "remove")}
+              <span class="metric-soft">${Number(result.alignment_score).toFixed(2)}</span>
             </td>
             <td class="action-cell">
               ${badge(result.action, actionTone(result.action))}
@@ -643,8 +721,15 @@ function renderResults(results) {
           </tr>
         `;
       }
+      opensourceRowIndex++;
     }
   });
+
+  html += `
+        </tbody>
+      </table>
+    </div>
+  `;
 
   resultsBody.innerHTML = html;
 }
