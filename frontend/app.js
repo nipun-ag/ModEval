@@ -831,6 +831,100 @@ form.addEventListener("submit", async (event) => {
       data.insights?.consensus_recommendation || data.insights?.consensus_action || "Review",
       data.ai_summary || generateConsensusSummary(data.results || [], data.insights || {}, data.disagreements || [])
     );
+    // --- Donut Chart ---
+    const actionCounts = { remove: 0, review: 0, allow: 0 };
+    data.results.forEach(r => {
+      const a = (r.action || '').toLowerCase();
+      if (a === 'remove') actionCounts.remove++;
+      else if (a === 'review') actionCounts.review++;
+      else actionCounts.allow++;
+    });
+    const total = data.results.length;
+    const circumference = 314.159;
+
+    const removeArc = (actionCounts.remove / total) * circumference;
+    const reviewArc = (actionCounts.review / total) * circumference;
+    const allowArc  = (actionCounts.allow  / total) * circumference;
+
+    const donutRemove = document.getElementById('donut-remove');
+    const donutReview = document.getElementById('donut-review');
+    const donutAllow  = document.getElementById('donut-allow');
+
+    if (donutRemove) {
+      donutRemove.style.strokeDasharray = removeArc + ' ' + circumference;
+      donutRemove.style.strokeDashoffset = '0';
+    }
+    if (donutReview) {
+      donutReview.style.strokeDasharray = reviewArc + ' ' + circumference;
+      donutReview.style.strokeDashoffset = String(-removeArc);
+    }
+    if (donutAllow) {
+      donutAllow.style.strokeDasharray = allowArc + ' ' + circumference;
+      donutAllow.style.strokeDashoffset = String(-(removeArc + reviewArc));
+    }
+
+    const dominant = Object.entries(actionCounts)
+      .sort((a, b) => b[1] - a[1])[0];
+    const donutFraction = document.getElementById('donut-fraction');
+    const donutLabel = document.getElementById('donut-action-label');
+    if (donutFraction) donutFraction.textContent = dominant[1] + '/5';
+    if (donutLabel) donutLabel.textContent = dominant[0].toUpperCase();
+
+    // --- Severity Gauge ---
+    const avgSeverity = Math.round(
+      data.results.reduce((sum, r) => sum + (r.severity || 0), 0) 
+      / data.results.length
+    );
+    const gaugeNumber = document.getElementById('gauge-number');
+    const gaugeFill = document.getElementById('gauge-fill-path');
+    const gaugeColor = avgSeverity <= 3 ? 'var(--green)' :
+                       avgSeverity <= 7 ? 'var(--amber)' : 'var(--red)';
+    if (gaugeNumber) {
+      gaugeNumber.textContent = avgSeverity;
+      gaugeNumber.style.color = gaugeColor;
+    }
+    if (gaugeFill) {
+      const fillLength = (avgSeverity / 10) * 188.5;
+      gaugeFill.style.strokeDasharray = fillLength + ' 188.5';
+      gaugeFill.style.stroke = gaugeColor;
+    }
+
+    // --- AI Snippet ---
+    const aiSnippet = document.getElementById('ai-snippet-text');
+    if (aiSnippet && data.ai_summary) {
+      const firstSentence = data.ai_summary.split('.')[0] + '.';
+      aiSnippet.textContent = firstSentence;
+    }
+
+    // --- Confidence Bars ---
+    const barsContainer = document.getElementById('confidence-bars');
+    if (barsContainer) {
+      barsContainer.innerHTML = '';
+      data.results.forEach(result => {
+        const action = (result.action || 'allow').toLowerCase();
+        const actionClass = 'action-' + action;
+        const badgeClass = action === 'remove' ? 'badge-remove' :
+                           action === 'review' ? 'badge-review' :
+                           'badge-allow';
+        const widthPct = Math.round((result.confidence || 0) * 100) + '%';
+        const score = (result.confidence || 0).toFixed(2);
+        const row = document.createElement('div');
+        row.className = 'conf-bar-row';
+        row.innerHTML = `
+          <span class="conf-bar-label">${result.model}</span>
+          <div class="conf-bar-track">
+            <div class="conf-bar-fill ${actionClass}"
+                 style="width:${widthPct}"></div>
+          </div>
+          <span class="conf-bar-score ${actionClass}">${score}</span>
+          <span class="badge ${badgeClass}">
+            ${(result.action || 'ALLOW').toUpperCase()}
+          </span>
+        `;
+        barsContainer.appendChild(row);
+      });
+    }
+
     setBreakdownExpanded(false);
     showPanelState("results");
     setStatus("Analysis complete", "success");
