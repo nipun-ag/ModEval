@@ -1,6 +1,6 @@
 # ModEval — Complete Technical Architecture
 
-**Last Updated:** April 2026  
+**Last Updated:** May 2026  
 **Status:** Live at [modeval.bynipun.com](https://modeval.bynipun.com)
 
 ---
@@ -49,7 +49,7 @@ modeval/
 ## API Endpoints
 
 ### POST /analyze
-**Purpose:** Analyze a single text input across all 5 moderation models.
+**Purpose:** Analyze a single text input across up to 9 moderation models (4 enterprise APIs + 4 HuggingFace + OpenAI).
 
 **Request Body:**
 ```json
@@ -80,7 +80,7 @@ modeval/
       "explanation": "string — plain English explainer text",
       "error": "string (optional) — only on model failures"
     },
-    ...5 models total
+    ...up to 9 models total
   ],
   "disagreements": {
     "action_mismatch": ["list of model names"],
@@ -553,7 +553,7 @@ Render free tier spins down after 15+ minutes of inactivity. First request after
 | Backend Framework | Flask | 3.1 | HTTP routing, request handling |
 | WSGI Server | Gunicorn | (latest) | Production HTTP server |
 | Python | Python | 3.14 | Core language |
-| Model Inference | HuggingFace Inference API | (live) | 5 HuggingFace models |
+| Model Inference | HuggingFace, Enterprise APIs | (live) | 4 Enterprise APIs + 4 HuggingFace + OpenAI |
 | AI Summary | OpenAI API | gpt-4o-mini | Natural language synthesis |
 | Frontend | Vanilla HTML/CSS/JS | (native) | Single-page app, no frameworks |
 | Fonts | Google Fonts | (live) | DM Serif Display, Inter, JetBrains Mono |
@@ -579,7 +579,7 @@ Render free tier spins down after 15+ minutes of inactivity. First request after
 
 ### backend/routes/analyze.py
 - `POST /analyze` endpoint handler
-- Model orchestration via `ThreadPoolExecutor` (5 parallel calls)
+- Model orchestration via `ThreadPoolExecutor` (up to 9 parallel calls)
 - Per-model error handling (failures don't crash whole response)
 - Calls normalizer, policy engine, comparison engine, explainer
 - Generates AI summary via OpenAI GPT-4o-mini
@@ -661,6 +661,10 @@ validate_payload()
     ├─→ check text length, required fields
     ↓
 run_models() (parallel ThreadPoolExecutor)
+    ├─→ perspective_api.analyze()
+    ├─→ azure_content.analyze()
+    ├─→ aws_comprehend.analyze()
+    ├─→ google_nlp.analyze()
     ├─→ openai_moderation.analyze()
     ├─→ hf_toxic_bert.analyze()
     ├─→ hf_roberta_offensive.analyze()
