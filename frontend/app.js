@@ -909,53 +909,6 @@ if (batchButton) batchButton.addEventListener("click", () => batchFileInput.clic
 analysisTab.addEventListener("click", () => switchTab("analysis"));
 methodologyTab.addEventListener("click", () => switchTab("methodology"));
 modelsTab.addEventListener("click", () => switchTab("models"));
-function showPanel(id) {
-  const panels = ['benchmark-panel', 
-   'how-it-works-panel', 'models-panel'];
-  panels.forEach(p => {
-    const el = document.getElementById(p);
-    if (el) el.style.display = 'none';
-  });
-  const workspace = document.querySelector('.workspace');
-  if (workspace) workspace.style.display = 'none';
-  if (id === 'workspace') {
-    if (workspace) workspace.style.display = '';
-  } else {
-    const target = document.getElementById(id);
-    if (target) target.style.display = 'block';
-  }
-}
-
-function setActiveNav(id) {
-  document.querySelectorAll('.topbar-nav-item')
-    .forEach(el => el.classList.remove('active'));
-  const el = document.getElementById(id);
-  if (el) el.classList.add('active');
-}
-
-document.getElementById('nav-analysis')
-  .addEventListener('click', () => {
-    showPanel('workspace');
-    setActiveNav('nav-analysis');
-  });
-
-document.getElementById('nav-benchmark')
-  .addEventListener('click', () => {
-    showPanel('benchmark-panel');
-    setActiveNav('nav-benchmark');
-  });
-
-document.getElementById('nav-how-it-works')
-  .addEventListener('click', () => {
-    showPanel('how-it-works-panel');
-    setActiveNav('nav-how-it-works');
-  });
-
-document.getElementById('nav-models')
-  .addEventListener('click', () => {
-    showPanel('models-panel');
-    setActiveNav('nav-models');
-  });
 if (breakdownTrigger) {
   breakdownTrigger.addEventListener("click", () => {
     setBreakdownExpanded(!breakdownAccordion.classList.contains("open"));
@@ -1041,3 +994,51 @@ setBreakdownExpanded(false);
 setHeroState("Review", "");
 setPrimaryView("analysis");
 showPanelState("empty");
+
+(function() {
+  function showPanel(id) {
+    const workspace = document.querySelector('.workspace');
+    const panels = ['benchmark-panel', 
+      'how-it-works-panel', 'models-panel'];
+    if (workspace) workspace.style.display = 'none';
+    panels.forEach(p => {
+      const el = document.getElementById(p);
+      if (el) el.style.display = 'none';
+    });
+    if (id === 'workspace') {
+      if (workspace) workspace.style.display = '';
+    } else {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'block';
+    }
+  }
+
+  function setActiveNav(id) {
+    document.querySelectorAll('.topbar-nav-item')
+      .forEach(el => el.classList.remove('active'));
+    const el = document.getElementById(id);
+    if (el) el.classList.add('active');
+  }
+
+  const navAnalysis = document.getElementById('nav-analysis');
+  const navBenchmark = document.getElementById('nav-benchmark');
+  const navHowItWorks = document.getElementById('nav-how-it-works');
+  const navModels = document.getElementById('nav-models');
+
+  if (navAnalysis) navAnalysis.addEventListener('click', () => {
+    showPanel('workspace');
+    setActiveNav('nav-analysis');
+  });
+  if (navBenchmark) navBenchmark.addEventListener('click', () => {
+    showPanel('benchmark-panel');
+    setActiveNav('nav-benchmark');
+  });
+  if (navHowItWorks) navHowItWorks.addEventListener('click', () => {
+    showPanel('how-it-works-panel');
+    setActiveNav('nav-how-it-works');
+  });
+  if (navModels) navModels.addEventListener('click', () => {
+    showPanel('models-panel');
+    setActiveNav('nav-models');
+  });
+})();
