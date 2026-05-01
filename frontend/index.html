@@ -225,7 +225,13 @@
               </div>
             </section>
 
+            <div class="results-lower-tabs hidden" id="results-lower-tabs">
+              <button class="lower-tab active" id="lower-tab-summary" data-target="lower-panel-summary">Summary</button>
+              <button class="lower-tab" id="lower-tab-breakdown" data-target="lower-panel-breakdown">Model Breakdown</button>
+              <button class="lower-tab" id="lower-tab-insights" data-target="lower-panel-insights">Insights</button>
+            </div>
             <div id="results-content" class="results-content hidden">
+              <div class="lower-panel" id="lower-panel-summary">
               <section class="consensus-hero" id="consensus-hero">
                 <span class="consensus-hero-eyebrow">AGGREGATED CONSENSUS</span>
                 <div class="consensus-hero-action" id="hero-action">REVIEW</div>
@@ -290,7 +296,9 @@
   </span>
 </div>
               </section>
+              </div>
 
+              <div class="lower-panel hidden" id="lower-panel-breakdown">
               <div id="breakdown-accordion" class="breakdown-accordion">
                 <div id="breakdown-trigger" class="breakdown-trigger" role="button" tabindex="0">
                   <div class="breakdown-trigger-left">
@@ -335,6 +343,9 @@
                 </div>
               </div>
 
+              </div>
+
+              <div class="lower-panel hidden" id="lower-panel-insights">
               <section class="insights-strip">
                 <article id="strictest-card" class="insight-card" data-tone="review">
                   <span>Strictest Model</span>
@@ -357,6 +368,7 @@
                 </div>
                 <div id="explainability-list" class="explainability-grid"></div>
               </section>
+              </div>
             </div>
           </div>
 

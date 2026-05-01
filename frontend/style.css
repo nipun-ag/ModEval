@@ -21,6 +21,43 @@
   --muted: #64748b;
   --white: #ffffff;
 }
+/* === LOWER TABS === */
+.results-lower-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+}
+.results-lower-tabs.hidden {
+  display: none;
+}
+.lower-tab {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  background: none;
+  border: none;
+  padding: 12px 20px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+.lower-tab:hover {
+  color: var(--text-secondary);
+}
+.lower-tab.active {
+  color: var(--text);
+  border-bottom: 2px solid var(--accent);
+}
+.lower-panel {
+  display: block;
+}
+.lower-panel.hidden {
+  display: none;
+}
 
 * {
   box-sizing: border-box;
