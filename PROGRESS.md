@@ -6,6 +6,23 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ## 2026-05-02
 
+**style: restructure decision matrix into two separate tables with section labels and divider**
+
+Changes shipped:
+- Split single decision matrix table into two fully separate tables: Enterprise APIs and Open Source Models
+- Each table has its own section label above it and its own full column header row (MODEL, CATEGORY, SEVERITY, CONFIDENCE, ALIGNMENT, ACTION)
+- Added .matrix-section-label component: JetBrains Mono 10px uppercase var(--muted), padding 20px 0 10px 0
+- Added .matrix-section-divider: 1px var(--border-strong) between the two sections
+- Disabled model rows (.matrix-row-disabled) render at 0.4 opacity with "Not Configured" spanning remaining columns
+- Fade-up animation index resets to 0 at start of each table
+- Updated DESIGN.md Decision Matrix Table spec to reflect two-table structure
+
+**Rationale:** Single table with internal tier header rows caused Enterprise and Open Source sections to visually intermingle. Two separate tables with independent headers creates clear visual separation matching the reference design pattern. Disabled enterprise models remain visible at reduced opacity to communicate unlock potential to visitors.
+
+---
+
+## 2026-05-02
+
 **feat: integrate 4 enterprise APIs with 9-model parallel pipeline and graceful degradation**
 
 Changes shipped:

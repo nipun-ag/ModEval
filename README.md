@@ -6,7 +6,7 @@
 
 ## What Is This
 
-ModEval is a live web tool that evaluates text content using five independent AI moderation models simultaneously across five distinct safety dimensions. It normalizes their outputs into a unified format, applies platform context and strictness rules, scores each model's alignment with real platform policies, and surfaces disagreements between models.
+ModEval is a live web tool that evaluates text content using up to nine AI moderation models simultaneously — four enterprise APIs (Perspective API, Azure Content Safety, AWS Comprehend, Google NLP) alongside five open source models. It normalizes their outputs into a unified format, applies platform context and strictness rules, scores each model's alignment with real platform policies, and surfaces disagreements between models.
 
 The core insight behind it: **no single moderation model should be trusted blindly.** The same piece of content can be classified completely differently depending on which model you use, what platform it appears on, and what policy framework is being applied. ModEval makes those differences visible.
 
@@ -26,7 +26,7 @@ ModEval is both a functional tool and a demonstration of applied AI governance t
 
 ## What It Does
 
-- Runs text through five independent moderation models in parallel, each covering a different safety dimension
+- Runs text through up to nine moderation models in parallel -- four enterprise APIs and five open source models, each covering a distinct safety dimension
 - Normalizes all outputs into a unified schema (category, severity, confidence, action)
 - Adjusts decision thresholds based on platform context (Social Media, Gaming, Professional, Community/Forum, VR/Metaverse)
 - Adjusts further based on content type (Original Post, Comment/Reply, Username, Bio, UGC) and strictness level
@@ -35,38 +35,33 @@ ModEval is both a functional tool and a demonstration of applied AI governance t
 - Surfaces an explainability layer showing what each model flagged and why
 - Includes a pre-loaded test case library with 100 real-world content examples across 10 violation categories
 - Documents the full methodology in a dedicated "How It Works" tab
-- Provides detailed model cards for all 5 models in a dedicated "Models" tab
+- Provides detailed model cards for all 9 models (enterprise and open source) in a dedicated "Models" tab
 
 ---
 
 ## Models Used
 
-All five models are free and run via the HuggingFace Inference API. Each covers a distinct safety dimension, simulating a real multi-layer Trust & Safety pipeline.
+ModEval runs up to nine models in parallel across two tiers. Enterprise APIs require credentials configured in environment variables. Open source models run via the HuggingFace Inference API and are always available.
 
-| Display Name | Model | Architecture | Creator | Training Data | Safety Dimension |
-|---|---|---|---|---|---|
-| Toxicity Classifier | `unitary/toxic-bert` | BERT | Unitary AI | Jigsaw Toxic Comments | General toxicity baseline |
-| Offensive Language Detector | `cardiffnlp/twitter-roberta-base-offensive` | RoBERTa | Cardiff NLP | Twitter / SemEval 2019 | Social media offensive language |
-| Hate Speech Detector | `facebook/roberta-hate-speech-dynabench-r4-target` | RoBERTa | Facebook AI Research | DynaBench R4 (adversarial) | Identity-based hate speech |
-| Spam Detector | `mrm8488/bert-tiny-finetuned-sms-spam-detection` | BERT-tiny | Manuel Romero | SMS Spam Collection | Spam and manipulative content |
-| Bias Detector | `valurank/distilroberta-bias` | DistilRoBERTa | Valurank | Wikipedia revisions (WNC) | Non-neutral language detection |
+### Enterprise APIs
 
-### Model Details
+| Display Name | Provider | Safety Dimension |
+|---|---|---|
+| Perspective API | Google / Jigsaw | Toxicity and civil discourse (6 attributes) |
+| Azure Content Safety | Microsoft | Hate, Violence, Sexual, Self-Harm |
+| AWS Comprehend | Amazon | Violence, Hate, Harassment, Sexual, Insult, Profanity |
+| Google NLP | Google Cloud | 8-category moderation including weapons and drugs |
+| OpenAI Moderation | OpenAI | Multi-category (harassment, hate, violence, sexual, self-harm) |
 
-**Toxicity Classifier — unitary/toxic-bert**
-Multi-label classification covering 6 toxicity dimensions simultaneously. Trained on Wikipedia comments which skews toward formal English. Best general-purpose toxicity baseline, widely used in production T&S pipelines. May underperform on informal social media slang.
+### Open Source Models
 
-**Offensive Language Detector — cardiffnlp/twitter-roberta-base-offensive**
-Specifically trained on real Twitter content making it better at detecting informal offensive language and slang. Twitter-specific training may miss platform-specific offensive patterns from other networks.
-
-**Hate Speech Detector — facebook/roberta-hate-speech-dynabench-r4-target**
-Trained on adversarially collected data making it more robust against evasion attempts. Specifically targets identity-based hate rather than general toxicity. Binary hate/not-hate output provides less granularity than multi-label models.
-
-**Spam Detector — mrm8488/bert-tiny-finetuned-sms-spam-detection**
-Extremely lightweight at 4.4M parameters making it the fastest model in the pipeline. 98% validation accuracy. Trained on SMS data so may miss sophisticated social media spam patterns.
-
-**Bias Detector — valurank/distilroberta-bias**
-Unique training methodology using real Wikipedia editorial decisions where neutral editors removed biased language. Detects subtle linguistic bias rather than overt violations. May flag strongly opinionated but legitimate content as biased.
+| Display Name | Model | Architecture | Creator | Safety Dimension |
+|---|---|---|---|---|
+| Toxicity Classifier | `unitary/toxic-bert` | BERT | Unitary AI | General toxicity baseline |
+| Offensive Language Detector | `cardiffnlp/twitter-roberta-base-offensive` | RoBERTa | Cardiff NLP | Social media offensive language |
+| Hate Speech Detector | `facebook/roberta-hate-speech-dynabench-r4-target` | RoBERTa | Facebook AI Research | Identity-based hate speech |
+| Spam Detector | `mrm8488/bert-tiny-finetuned-sms-spam-detection` | BERT-tiny | Manuel Romero | Spam and manipulative content |
+| Bias Detector | `valurank/distilroberta-bias` | DistilRoBERTa | Valurank | Non-neutral language detection |
 
 ---
 
@@ -157,15 +152,15 @@ alignment_score = 1 - abs(model_confidence - policy_expected_threshold)
 - **Analysis Context** — Platform Context, Content Type, and Strictness with descriptive option labels
 - **Consensus Hero Card** — leads results with large action word (ALLOW/REVIEW/REMOVE), AI summary subtitle, and verdict visuals
 - **Verdict Visuals Row** — donut chart showing model vote distribution, severity arc gauge (1-10), and action legend
-- **Model Breakdown Accordion** — collapsed-by-default accordion wrapping the decision matrix table for cleaner information hierarchy
+- **Two-Tier Decision Matrix** — Enterprise APIs and Open Source Models rendered as separate tables, each with independent column headers and section labels
 - **Decision Matrix** — comparison table with model chip badges, color-coded action badges, alignment scores
 - **Insight Strip** — strictest model, most lenient model, consensus recommendation with plain-English explainers
 - **Disagreement Banner** — high-contrast alert when models conflict
-- **AI Consensus Summary** — GPT-4o-mini analyzes all 5 model results and generates a 2-3 sentence plain English interpretation, surfacing model agreements, disagreements, and safety recommendation
+- **AI Consensus Summary** — GPT-4o-mini analyzes all active model results and generates a 2-3 sentence plain English interpretation, surfacing model agreements, disagreements, and safety recommendation
 - **AI Interpretation Layer (Section 6.5)** — Documents the GPT-4o-mini synthesis layer, inputs, outputs, and fallback behavior
 - **Skeleton shimmer loading** — premium loading state while models run
 - **Model Cards** — detailed cards for all 5 models with architecture, training data, strengths, limitations, and HuggingFace links
-- **5 Models Active** indicator in navigation
+- **Dynamic Models Active** indicator in navigation — reflects count of configured models (up to 9)
 - **Benchmark Placeholder Panel** — preview of upcoming benchmark features with skeleton leaderboard and feature preview cards
 - **Ambient glow blobs** — subtle blue and purple glow layers behind results panel for visual depth
 
@@ -176,7 +171,9 @@ alignment_score = 1 - abs(model_confidence - policy_expected_threshold)
 | Layer | Technology |
 |---|---|
 | Backend | Python 3.14, Flask 3.1, Gunicorn |
-| Model Integration | HuggingFace Inference API (5 models) |
+| Enterprise APIs | Perspective API, Azure Content Safety, AWS Comprehend, Google NLP, OpenAI Moderation |
+| Open Source Models | HuggingFace Inference API (4 models) |
+| AI Summary | OpenAI GPT-4o-mini |
 | Frontend | Plain HTML, CSS, JavaScript |
 | Fonts | DM Serif Display, Inter, JetBrains Mono |
 | Deployment | Render (free tier) |
@@ -195,7 +192,6 @@ alignment_score = 1 - abs(model_confidence - policy_expected_threshold)
 - **Model leaderboard** — Aggregate alignment scores across all analyses to rank model performance by platform and violation category
 - **Prompt injection resistance testing** — Test whether policy instructions can be overridden via adversarial input in the custom policy field
 - **Multilingual support** — Extend coverage to non-English content using multilingual model variants
-- **Paid API integrations** — AWS Comprehend, Azure Content Moderator, and Clarifai for enterprise-grade comparison
 - **G2-style model marketplace** — Long-term vision: aggregate benchmark data across all analyses to build the first independent public leaderboard ranking moderation APIs by accuracy, strictness, and policy alignment across platforms and violation categories
 
 ---
