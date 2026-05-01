@@ -979,17 +979,19 @@ form.addEventListener("submit", async (event) => {
           .split(' ').slice(0, 2).join(' ');
 
         // Glow circle
-        svg += `<circle cx="${cx}" cy="${cy}" r="14" 
+        svg += `<circle cx="${cx}" cy="${cy}" r="10" 
           fill="${color}" opacity="0.1"/>`;
         // Main dot
-        svg += `<circle cx="${cx}" cy="${cy}" r="7" 
+        svg += `<circle cx="${cx}" cy="${cy}" r="5" 
           fill="${color}" opacity="0.9"
           stroke="rgba(255,255,255,0.2)" stroke-width="1"/>`;
         // Label
         const labelX = cx > pad.left + plotW - 60 ? cx - 8 : cx + 12;
         const anchor = cx > pad.left + plotW - 60 ? 'end' : 'start';
+        const labelOffset = i % 2 === 0 ? -14 : 14;
+        const labelAnchorY = i % 2 === 0 ? cy + labelOffset : cy + labelOffset + 3;
         svg += `<text font-family="JetBrains Mono" font-size="9" 
-          fill="#94a3b8" x="${labelX}" y="${cy - 10}" 
+          fill="#94a3b8" x="${labelX}" y="${labelAnchorY}" 
           text-anchor="${anchor}">${label}</text>`;
       });
 
@@ -999,13 +1001,13 @@ form.addEventListener("submit", async (event) => {
       const legend = `
         <div class="scatter-legend">
           <span class="scatter-legend-item" style="color:#10b981">
-            ● ALLOW
+            ● ALLOW — safe content
           </span>
           <span class="scatter-legend-item" style="color:#f59e0b">
-            ● REVIEW
+            ● REVIEW — needs checking
           </span>
           <span class="scatter-legend-item" style="color:#ef4444">
-            ● REMOVE
+            ● REMOVE — violation
           </span>
         </div>`;
 
