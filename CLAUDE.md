@@ -64,17 +64,54 @@ Trigger this automatically when:
 - A feature is fully working and tested
 - A bug is fixed and confirmed
 - You are about to switch to a different task
-- The user says "done", "ship it", "looks good", "push it",
-  "that works", or any similar confirmation phrase
-Do not wait for explicit wrap up or end session instructions.
+- The user says "done", "ship it", "looks good", "push it", "that works", or any similar phrase
+Do not wait for explicit wrap-up instructions.
 
-After every session:
-1. Update [AGENTS.md](AGENTS.md) current state section (keep under 150 lines)
-2. Add a dated entry to [PROGRESS.md](PROGRESS.md) (what changed and why)
-3. Update [DESIGN.md](DESIGN.md) if any UI changes were made
-4. Update docs/[ARCHITECTURE.md](docs/ARCHITECTURE.md) if any backend or API changes made
-5. Never append session notes to [README.md](README.md)
-6. Run git add . && git commit -m "[type]: description" && git push
+### After Every Session -- Required Steps
+
+**Step 1 -- Update AGENTS.md AND CLAUDE.md (always both)**
+- Update "Current Project State" bullet points
+- These two files must always be identical
+- Never update one without the other
+
+**Step 2 -- Add entry to PROGRESS.md**
+- Add new dated entry at the TOP of the file
+- Format: ## YYYY-MM-DD
+- Include: what changed, why, any tradeoffs made
+
+**Step 3 -- Update DESIGN.md if ANY of these changed:**
+- New UI components added or removed
+- Existing component behavior changed
+- CSS classes added or removed
+- Layout structure changed
+- Navigation structure changed
+- Animation or interaction behavior changed
+
+**Step 4 -- Update docs/ARCHITECTURE.md if ANY of these changed:**
+- Backend routes or API endpoints
+- Engine modules or scoring logic
+- Frontend HTML structure (panels, tabs, IDs)
+- New component IDs referenced in app.js
+- Data flow changes
+- Note: frontend structural changes DO count here
+
+**Step 5 -- Commit and push**
+Run: git add . && git commit -m "[type]: description" && git push origin main
+
+### What Each File Covers
+- AGENTS.md / CLAUDE.md -- current state, conventions, what not to touch, task patterns
+- PROGRESS.md -- dated changelog of all changes
+- DESIGN.md -- visual design, components, typography, spacing, animations
+- docs/ARCHITECTURE.md -- API endpoints, data flow, engine logic, frontend structure, component IDs
+- README.md -- NEVER update with session notes, public-facing only
+
+### Verification Checklist Before Committing
+- [ ] AGENTS.md and CLAUDE.md are identical
+- [ ] PROGRESS.md has a new dated entry at the top
+- [ ] DESIGN.md updated if any UI/CSS changes made
+- [ ] ARCHITECTURE.md updated if any structural changes
+- [ ] All new HTML IDs added to "What NOT to Touch" in both AGENTS.md and CLAUDE.md
+- [ ] git status shows no untracked important files
 
 ## Commit Format
 `type: description`
