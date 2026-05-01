@@ -505,13 +505,16 @@ function setBreakdownExpanded(expanded) {
 
 function setPrimaryView(view) {
   const showBenchmark = view === "benchmark";
-
-  if (workspace) workspace.style.display = showBenchmark ? "none" : "grid";
-  if (benchmarkPanel) benchmarkPanel.style.display = showBenchmark ? "block" : "none";
+  if (workspace) workspace.style.display = 
+    showBenchmark ? "none" : "grid";
+  if (benchmarkPanel) benchmarkPanel.style.display = 
+    showBenchmark ? "block" : "none";
   const navAnalysis = document.getElementById('nav-analysis');
   const navBenchmark = document.getElementById('nav-benchmark');
-  if (navAnalysis) navAnalysis.classList.toggle("active", !showBenchmark);
-  if (navBenchmark) navBenchmark.classList.toggle("active", showBenchmark);
+  if (navAnalysis) navAnalysis.classList.toggle(
+    "active", !showBenchmark);
+  if (navBenchmark) navBenchmark.classList.toggle(
+    "active", showBenchmark);
 }
 
 function setSectionExpanded(toggle, content, expanded) {
@@ -1020,7 +1023,7 @@ showPanelState("empty");
       if (el) el.style.display = 'none';
     });
     if (id === 'workspace') {
-      if (workspace) workspace.style.display = '';
+      if (workspace) workspace.style.display = 'grid';
     } else {
       const el = document.getElementById(id);
       if (el) el.style.display = 'block';
