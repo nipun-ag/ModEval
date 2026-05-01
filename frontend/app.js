@@ -506,10 +506,12 @@ function setBreakdownExpanded(expanded) {
 function setPrimaryView(view) {
   const showBenchmark = view === "benchmark";
 
-  workspace.style.display = showBenchmark ? "none" : "grid";
-  benchmarkPanel.style.display = showBenchmark ? "block" : "none";
-  navAnalysis.classList.toggle("active", !showBenchmark);
-  navBenchmark.classList.toggle("active", showBenchmark);
+  if (workspace) workspace.style.display = showBenchmark ? "none" : "grid";
+  if (benchmarkPanel) benchmarkPanel.style.display = showBenchmark ? "block" : "none";
+  const navAnalysis = document.getElementById('nav-analysis');
+  const navBenchmark = document.getElementById('nav-benchmark');
+  if (navAnalysis) navAnalysis.classList.toggle("active", !showBenchmark);
+  if (navBenchmark) navBenchmark.classList.toggle("active", showBenchmark);
 }
 
 function setSectionExpanded(toggle, content, expanded) {
@@ -966,6 +968,20 @@ if (batchFileInput) batchFileInput.addEventListener("change", async () => {
   }
 });
 
+// Ensure any other references to lower tab IDs are null-checked
+const lowerPanelSummary = document.getElementById('lower-panel-summary');
+if (lowerPanelSummary) {
+  // Any operations on lowerPanelSummary go here
+}
+const lowerPanelBreakdown = document.getElementById('lower-panel-breakdown');
+if (lowerPanelBreakdown) {
+  // Any operations on lowerPanelBreakdown go here
+}
+const lowerPanelInsights = document.getElementById('lower-panel-insights');
+if (lowerPanelInsights) {
+  // Any operations on lowerPanelInsights go here
+}
+
 if (textInput) {
   textInput.addEventListener("input", updateCounter);
   textInput.addEventListener("animationend", () => textInput.classList.remove("example-loaded"));
@@ -1040,3 +1056,45 @@ showPanelState("empty");
     setActiveNav('nav-models');
   });
 })();
+
+// Add null checks for lower tab IDs to prevent crashes
+const lowerTabs = document.getElementById('results-lower-tabs');
+if (lowerTabs) {
+  lowerTabs.classList.remove('hidden');
+}
+
+const lowerTabSummary = document.getElementById('lower-tab-summary');
+if (lowerTabSummary) {
+  lowerTabSummary.addEventListener('click', () => {
+    const lowerPanelSummary = document.getElementById('lower-panel-summary');
+    if (lowerPanelSummary) lowerPanelSummary.classList.remove('hidden');
+    const lowerPanelBreakdown = document.getElementById('lower-panel-breakdown');
+    if (lowerPanelBreakdown) lowerPanelBreakdown.classList.add('hidden');
+    const lowerPanelInsights = document.getElementById('lower-panel-insights');
+    if (lowerPanelInsights) lowerPanelInsights.classList.add('hidden');
+  });
+}
+
+const lowerTabBreakdown = document.getElementById('lower-tab-breakdown');
+if (lowerTabBreakdown) {
+  lowerTabBreakdown.addEventListener('click', () => {
+    const lowerPanelSummary = document.getElementById('lower-panel-summary');
+    if (lowerPanelSummary) lowerPanelSummary.classList.add('hidden');
+    const lowerPanelBreakdown = document.getElementById('lower-panel-breakdown');
+    if (lowerPanelBreakdown) lowerPanelBreakdown.classList.remove('hidden');
+    const lowerPanelInsights = document.getElementById('lower-panel-insights');
+    if (lowerPanelInsights) lowerPanelInsights.classList.add('hidden');
+  });
+}
+
+const lowerTabInsights = document.getElementById('lower-tab-insights');
+if (lowerTabInsights) {
+  lowerTabInsights.addEventListener('click', () => {
+    const lowerPanelSummary = document.getElementById('lower-panel-summary');
+    if (lowerPanelSummary) lowerPanelSummary.classList.add('hidden');
+    const lowerPanelBreakdown = document.getElementById('lower-panel-breakdown');
+    if (lowerPanelBreakdown) lowerPanelBreakdown.classList.add('hidden');
+    const lowerPanelInsights = document.getElementById('lower-panel-insights');
+    if (lowerPanelInsights) lowerPanelInsights.classList.remove('hidden');
+  });
+}
