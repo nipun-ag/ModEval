@@ -62,7 +62,7 @@ Trigger this automatically when:
 Do not wait for explicit wrap up or end session instructions.
 
 After every session:
-1. Update [CLAUDE.md](CLAUDE.md) current state section (keep under 150 lines)
+1. Update [AGENTS.md](AGENTS.md) current state section (keep under 150 lines)
 2. Add a dated entry to [PROGRESS.md](PROGRESS.md) (what changed and why)
 3. Update [DESIGN.md](DESIGN.md) if any UI changes were made
 4. Update docs/[ARCHITECTURE.md](docs/ARCHITECTURE.md) if any backend or API changes made
@@ -118,7 +118,8 @@ After every session:
 - Disagreement detection and banner
 - AI Consensus Summary via GPT-4o-mini
 - 100 pre-loaded test cases across 10 violation categories
-- 4 tabs: Analysis, How It Works, Models
+- Results panel now leads with a consensus hero and collapsed model breakdown accordion
+- Topbar includes ANALYSIS and locked BENCHMARK navigation; Benchmark shows a v2 placeholder panel
 - Deployed on Render at modeval.bynipun.com
 
 ## Known Limitations
