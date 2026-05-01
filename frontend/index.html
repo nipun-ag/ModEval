@@ -14,6 +14,10 @@
     <header class="topbar">
       <div class="topbar-inner">
         <div class="brand-wordmark">Mod<span>Eval</span></div>
+        <nav class="topbar-nav">
+          <a class="topbar-nav-item active" id="nav-analysis">ANALYSIS</a>
+          <a class="topbar-nav-item locked" id="nav-benchmark">BENCHMARK 🔒</a>
+        </nav>
         <div class="topbar-status">
           <span class="status-dots">
             <span class="status-dot"></span>
@@ -178,6 +182,8 @@
       </aside>
 
       <section class="results-panel">
+        <div class="results-glow-blue"></div>
+        <div class="results-glow-purple"></div>
         <div class="panel-inner">
           <div class="results-tabs-wrap">
             <div class="progress-bar hidden" aria-hidden="true"></div>
@@ -223,6 +229,56 @@
             </section>
 
             <div id="results-content" class="results-content hidden">
+              <section class="consensus-hero" id="consensus-hero">
+                <span class="consensus-hero-eyebrow">AGGREGATED CONSENSUS</span>
+                <div class="consensus-hero-action" id="hero-action">REVIEW</div>
+                <p class="consensus-hero-subtitle" id="hero-subtitle"></p>
+              </section>
+
+              <div id="breakdown-accordion" class="breakdown-accordion">
+                <div id="breakdown-trigger" class="breakdown-trigger" role="button" tabindex="0">
+                  <div class="breakdown-trigger-left">
+                    <span class="breakdown-title">Model Breakdown</span>
+                    <span class="breakdown-count">5 MODELS</span>
+                  </div>
+                  <span class="breakdown-chevron" aria-hidden="true">▾</span>
+                </div>
+                <div id="breakdown-body" class="breakdown-body">
+                  <section class="matrix-section">
+                    <div class="section-heading">
+                      <p class="section-label mono-label">Decision Matrix</p>
+                    </div>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>
+                            Model
+                            <span class="col-info-icon" data-tooltip="The AI model that evaluated this content. Each model was trained on different data and detects a different type of violation.">?</span>
+                          </th>
+                          <th>
+                            Top Category
+                            <span class="col-info-icon" data-tooltip="The violation type this model flagged as most likely. If the model found nothing suspicious, it shows the closest clean classification.">?</span>
+                          </th>
+                          <th>
+                            Severity
+                            <span class="col-info-icon" data-tooltip="How harmful the content could be, rated 1 to 10. Derived from the model's confidence score. 1-3 is low risk, 4-7 is medium, 8-10 is high.">?</span>
+                          </th>
+                          <th>
+                            Confidence
+                            <span class="col-info-icon" data-tooltip="How certain the model is about its top category, from 0.00 (no confidence) to 1.00 (fully certain). A high confidence on a clean category means the model is sure the content is safe.">?</span>
+                          </th>
+                          <th>
+                            Action
+                            <span class="col-info-icon" data-tooltip="The recommended moderation decision based on the model's confidence and your selected platform context and strictness level. Allow means no action needed. Review means a human should check. Remove means the content violates policy.">?</span>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody id="results-body"></tbody>
+                    </table>
+                  </section>
+                </div>
+              </div>
+
               <section class="insights-strip">
                 <article id="strictest-card" class="insight-card" data-tone="review">
                   <span>Strictest Model</span>
@@ -234,39 +290,6 @@
                   <em>The model most likely to allow this content through</em>
                   <strong id="most-lenient-model">-</strong>
                 </article>
-              </section>
-
-              <section class="matrix-section">
-                <div class="section-heading">
-                  <p class="section-label mono-label">Decision Matrix</p>
-                </div>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>
-                        Model
-                        <span class="col-info-icon" data-tooltip="The AI model that evaluated this content. Each model was trained on different data and detects a different type of violation.">?</span>
-                      </th>
-                      <th>
-                        Top Category
-                        <span class="col-info-icon" data-tooltip="The violation type this model flagged as most likely. If the model found nothing suspicious, it shows the closest clean classification.">?</span>
-                      </th>
-                      <th>
-                        Severity
-                        <span class="col-info-icon" data-tooltip="How harmful the content could be, rated 1 to 10. Derived from the model's confidence score. 1-3 is low risk, 4-7 is medium, 8-10 is high.">?</span>
-                      </th>
-                      <th>
-                        Confidence
-                        <span class="col-info-icon" data-tooltip="How certain the model is about its top category, from 0.00 (no confidence) to 1.00 (fully certain). A high confidence on a clean category means the model is sure the content is safe.">?</span>
-                      </th>
-                      <th>
-                        Action
-                        <span class="col-info-icon" data-tooltip="The recommended moderation decision based on the model's confidence and your selected platform context and strictness level. Allow means no action needed. Review means a human should check. Remove means the content violates policy.">?</span>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody id="results-body"></tbody>
-                </table>
               </section>
 
               <section class="explainability-section">
@@ -741,6 +764,49 @@
         </div>
       </section>
     </main>
+    <div id="benchmark-panel" style="display:none">
+      <h2 class="benchmark-heading">Benchmarking</h2>
+      <p class="benchmark-subheading">Upload a labeled dataset and run all models against ground truth. Accuracy, F1, over-moderation rates, and model profiles coming in v2.</p>
+
+      <div class="benchmark-preview-container">
+        <div class="benchmark-skeleton-table">
+          <div class="benchmark-skeleton-head">
+            <span>Model</span>
+            <span>Accuracy</span>
+            <span>F1</span>
+            <span>Over-mod Rate</span>
+          </div>
+          <div class="benchmark-skeleton-row skeleton-row"></div>
+          <div class="benchmark-skeleton-row skeleton-row"></div>
+          <div class="benchmark-skeleton-row skeleton-row"></div>
+        </div>
+        <div class="benchmark-lock-overlay">
+          <div class="benchmark-lock-card">
+            <div class="benchmark-lock-icon">🔒</div>
+            <h3 class="benchmark-lock-title">Model Benchmarking</h3>
+            <p class="benchmark-lock-body">This feature is being built. Phase 2 of ModEval v2 will introduce full benchmark runs against labeled ground truth datasets.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="benchmark-preview-grid">
+        <div class="benchmark-preview-card">
+          <div class="benchmark-preview-eyebrow">COMING IN V2</div>
+          <div class="benchmark-preview-title">Leaderboard</div>
+          <div class="benchmark-preview-body">Ranked model comparison filterable by violation category and platform context.</div>
+        </div>
+        <div class="benchmark-preview-card">
+          <div class="benchmark-preview-eyebrow">COMING IN V2</div>
+          <div class="benchmark-preview-title">Failure Analysis</div>
+          <div class="benchmark-preview-body">False positive and false negative clusters with edge case breakdowns.</div>
+        </div>
+        <div class="benchmark-preview-card">
+          <div class="benchmark-preview-eyebrow">COMING IN V2</div>
+          <div class="benchmark-preview-title">Recommendation Engine</div>
+          <div class="benchmark-preview-body">Optimal API selection based on your platform, use case, and benchmark results.</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="/app.js"></script>

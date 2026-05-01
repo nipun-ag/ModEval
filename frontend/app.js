@@ -13,12 +13,16 @@ const batchSummary = document.getElementById("batch-summary");
 const analysisTab = document.getElementById("analysis-tab");
 const methodologyTab = document.getElementById("methodology-tab");
 const modelsTab = document.getElementById("models-tab");
+const navAnalysis = document.getElementById("nav-analysis");
+const navBenchmark = document.getElementById("nav-benchmark");
 const analysisView = document.getElementById("analysis-view");
 const methodologyView = document.getElementById("methodology-view");
 const modelsView = document.getElementById("models-view");
 const contextToggle = document.getElementById("context-toggle");
 const contextContent = document.getElementById("context-content");
 const analyzeButton = document.getElementById("analyze-button");
+const workspace = document.querySelector(".workspace");
+const benchmarkPanel = document.getElementById("benchmark-panel");
 
 analyzeButton.addEventListener("mousedown", () => {
   analyzeButton.classList.add("loading");
@@ -29,6 +33,11 @@ const skeletonState = document.getElementById("skeleton-state");
 const resultsContent = document.getElementById("results-content");
 const strictestCard = document.getElementById("strictest-card");
 const lenientCard = document.getElementById("lenient-card");
+const consensusHero = document.getElementById("consensus-hero");
+const heroAction = document.getElementById("hero-action");
+const heroSubtitle = document.getElementById("hero-subtitle");
+const breakdownAccordion = document.getElementById("breakdown-accordion");
+const breakdownTrigger = document.getElementById("breakdown-trigger");
 const exampleButtons = Array.from(document.querySelectorAll(".example-pill"));
 
 // Initialize column info icon tooltips
@@ -460,6 +469,51 @@ function badge(label, variant) {
   return `<span class="badge ${variant}">${escapeHtml(label)}</span>`;
 }
 
+function firstTwoSentences(text) {
+  const normalized = String(text || "").trim();
+  if (!normalized) {
+    return "";
+  }
+
+  const parts = normalized.split(". ").filter(Boolean);
+  if (parts.length <= 2) {
+    return normalized;
+  }
+
+  const summary = parts.slice(0, 2).join(". ");
+  return /[.!?]$/.test(summary) ? summary : `${summary}.`;
+}
+
+function setHeroState(action, summary) {
+  const tone = actionTone(action);
+  const borderColors = {
+    allow: "var(--green)",
+    review: "var(--amber)",
+    remove: "var(--red)",
+    neutral: "var(--amber)",
+  };
+  const displayAction = String(action || "Review").toUpperCase();
+  const color = borderColors[tone] || borderColors.review;
+
+  heroAction.textContent = displayAction;
+  heroSubtitle.textContent = firstTwoSentences(summary);
+  consensusHero.style.borderLeftColor = color;
+  heroAction.style.color = color;
+}
+
+function setBreakdownExpanded(expanded) {
+  breakdownAccordion.classList.toggle("open", expanded);
+}
+
+function setPrimaryView(view) {
+  const showBenchmark = view === "benchmark";
+
+  workspace.style.display = showBenchmark ? "none" : "grid";
+  benchmarkPanel.style.display = showBenchmark ? "block" : "none";
+  navAnalysis.classList.toggle("active", !showBenchmark);
+  navBenchmark.classList.toggle("active", showBenchmark);
+}
+
 function setSectionExpanded(toggle, content, expanded) {
   toggle.setAttribute("aria-expanded", String(expanded));
   content.setAttribute("aria-hidden", String(!expanded));
@@ -501,6 +555,9 @@ function showPanelState(state) {
   resultsEmpty.classList.toggle("hidden", state !== "empty");
   skeletonState.classList.toggle("hidden", state !== "loading");
   resultsContent.classList.toggle("hidden", state !== "results");
+  if (state !== "results") {
+    setBreakdownExpanded(false);
+  }
 }
 
 function renderResults(results) {
@@ -770,12 +827,18 @@ form.addEventListener("submit", async (event) => {
     renderDisagreements(data.disagreements || []);
     renderInsights(data.insights || {}, data.results || []);
     renderExplainability(data.results || [], data.insights || {}, data.disagreements || [], data.ai_summary || "");
+    setHeroState(
+      data.insights?.consensus_recommendation || data.insights?.consensus_action || "Review",
+      data.ai_summary || generateConsensusSummary(data.results || [], data.insights || {}, data.disagreements || [])
+    );
+    setBreakdownExpanded(false);
     showPanelState("results");
     setStatus("Analysis complete", "success");
   } catch (error) {
     renderResults([]);
     renderInsights({}, []);
     explainabilityList.innerHTML = `<p class="error-text">${escapeHtml(error.message)}</p>`;
+    setHeroState("Review", "");
     showPanelState("results");
     setStatus("Request failed", "error");
   } finally {
@@ -789,6 +852,19 @@ if (batchButton) batchButton.addEventListener("click", () => batchFileInput.clic
 analysisTab.addEventListener("click", () => switchTab("analysis"));
 methodologyTab.addEventListener("click", () => switchTab("methodology"));
 modelsTab.addEventListener("click", () => switchTab("models"));
+if (navAnalysis) navAnalysis.addEventListener("click", () => setPrimaryView("analysis"));
+if (navBenchmark) navBenchmark.addEventListener("click", () => setPrimaryView("benchmark"));
+if (breakdownTrigger) {
+  breakdownTrigger.addEventListener("click", () => {
+    setBreakdownExpanded(!breakdownAccordion.classList.contains("open"));
+  });
+  breakdownTrigger.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      setBreakdownExpanded(!breakdownAccordion.classList.contains("open"));
+    }
+  });
+}
 exampleButtons.forEach((button) => {
   button.addEventListener("click", () => applyExample(button.dataset.category, button));
 });
@@ -859,4 +935,7 @@ window.addEventListener("resize", () => {
 updateCounter();
 initializeModalSelects();
 setSectionExpanded(contextToggle, contextContent, false);
+setBreakdownExpanded(false);
+setHeroState("Review", "");
+setPrimaryView("analysis");
 showPanelState("empty");
