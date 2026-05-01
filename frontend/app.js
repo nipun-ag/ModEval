@@ -745,7 +745,6 @@ function generateConsensusSummary(results, insights, disagreements) {
 
 function highlightSummary(text) {
   if (!text) return text;
-  console.log("INPUT:", text);
   let safe = escapeHtml(text);
   safe = safe.replace(/\b(remov\w*|flagged|violat\w*|harmful|danger\w*)\b/gi,
     '<span style="color: var(--red); font-style: normal; font-weight: 600;">$1</span>');
@@ -753,7 +752,6 @@ function highlightSummary(text) {
     '<span style="color: var(--green); font-style: normal; font-weight: 600;">$1</span>');
   safe = safe.replace(/\b(review\w*|caution\w*|ambiguous|borderline|disagree\w*|conflict\w*)\b/gi,
     '<span style="color: var(--amber); font-style: normal; font-weight: 600;">$1</span>');
-  console.log("OUTPUT:", safe);
   return safe;
 }
 
@@ -889,8 +887,6 @@ form.addEventListener("submit", async (event) => {
       gaugeFill.style.stroke = gaugeColor;
     }
 
-
-    // (scatter plot removed)
 
     setBreakdownExpanded(false);
     showPanelState("results");
