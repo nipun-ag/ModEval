@@ -776,8 +776,8 @@ form.addEventListener("submit", async (event) => {
   renderDisagreements([]);
   showPanelState("loading");
 
-  const lowerTabsEl = document.getElementById('results-lower-tabs');
-  if (lowerTabsEl) lowerTabsEl.classList.add('hidden');
+  const lowerTabsHide = document.getElementById('results-lower-tabs');
+  if (lowerTabsHide) lowerTabsHide.classList.add('hidden');
 
   const progressBar = document.querySelector(".progress-bar");
   if (progressBar) {
