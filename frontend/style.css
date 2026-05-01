@@ -1136,6 +1136,8 @@ thead th {
   padding: 8px 12px;
   border-bottom: 1px solid var(--border-strong);
   text-align: left;
+  white-space: nowrap;
+  vertical-align: middle;
 }
 
 .col-info-icon {
@@ -1150,7 +1152,7 @@ thead th {
   color: var(--muted);
   font-size: 9px;
   font-family: "JetBrains Mono", monospace;
-  margin-left: 5px;
+  margin-left: 4px;
   cursor: help;
   vertical-align: middle;
 }
@@ -2434,22 +2436,4 @@ tbody td {
   display: inline-block;
 }
 
-/* === SCATTER PLOT === */
-.scatter-svg {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-.scatter-legend {
-  display: flex;
-  gap: 24px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
-  margin-top: 4px;
-}
-.scatter-legend-item {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
+/* (scatter plot CSS removed) */
