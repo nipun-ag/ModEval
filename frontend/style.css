@@ -2393,3 +2393,18 @@ tbody td {
 .lower-panel.hidden {
   display: none !important;
 }
+
+/* Tier Headers in Decision Matrix */
+tr.tier-header {
+  background: var(--surface3);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.tier-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  display: inline-block;
+}

@@ -22,6 +22,14 @@ load_dotenv(PROJECT_ROOT / ".env")
 HF_API_KEY = os.getenv("HF_API_KEY", "").strip()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
 
+PERSPECTIVE_API_KEY = os.getenv("PERSPECTIVE_API_KEY", "").strip()
+AZURE_CS_KEY = os.getenv("AZURE_CS_KEY", "").strip()
+AZURE_CS_ENDPOINT = os.getenv("AZURE_CS_ENDPOINT", "").strip()
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID", "").strip()
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY", "").strip()
+AWS_REGION = os.getenv("AWS_REGION", "us-east-1").strip()
+GOOGLE_NLP_KEY = os.getenv("GOOGLE_NLP_KEY", "").strip()
+
 REQUEST_TIMEOUT = 20
 MAX_INPUT_LENGTH = 500
 

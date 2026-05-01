@@ -89,7 +89,48 @@ function initColumnTooltips() {
 
 document.addEventListener("DOMContentLoaded", initColumnTooltips);
 
+const ENTERPRISE_MODELS = [
+  "Perspective API",
+  "Azure Content Safety",
+  "AWS Comprehend",
+  "Google NLP",
+  "OpenAI Moderation",
+];
+
+const OPENSOURCE_MODELS = [
+  "HuggingFace toxic-bert",
+  "HuggingFace RoBERTa offensive",
+  "HuggingFace Hate Speech",
+  "HuggingFace Spam Detector",
+  "HuggingFace Bias Detector",
+];
+
 const MODEL_DISPLAY = {
+  "Perspective API": {
+    name: "Perspective API",
+    subtitle: "google/perspective",
+    chip: "REST API",
+  },
+  "Azure Content Safety": {
+    name: "Azure Content Safety",
+    subtitle: "microsoft/azure",
+    chip: "Proprietary",
+  },
+  "AWS Comprehend": {
+    name: "AWS Comprehend",
+    subtitle: "amazon/comprehend",
+    chip: "Managed",
+  },
+  "Google NLP": {
+    name: "Google NLP",
+    subtitle: "google/nlp",
+    chip: "REST API",
+  },
+  "OpenAI Moderation": {
+    name: "OpenAI Moderation",
+    subtitle: "openai/omni-moderation-latest",
+    chip: "Proprietary",
+  },
   "HuggingFace toxic-bert": {
     name: "General Toxicity",
     subtitle: "unitary/toxic-bert",
@@ -105,10 +146,10 @@ const MODEL_DISPLAY = {
     subtitle: "facebook/roberta-hate-speech",
     chip: "facebook",
   },
-  "OpenAI Moderation": {
-    name: "OpenAI Moderation",
-    subtitle: "openai/omni-moderation-latest",
-    chip: "Proprietary",
+  "HuggingFace Spam Detector": {
+    name: "Spam Detector",
+    subtitle: "facebook/roberta-spam",
+    chip: "RoBERTa",
   },
   "HuggingFace Bias Detector": {
     name: "Language Bias",
@@ -527,26 +568,85 @@ function renderResults(results) {
     return;
   }
 
-  resultsBody.innerHTML = results.map((result, index) => `
-    <tr style="animation-delay:${index * 50}ms">
-      <td>
-        ${renderModelDisplay(result.model, true)}
-        <span class="metric-soft">${result.error ? "Model unavailable" : "Live inference"}</span>
-      </td>
-      <td>
-        <span class="metric-strong">${escapeHtml(result.top_category)}</span>
-      </td>
-      <td>
-        <span class="severity-value mono ${severityTone(Number(result.severity))}">${escapeHtml(result.severity)}</span>
-      </td>
-      <td>
-        <span class="mono">${Number(result.confidence).toFixed(2)}</span>
-      </td>
-      <td class="action-cell">
-        ${badge(result.action, actionTone(result.action))}
-      </td>
-    </tr>
-  `).join("");
+  let html = "";
+
+  // Enterprise APIs tier
+  html += `<tr class="tier-header"><td colspan="6"><span class="tier-label">ENTERPRISE APIS</span></td></tr>`;
+  ENTERPRISE_MODELS.forEach((modelName, index) => {
+    const result = results.find(r => r.model === modelName);
+    if (result) {
+      if (result.disabled) {
+        html += `
+          <tr style="animation-delay:${index * 50}ms; opacity: 0.4;">
+            <td colspan="6">
+              <span class="metric-soft">${escapeHtml(modelName)} — Not Configured</span>
+            </td>
+          </tr>
+        `;
+      } else {
+        html += `
+          <tr style="animation-delay:${index * 50}ms">
+            <td>
+              ${renderModelDisplay(result.model, true)}
+              <span class="metric-soft">${result.error ? "Model unavailable" : "Live inference"}</span>
+            </td>
+            <td>
+              <span class="metric-strong">${escapeHtml(result.top_category)}</span>
+            </td>
+            <td>
+              <span class="severity-value mono ${severityTone(Number(result.severity))}">${escapeHtml(result.severity)}</span>
+            </td>
+            <td>
+              <span class="mono">${Number(result.confidence).toFixed(2)}</span>
+            </td>
+            <td class="action-cell">
+              ${badge(result.action, actionTone(result.action))}
+            </td>
+          </tr>
+        `;
+      }
+    }
+  });
+
+  // Open Source Models tier
+  html += `<tr class="tier-header"><td colspan="6"><span class="tier-label">OPEN SOURCE MODELS</span></td></tr>`;
+  OPENSOURCE_MODELS.forEach((modelName, index) => {
+    const result = results.find(r => r.model === modelName);
+    if (result) {
+      if (result.disabled) {
+        html += `
+          <tr style="animation-delay:${(ENTERPRISE_MODELS.length + index) * 50}ms; opacity: 0.4;">
+            <td colspan="6">
+              <span class="metric-soft">${escapeHtml(modelName)} — Not Configured</span>
+            </td>
+          </tr>
+        `;
+      } else {
+        html += `
+          <tr style="animation-delay:${(ENTERPRISE_MODELS.length + index) * 50}ms">
+            <td>
+              ${renderModelDisplay(result.model, true)}
+              <span class="metric-soft">${result.error ? "Model unavailable" : "Live inference"}</span>
+            </td>
+            <td>
+              <span class="metric-strong">${escapeHtml(result.top_category)}</span>
+            </td>
+            <td>
+              <span class="severity-value mono ${severityTone(Number(result.severity))}">${escapeHtml(result.severity)}</span>
+            </td>
+            <td>
+              <span class="mono">${Number(result.confidence).toFixed(2)}</span>
+            </td>
+            <td class="action-cell">
+              ${badge(result.action, actionTone(result.action))}
+            </td>
+          </tr>
+        `;
+      }
+    }
+  });
+
+  resultsBody.innerHTML = html;
 }
 
 function renderDisagreements(disagreements) {
@@ -781,6 +881,11 @@ form.addEventListener("submit", async (event) => {
 
   try {
     const data = await postJson("/analyze", payload);
+    const activeModels = (data.results || []).filter(r => !r.disabled).length;
+    const modelsCountSpan = document.getElementById('models-active-count');
+    if (modelsCountSpan) {
+      modelsCountSpan.textContent = activeModels + ' Models Active';
+    }
     renderResults(data.results || []);
     renderDisagreements(data.disagreements || []);
     renderInsights(data.insights || {}, data.results || []);
@@ -790,14 +895,15 @@ form.addEventListener("submit", async (event) => {
       data.ai_summary || generateConsensusSummary(data.results || [], data.insights || {}, data.disagreements || [])
     );
     // --- Donut Chart ---
+    const activeResults = data.results.filter(r => !r.disabled);
     const actionCounts = { remove: 0, review: 0, allow: 0 };
-    data.results.forEach(r => {
+    activeResults.forEach(r => {
       const a = (r.action || '').toLowerCase();
       if (a === 'remove') actionCounts.remove++;
       else if (a === 'review') actionCounts.review++;
       else actionCounts.allow++;
     });
-    const total = data.results.length;
+    const total = activeResults.length || 1;
     const circumference = 314.159;
 
     const removeArc = (actionCounts.remove / total) * circumference;
@@ -825,7 +931,7 @@ form.addEventListener("submit", async (event) => {
       .sort((a, b) => b[1] - a[1])[0];
     const donutFraction = document.getElementById('donut-fraction');
     const donutLabel = document.getElementById('donut-action-label');
-    if (donutFraction) donutFraction.textContent = dominant[1] + '/5';
+    if (donutFraction) donutFraction.textContent = dominant[1] + '/' + total;
     if (donutLabel) donutLabel.textContent = dominant[0].toUpperCase();
 
     // --- Severity Gauge ---

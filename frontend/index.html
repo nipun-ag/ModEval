@@ -28,7 +28,7 @@
             <span class="status-dot"></span>
             <span class="status-dot"></span>
           </span>
-          <span>5 Models Active</span>
+          <span id="models-active-count">9 Models Available</span>
         </div>
       </div>
     </header>
@@ -732,6 +732,123 @@
       </section>
 
       <div class="model-cards-grid">
+
+        <!-- ENTERPRISE APIS TIER -->
+        <div style="grid-column: 1 / -1; padding: 16px 0; border-bottom: 1px var(--border) solid; margin-bottom: 16px;">
+          <p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);">Enterprise APIs</p>
+        </div>
+
+        <article class="model-detail-card" style="border-left: 3px solid var(--accent);">
+          <div class="model-card-header">
+            <h3 class="model-card-title"><span class="live-indicator"></span>Perspective API</h3>
+            <span class="model-card-arch">REST API</span>
+          </div>
+          <p class="model-card-creator">Google / Jigsaw</p>
+          <p class="model-card-detects">Detects: Toxicity and civil discourse across 6 scored attributes</p>
+          <p class="model-card-trained"><strong>Trained on</strong> Online comments from public datasets</p>
+          <div class="model-card-section">
+            <p class="section-label mono-label">Strengths</p>
+            <ul class="model-card-list">
+              <li>Production-grade API used in journalism and civic platforms</li>
+              <li>6 independent scored attributes (toxicity, severe toxicity, identity attack, insult, threat, sexual)</li>
+              <li>Widely trusted for large-scale moderation</li>
+            </ul>
+          </div>
+          <div class="model-card-section">
+            <p class="section-label mono-label">Limitations</p>
+            <ul class="model-card-list">
+              <li>English-primary training data</li>
+              <li>Requires Referer header for API calls</li>
+              <li>Free tier has strict quota limits</li>
+            </ul>
+          </div>
+          <a href="https://perspectiveapi.com" target="_blank" rel="noopener noreferrer" class="model-card-link">View Documentation →</a>
+        </article>
+
+        <article class="model-detail-card" style="border-left: 3px solid #0078d4;">
+          <div class="model-card-header">
+            <h3 class="model-card-title"><span class="live-indicator"></span>Azure Content Safety</h3>
+            <span class="model-card-arch">Proprietary</span>
+          </div>
+          <p class="model-card-creator">Microsoft Azure</p>
+          <p class="model-card-detects">Detects: Hate speech, violence, sexual content, self-harm</p>
+          <p class="model-card-trained"><strong>Trained on</strong> Microsoft proprietary enterprise dataset</p>
+          <div class="model-card-section">
+            <p class="section-label mono-label">Strengths</p>
+            <ul class="model-card-list">
+              <li>Enterprise SLA and SOC2 compliance</li>
+              <li>Designed specifically for production T&amp;S pipelines</li>
+              <li>Integrated with Azure ecosystem</li>
+            </ul>
+          </div>
+          <div class="model-card-section">
+            <p class="section-label mono-label">Limitations</p>
+            <ul class="model-card-list">
+              <li>Limited to 4 safety categories</li>
+              <li>Severity scale (0-6) requires normalization to 0-1</li>
+              <li>Paid service with per-request pricing</li>
+            </ul>
+          </div>
+          <a href="https://azure.microsoft.com/services/cognitive-services/content-safety" target="_blank" rel="noopener noreferrer" class="model-card-link">View Documentation →</a>
+        </article>
+
+        <article class="model-detail-card" style="border-left: 3px solid #ff9900;">
+          <div class="model-card-header">
+            <h3 class="model-card-title"><span class="live-indicator"></span>AWS Comprehend</h3>
+            <span class="model-card-arch">Managed</span>
+          </div>
+          <p class="model-card-creator">Amazon Web Services</p>
+          <p class="model-card-detects">Detects: Toxic content (6 categories including harassment and profanity)</p>
+          <p class="model-card-trained"><strong>Trained on</strong> AWS proprietary dataset</p>
+          <div class="model-card-section">
+            <p class="section-label mono-label">Strengths</p>
+            <ul class="model-card-list">
+              <li>Native integration with AWS ecosystem</li>
+              <li>Enterprise support and SLA options</li>
+              <li>6 toxicity categories (violence, hate, harassment, sexual, insult, profanity)</li>
+            </ul>
+          </div>
+          <div class="model-card-section">
+            <p class="section-label mono-label">Limitations</p>
+            <ul class="model-card-list">
+              <li>Requires AWS account and IAM setup</li>
+              <li>Slightly higher latency than dedicated moderation APIs</li>
+              <li>Pay-per-request pricing model</li>
+            </ul>
+          </div>
+          <a href="https://aws.amazon.com/comprehend" target="_blank" rel="noopener noreferrer" class="model-card-link">View Documentation →</a>
+        </article>
+
+        <article class="model-detail-card" style="border-left: 3px solid #4285f4;">
+          <div class="model-card-header">
+            <h3 class="model-card-title"><span class="live-indicator"></span>Google NLP</h3>
+            <span class="model-card-arch">REST API</span>
+          </div>
+          <p class="model-card-creator">Google Cloud</p>
+          <p class="model-card-detects">Detects: 8 moderation categories including weapons, drugs, and more</p>
+          <p class="model-card-trained"><strong>Trained on</strong> Google proprietary dataset</p>
+          <div class="model-card-section">
+            <p class="section-label mono-label">Strengths</p>
+            <ul class="model-card-list">
+              <li>Broader category coverage (8 categories) including weapons and illicit drugs</li>
+              <li>Integrates with Google Cloud ecosystem</li>
+              <li>Proprietary training from Google's scale</li>
+            </ul>
+          </div>
+          <div class="model-card-section">
+            <p class="section-label mono-label">Limitations</p>
+            <ul class="model-card-list">
+              <li>Paid service requiring Google Cloud billing</li>
+              <li>ModerateText endpoint is newer, less documented than core NLP features</li>
+            </ul>
+          </div>
+          <a href="https://cloud.google.com/natural-language/docs" target="_blank" rel="noopener noreferrer" class="model-card-link">View Documentation →</a>
+        </article>
+
+        <!-- OPEN SOURCE MODELS TIER -->
+        <div style="grid-column: 1 / -1; padding: 16px 0 16px 0; border-top: 1px var(--border) solid; border-bottom: 1px var(--border) solid; margin: 32px 0 16px 0;">
+          <p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);">Open Source Models</p>
+        </div>
 
         <article class="model-detail-card dim-red">
           <div class="model-card-header">

@@ -45,6 +45,8 @@ CATEGORY_ALIASES = {
     "label_0": "allow",
     "label_1": "harassment",
     "label_2": "hate",
+    "illicit_drugs": "illicit_drugs",
+    "weapons": "weapons",
 }
 
 
@@ -70,6 +72,19 @@ def score_to_severity(score: float) -> int:
 
 def normalize_result(raw_result: dict, thresholds: dict) -> dict:
     """Convert one raw provider response into the unified ModEval schema."""
+    if raw_result.get("disabled"):
+        return {
+            "model": raw_result.get("model", "Unknown Model"),
+            "disabled": True,
+            "action": "Disabled",
+            "flagged": False,
+            "confidence": 0.0,
+            "severity": 0,
+            "top_category": "none",
+            "raw_scores": {},
+            "explanation": "API credentials not configured.",
+        }
+
     raw_scores = normalize_scores(raw_result.get("scores", {}))
 
     if not raw_scores:

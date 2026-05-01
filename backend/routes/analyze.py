@@ -14,12 +14,26 @@ from backend.engine.context_engine import calculate_context_adjustment
 from backend.engine.explainer import explain_result
 from backend.engine.normalizer import build_error_result, normalize_result
 from backend.engine.policy_engine import evaluate_policy_alignment, get_policy_rules
-from backend.models import hf_bias, hf_hate_speech, hf_roberta_offensive, hf_toxic_bert, openai_moderation
+from backend.models import (
+    hf_bias,
+    hf_hate_speech,
+    hf_roberta_offensive,
+    hf_toxic_bert,
+    openai_moderation,
+    perspective_api,
+    azure_content,
+    aws_comprehend,
+    google_nlp,
+)
 
 analyze_bp = Blueprint("analyze", __name__)
 
 
 MODEL_RUNNERS = {
+    "Perspective API": perspective_api.analyze,
+    "Azure Content Safety": azure_content.analyze,
+    "AWS Comprehend": aws_comprehend.analyze,
+    "Google NLP": google_nlp.analyze,
     "OpenAI Moderation": openai_moderation.analyze,
     "HuggingFace toxic-bert": hf_toxic_bert.analyze,
     "HuggingFace RoBERTa offensive": hf_roberta_offensive.analyze,
@@ -123,6 +137,11 @@ def build_response(payload: dict) -> dict:
             continue
 
         result = normalize_result(raw_result, thresholds)
+
+        if result.get("disabled"):
+            normalized_results.append(result)
+            continue
+
         policy_data = evaluate_policy_alignment(result, policy_rules, thresholds)
         result["action"] = policy_data["enforced_action"]
         result["flagged"] = result["action"] != "Allow"
@@ -138,12 +157,13 @@ def build_response(payload: dict) -> dict:
         )
         normalized_results.append(result)
 
-    ai_summary = generate_ai_summary(normalized_results, payload)
+    active_results = [r for r in normalized_results if not r.get("disabled")]
+    ai_summary = generate_ai_summary(active_results, payload)
 
     return {
         "results": normalized_results,
-        "disagreements": detect_disagreements(normalized_results),
-        "insights": build_insights(normalized_results),
+        "disagreements": detect_disagreements(active_results),
+        "insights": build_insights(active_results),
         "ai_summary": ai_summary,
     }
 
