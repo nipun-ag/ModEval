@@ -258,7 +258,7 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Disabled models (.matrix-row-disabled):
   - Entire row opacity: 0.4
   - MODEL cell: model name in var(--muted)
-  - Remaining columns: single colspan "Not Configured" cell in JetBrains Mono 11px italic var(--muted)
+  - Remaining columns: single colspan "Coming Soon" cell in JetBrains Mono 11px italic var(--muted)
 
 ### Disagreement Banner (.disagreement-banner)
 - Background: `--white`

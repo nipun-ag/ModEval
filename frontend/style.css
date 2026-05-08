@@ -2437,7 +2437,7 @@ tr.tier-header {
   opacity: 0.4;
 }
 
-/* Not Configured cell */
+/* Coming Soon cell */
 .matrix-not-configured {
   color: var(--muted);
   font-family: 'JetBrains Mono', monospace;

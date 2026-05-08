@@ -610,7 +610,7 @@ function renderResults(results) {
         html += `
           <tr class="matrix-row-disabled" style="animation-delay:${enterpriseRowIndex * 50}ms">
             <td style="color: var(--muted);">${escapeHtml(modelName)}</td>
-            <td colspan="5"><span class="matrix-not-configured">Not Configured</span></td>
+            <td colspan="5"><span class="matrix-not-configured">Coming Soon</span></td>
           </tr>
         `;
       } else {
@@ -692,7 +692,7 @@ function renderResults(results) {
         html += `
           <tr class="matrix-row-disabled" style="animation-delay:${opensourceRowIndex * 50}ms">
             <td>${escapeHtml(modelName)}</td>
-            <td colspan="5"><span class="matrix-not-configured">Not Configured</span></td>
+            <td colspan="5"><span class="matrix-not-configured">Coming Soon</span></td>
           </tr>
         `;
       } else {

@@ -161,7 +161,7 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
   - 4 HuggingFace models: toxic-bert, RoBERTa offensive, hate-speech, bias-detector
   - 1 Proprietary: OpenAI Moderation
 - Graceful degradation with disabled model handling:
-  - Models without configured credentials show "Not Configured" instead of errors
+  - Models without configured credentials show "Coming Soon" instead of errors in the decision matrix
   - Consensus, disagreements, and insights calculated only from active models
   - Dynamic model count in topbar reflects configured credentials
 - Decision matrix rendered in two tiers:

@@ -4,6 +4,19 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-05-09
+
+**style: rename disabled decision matrix label to coming soon**
+
+Changes shipped:
+- Replaced the disabled decision matrix label text from "Not Configured" to "Coming Soon" in the frontend rendering logic
+- Updated the matching frontend CSS comment so the frontend directory contains zero `Not Configured` string matches
+- Left backend behavior, styling, and disabled-row logic unchanged
+
+**Rationale:** The results table now presents unavailable enterprise integrations with softer product language while preserving the same degraded-state UX and implementation. Updating the frontend comment as well keeps the requested verification clean without altering runtime behavior.
+
+---
+
 ## 2026-05-02
 
 **style: restructure decision matrix into two separate tables with section labels and divider**
