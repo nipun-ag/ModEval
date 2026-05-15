@@ -136,7 +136,7 @@ modeval/
 ---
 
 ### GET /health
-**Purpose:** Uptime monitoring endpoint for Render.
+**Purpose:** Uptime monitoring endpoint.
 
 **Response:**
 ```json
@@ -439,12 +439,12 @@ severity = min(10, max(1, round(score * 10)))
 - HuggingFace User Access Token with read permissions
 - Get at: huggingface.co/settings/tokens
 - Covers all 5 HuggingFace models
-- Set as secret in Render dashboard or in local `.env`
+- Set as secret in Doppler (project: modeval, config: prd) or in local `.env`
 
 **OPENAI_API_KEY**
 - OpenAI API key for GPT-4o-mini (AI summary generation)
 - Get at: platform.openai.ai/api-keys
-- Set as secret in Render dashboard or in local `.env`
+- Set as secret in Doppler (project: modeval, config: prd) or in local `.env`
 - Falls back to empty string (AI summary disabled) if not provided
 
 ### Local Development Only
@@ -504,27 +504,26 @@ curl -X POST http://127.0.0.1:5000/analyze \
 ## Deployment
 
 ### Platform
-Render (render.com) — free tier
+Hetzner VPS (hetzner.com) — CX23 plan
 
-### Build Configuration
-- **Build Command:** `pip install -r backend/requirements.txt`
-- **Start Command:** `gunicorn --chdir backend app:app`
-- **Node:** Auto-selected
+### Infrastructure
+- **Server:** Hetzner CX23 (2 vCPU, 4 GB RAM, Nuremberg)
+- **Process Manager:** systemd — auto-starts on boot, auto-restarts on crash
+- **Secret Management:** Doppler (project: modeval, config: prd) injects secrets at runtime
+- **Reverse Proxy:** Nginx on port 80/443 → 127.0.0.1:5000 (Flask/Gunicorn)
+- **SSL:** Let's Encrypt via Certbot with auto-renewal
+- **Uptime:** App runs permanently — no cold starts, no spin-down behavior
 
-### Environment Setup
-1. Connect GitHub repository
-2. Set secrets in Render dashboard:
-   - `HF_API_KEY` — HuggingFace token
-   - `OPENAI_API_KEY` — OpenAI key
-3. Enable auto-deploy on push to `main`
-4. Domain: modeval.bynipun.com (custom domain configured via CNAME)
-
-### Cold Starts
-Render free tier spins down after 15+ minutes of inactivity. First request after inactivity may take 30-60 seconds. This is expected behavior on free tier.
+### Auto-Deploy
+- GitHub Actions workflow watches main branch
+- On push: runs tests, builds, deploys via SSH (appleboy/ssh-action)
+- Deployment script: pulls repo, installs dependencies, reloads systemd service
+- Full setup: see INFRASTRUCTURE.md in repo root
 
 ### Monitoring
-- `/health` endpoint polled by Render for uptime
-- Check deployment logs at render.com/dashboard
+- `/health` endpoint available for uptime checks
+- Systemd logs: `journalctl -u modeval -f`
+- Nginx logs: `/var/log/nginx/{access,error}.log`
 
 ---
 
@@ -558,7 +557,7 @@ Render free tier spins down after 15+ minutes of inactivity. First request after
 | Frontend | Vanilla HTML/CSS/JS | (native) | Single-page app, no frameworks |
 | Fonts | Google Fonts | (live) | DM Serif Display, Inter, JetBrains Mono |
 | Version Control | Git | (local) | Repository management |
-| Deployment | Render | free tier | Continuous deployment |
+| Deployment | Hetzner VPS | CX23 | Continuous deployment via GitHub Actions |
 
 ---
 
@@ -711,7 +710,7 @@ frontend/app.js
 - **No Content Storage** — All submissions are processed and discarded immediately. No logging to disk.
 - **API Keys in Environment** — Never hardcoded, never logged, loaded from environment/`.env` only.
 - **No Session State** — Stateless architecture, each request is independent.
-- **HTTPS Only** — Enforced by Render HTTPS redirect.
+- **HTTPS Only** — Enforced by Nginx, certificate managed by Certbot/Let's Encrypt.
 - **CORS** — Not needed, frontend and backend same origin.
 - **Input Validation** — Max length 500 characters, schema validation on all inputs.
 - **Error Messages** — Never expose API keys or internal paths in error responses.

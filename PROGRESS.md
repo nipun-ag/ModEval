@@ -4,6 +4,31 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-05-15
+
+**infra: migrate backend from Render to Hetzner VPS**
+
+Changes:
+- Moved Flask/Gunicorn backend from Render free tier to self-hosted Hetzner CX23 (2 vCPU, 4 GB RAM, Nuremberg)
+- App now managed by systemd — auto-starts on boot, auto-restarts on crash
+- Secrets injected via Doppler service token at runtime
+- Nginx configured as reverse proxy for modeval.bynipun.com
+- SSL via Let's Encrypt/Certbot with auto-renewal
+- Auto-deploy on push to main via GitHub Actions (appleboy/ssh-action)
+- No more cold starts — app runs permanently
+- Added INFRASTRUCTURE.md documenting hosting details, deploy flow, and troubleshooting
+
+**docs: update ARCHITECTURE.md deployment references to reflect Hetzner migration**
+
+Changes:
+- Removed all Render-specific deployment instructions
+- Updated environment variable instructions to reference Doppler
+- Updated deployment section to document Hetzner/systemd/Nginx/Certbot stack
+- Updated security section HTTPS note
+- Updated tech stack table
+
+---
+
 ## 2026-05-09
 
 **style: rename disabled decision matrix label to coming soon**

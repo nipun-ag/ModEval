@@ -176,7 +176,7 @@ alignment_score = 1 - abs(model_confidence - policy_expected_threshold)
 | AI Summary | OpenAI GPT-4o-mini |
 | Frontend | Plain HTML, CSS, JavaScript |
 | Fonts | DM Serif Display, Inter, JetBrains Mono |
-| Deployment | Render (free tier) |
+| Deployment | Hetzner VPS (self-hosted) |
 | Version Control | Git + GitHub |
 
 ---

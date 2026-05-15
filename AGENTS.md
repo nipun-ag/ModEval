@@ -8,7 +8,7 @@ ModEval is a context and policy-aware AI moderation evaluation system. Runs text
 - **Models:** OpenAI Moderation API + 4 HuggingFace models (Inference API)
 - **AI Summary:** OpenAI GPT-4o-mini
 - **Frontend:** Plain HTML, CSS, JavaScript (no frameworks)
-- **Deployment:** Render (free tier, auto-deploy on push to main)
+- **Deployment:** Hetzner VPS (self-hosted) — see INFRASTRUCTURE.md
 
 ## Project Structure
 ```
@@ -132,7 +132,7 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
 - Change model IDs in `config.py`
 - Modify normalizer output schema
 - Change threshold clamping range
-- Modify Render deployment config
+- Modify GitHub Actions workflow or systemd service config
 - Add Python dependencies without updating `requirements.txt`
 
 ## Common Task Patterns
@@ -184,11 +184,10 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
   - Insights tab: strictest/most lenient cards + AI summary
   - Benchmark placeholder panel with coming soon state and 3 feature preview cards
   - Ambient glow blobs on results panel background
-- Deployed on Render at modeval.bynipun.com
+- Deployed on Hetzner VPS at modeval.bynipun.com — no cold starts
 
 ## Known Limitations
 - HuggingFace free tier may rate-limit under high traffic
 - English only — all models trained on English
 - Platform policies are approximations, not real enforcement rules
-- Render free tier spins down after inactivity (cold start delay)
 - No content persistence — submissions are ephemeral by design

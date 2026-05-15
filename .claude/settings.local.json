@@ -4,7 +4,13 @@
       "Bash(git add *)",
       "Bash(git commit *)",
       "Bash(git rm *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(curl -s -X POST http://127.0.0.1:5000/analyze -H 'Content-Type: application/json' -d '{ *)",
+      "Bash(pkill -f \"flask\")",
+      "Bash(taskkill /IM python.exe /F)",
+      "Bash(taskkill /F /IM python.exe)",
+      "Bash(pkill -9 python)",
+      "Bash(cmd /c \"taskkill /IM python.exe /F\")"
     ]
   }
 }
