@@ -20,7 +20,7 @@ def analyze(text: str) -> dict:
 
     url = "https://api.thehive.ai/api/v2/task/sync"
     headers = {
-        "Authorization": f"Bearer {api_key}",
+        "Authorization": f"Token {api_key}",
     }
 
     payload = {
