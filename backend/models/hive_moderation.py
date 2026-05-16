@@ -1,4 +1,4 @@
-"""The Hive AI Text Moderation API wrapper for content moderation."""
+"""The Hive AI V3 Text Moderation API wrapper for content moderation."""
 
 from __future__ import annotations
 
@@ -7,9 +7,21 @@ import requests
 from backend.config import REQUEST_TIMEOUT
 
 
+MODERATION_CLASSES = {
+    "sexual",
+    "hate",
+    "violence",
+    "bullying",
+    "spam",
+    "drugs",
+    "weapons",
+    "self_harm",
+}
+
+
 def analyze(text: str) -> dict:
     """Analyze text using The Hive AI V3 Text Moderation API."""
-    api_key = os.getenv("HIVE_API_KEY", "").strip()
+    api_key = os.environ.get("HIVE_API_KEY", "").strip()
 
     if not api_key:
         return {
@@ -18,31 +30,40 @@ def analyze(text: str) -> dict:
             "scores": {},
         }
 
-    url = "https://api.thehive.ai/api/v2/task/sync"
+    url = "https://api.thehive.ai/api/v3/hive/text-moderation"
     headers = {
-        "Authorization": f"Token {api_key}",
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
     }
 
     payload = {
-        "text_data": text,
+        "input": [
+            {"text": text}
+        ]
     }
 
     try:
-        response = requests.post(url, data=payload, headers=headers, timeout=10)
+        response = requests.post(url, json=payload, headers=headers, timeout=10)
         response.raise_for_status()
         data = response.json()
 
         scores = {}
-        if "status" in data:
-            for status_item in data["status"]:
-                if "response" in status_item:
-                    response_obj = status_item["response"]
-                    if "output" in response_obj:
-                        for output_item in response_obj["output"]:
-                            class_name = output_item.get("class", "").lower()
-                            score = float(output_item.get("score", 0.0))
-                            if class_name:
-                                scores[class_name] = score
+        if "output" in data and len(data["output"]) > 0:
+            output = data["output"][0]
+            if "classes" in output:
+                for class_item in output["classes"]:
+                    class_name = class_item.get("class_name", "").lower()
+                    value = class_item.get("value", -1)
+
+                    # Skip unsupported language marker
+                    if value == -1:
+                        continue
+
+                    # Only include moderation-relevant classes
+                    if class_name in MODERATION_CLASSES:
+                        # Normalize 0-3 integer score to 0.0-1.0 float
+                        normalized_score = float(value) / 3.0
+                        scores[class_name] = normalized_score
 
         return {
             "model": "Hive Moderation",
