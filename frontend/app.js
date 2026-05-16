@@ -109,7 +109,7 @@ const MODEL_DISPLAY = {
   "Hive Moderation": {
     name: "Hive Moderation",
     subtitle: "thehive/v3",
-    chip: "REST API",
+    chip: "Proprietary",
   },
   "Azure Content Safety": {
     name: "Azure Content Safety",
