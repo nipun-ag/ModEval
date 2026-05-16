@@ -393,22 +393,31 @@
         <p class="methodology-copy">
           ModEval runs five independent AI moderation models in parallel on every analysis request. Each model was trained on different datasets and detects a different safety dimension. No single model sees the outputs of another -- they evaluate content independently, which is intentional. The value of running multiple models simultaneously is that disagreements between them are signal, not noise. When two models reach different conclusions about the same content, that tells you something important about the content's ambiguity.
         </p>
-        <div class="architecture-flow">
-          <div class="flow-node">User Input</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-node">Parallel API Calls</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-node">5 Models</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-node">Normalizer</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-node">Context Engine</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-node">Policy Engine</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-node">Comparison Engine</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-node">Results</div>
+        <div class="arch-flow-visual">
+          <div class="arch-flow-step">
+            <div class="arch-flow-icon">→</div>
+            <span class="arch-flow-label">User Input</span>
+          </div>
+          <div class="arch-flow-connector"></div>
+          <div class="arch-flow-step">
+            <div class="arch-flow-icon">⚡</div>
+            <span class="arch-flow-label">Parallel API Calls</span>
+          </div>
+          <div class="arch-flow-connector"></div>
+          <div class="arch-flow-step">
+            <div class="arch-flow-icon">8</div>
+            <span class="arch-flow-label">8 Models</span>
+          </div>
+          <div class="arch-flow-connector"></div>
+          <div class="arch-flow-step">
+            <div class="arch-flow-icon">⚙</div>
+            <span class="arch-flow-label">Normalizer → Context → Policy</span>
+          </div>
+          <div class="arch-flow-connector"></div>
+          <div class="arch-flow-step arch-flow-step-accent">
+            <div class="arch-flow-icon">✓</div>
+            <span class="arch-flow-label">Results</span>
+          </div>
         </div>
       </section>
 
@@ -419,13 +428,20 @@
             <h3>Output Normalization</h3>
           </div>
         </div>
-        <p class="methodology-copy">
-          Each model returns data in a different format. toxic-bert returns multi-label probabilities. roberta-offensive returns a binary offensive/not-offensive score. The hate speech model returns hate/not-hate. The spam model returns spam/ham. The bias model returns biased/neutral. Raw outputs are incompatible for direct comparison.
-        </p>
-        <p class="methodology-copy">
-          The Normalizer converts every model's output into a unified schema:
-        </p>
-        <pre class="methodology-code"><code><span class="code-punctuation">{</span>
+        <div class="methodology-two-col">
+          <div>
+            <p class="methodology-copy">
+              Each model returns data in a different format. toxic-bert returns multi-label probabilities. roberta-offensive returns a binary offensive/not-offensive score. The hate speech model returns hate/not-hate. The spam model returns spam/ham. The bias model returns biased/neutral. Raw outputs are incompatible for direct comparison.
+            </p>
+            <p class="methodology-copy">
+              The Normalizer converts every model's output into a unified schema.
+            </p>
+            <p class="methodology-copy">
+              Severity is derived by scaling the highest raw score linearly from 0-1 to 1-10. Confidence is the raw highest score preserved directly. Action is determined by comparing confidence against the context-adjusted threshold.
+            </p>
+          </div>
+          <div>
+            <pre class="methodology-code"><code><span class="code-punctuation">{</span>
   <span class="code-key">model</span><span class="code-punctuation">:</span> <span class="code-type">string</span><span class="code-punctuation">,</span>
   <span class="code-key">top_category</span><span class="code-punctuation">:</span> <span class="code-type">string</span><span class="code-punctuation">,</span>
   <span class="code-key">severity</span><span class="code-punctuation">:</span> <span class="code-type">number</span> <span class="code-comment">(1-10)</span><span class="code-punctuation">,</span>
@@ -433,9 +449,8 @@
   <span class="code-key">action</span><span class="code-punctuation">:</span> <span class="code-string">"Allow"</span> <span class="code-punctuation">|</span> <span class="code-string">"Review"</span> <span class="code-punctuation">|</span> <span class="code-string">"Remove"</span><span class="code-punctuation">,</span>
   <span class="code-key">flagged</span><span class="code-punctuation">:</span> <span class="code-type">boolean</span>
 <span class="code-punctuation">}</span></code></pre>
-        <p class="methodology-copy">
-          Severity is derived by scaling the highest raw score linearly from 0-1 to 1-10. Confidence is the raw highest score preserved directly. Action is determined by comparing confidence against the context-adjusted threshold.
-        </p>
+          </div>
+        </div>
       </section>
 
       <section class="methodology-section methodology-card">
@@ -597,7 +612,11 @@
             <tr><td>Severity Gap</td><td>Severity scores differ by 3 or more points</td></tr>
           </tbody>
         </table>
-        <blockquote class="editorial-quote">"Disagreements are not errors — they are the most analytically interesting output ModEval produces."</blockquote>
+        <div class="pull-quote-block">
+          <div class="pull-quote-mark">"</div>
+          <blockquote class="pull-quote-text">Disagreements are not errors — they are the most analytically interesting output ModEval produces.</blockquote>
+          <div class="pull-quote-attribution">The ModEval Philosophy</div>
+        </div>
         <p class="methodology-copy">
           Content that triggers a disagreement is content that sits in an ambiguous zone, which is exactly the content that requires human review in a real T&amp;S pipeline.
         </p>
@@ -655,27 +674,32 @@
         <p class="methodology-copy">
           ModEval is a transparent tool and transparency includes acknowledging what it cannot do.
         </p>
-        <div class="limitations-grid">
-          <article class="limitation-card">
+        <div class="integrity-cards">
+          <div class="integrity-card">
+            <div class="integrity-card-icon">⊘</div>
             <h4>Models Are Frozen</h4>
-            <p>The five models cannot be retrained, and novel slang may score incorrectly. The Context Engine adjusts thresholds rather than changing model knowledge.</p>
-          </article>
-          <article class="limitation-card">
+            <p>The eight models cannot be retrained, and novel slang may score incorrectly. The Context Engine adjusts thresholds rather than changing model knowledge.</p>
+          </div>
+          <div class="integrity-card">
+            <div class="integrity-card-icon">◎</div>
             <h4>Platform Policies Are Approximations</h4>
             <p>Guidelines are simplified from official pages. Real enforcement also depends on account history, human judgment, and community rules.</p>
-          </article>
-          <article class="limitation-card">
+          </div>
+          <div class="integrity-card">
+            <div class="integrity-card-icon">⊡</div>
             <h4>English Only</h4>
-            <p>All five models were trained primarily on English data. Non-English content produces unreliable scores and multilingual support is planned.</p>
-          </article>
-          <article class="limitation-card">
+            <p>All models were trained primarily on English data. Non-English content produces unreliable scores and multilingual support is planned.</p>
+          </div>
+          <div class="integrity-card">
+            <div class="integrity-card-icon">◫</div>
             <h4>Text Only</h4>
             <p>Images, video, audio, and multimodal content are outside the scope of the current system.</p>
-          </article>
-          <article class="limitation-card">
-            <h4>Free Tier Rate Limits</h4>
-            <p>HuggingFace free inference may rate-limit under high traffic. The system surfaces these errors transparently rather than silently failing.</p>
-          </article>
+          </div>
+          <div class="integrity-card">
+            <div class="integrity-card-icon">⊟</div>
+            <h4>Rate Limits</h4>
+            <p>HuggingFace free inference and Hive V3 Playground may rate-limit under high traffic. Errors surface transparently rather than silently failing.</p>
+          </div>
         </div>
       </section>
     </div>
