@@ -18,6 +18,11 @@ MODERATION_CLASSES = {
     "self_harm",
 }
 
+CLASS_NAME_MAPPINGS = {
+    "violent_description": "violence",
+    "sexual_description": "sexual",
+}
+
 
 def analyze(text: str) -> dict:
     """Analyze text using The Hive AI V3 Text Moderation API."""
@@ -52,18 +57,21 @@ def analyze(text: str) -> dict:
             output = data["output"][0]
             if "classes" in output:
                 for class_item in output["classes"]:
-                    class_name = class_item.get("class_name", "").lower()
+                    class_name = class_item.get("class", "").lower()
                     value = class_item.get("value", -1)
 
                     # Skip unsupported language marker
                     if value == -1:
                         continue
 
+                    # Map API class names to canonical names
+                    canonical_name = CLASS_NAME_MAPPINGS.get(class_name, class_name)
+
                     # Only include moderation-relevant classes
-                    if class_name in MODERATION_CLASSES:
+                    if canonical_name in MODERATION_CLASSES:
                         # Normalize 0-3 integer score to 0.0-1.0 float
                         normalized_score = float(value) / 3.0
-                        scores[class_name] = normalized_score
+                        scores[canonical_name] = normalized_score
 
         return {
             "model": "Hive Moderation",
