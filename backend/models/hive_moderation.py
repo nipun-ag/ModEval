@@ -21,7 +21,6 @@ def analyze(text: str) -> dict:
     url = "https://api.thehive.ai/api/v2/task/sync"
     headers = {
         "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json",
     }
 
     payload = {
@@ -29,7 +28,7 @@ def analyze(text: str) -> dict:
     }
 
     try:
-        response = requests.post(url, json=payload, headers=headers, timeout=10)
+        response = requests.post(url, data=payload, headers=headers, timeout=10)
         response.raise_for_status()
         data = response.json()
 
