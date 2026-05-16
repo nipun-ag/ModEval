@@ -90,7 +90,7 @@ function initColumnTooltips() {
 document.addEventListener("DOMContentLoaded", initColumnTooltips);
 
 const ENTERPRISE_MODELS = [
-  "Perspective API",
+  "Hive Moderation",
   "Azure Content Safety",
   "AWS Comprehend",
   "Google NLP",
@@ -106,9 +106,9 @@ const OPENSOURCE_MODELS = [
 ];
 
 const MODEL_DISPLAY = {
-  "Perspective API": {
-    name: "Perspective API",
-    subtitle: "google/perspective",
+  "Hive Moderation": {
+    name: "Hive Moderation",
+    subtitle: "thehive/v3",
     chip: "REST API",
   },
   "Azure Content Safety": {
