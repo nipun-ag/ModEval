@@ -645,15 +645,18 @@
         </p>
         <table class="methodology-table model-rationale-table">
           <tbody>
+            <tr class="dimension-blue"><td>Hive Moderation</td><td><span class="mono">thehive/text-moderation</span></td><td>Proprietary</td><td>Proprietary (Hive AI)</td><td><strong>Multi-class text moderation</strong></td></tr>
+            <tr class="dimension-blue"><td>Azure Content Safety</td><td><span class="mono">microsoft/azure-content-safety</span></td><td>Proprietary</td><td>Proprietary (Microsoft)</td><td><strong>Hate, violence, sexual, self-harm</strong></td></tr>
+            <tr class="dimension-blue"><td>Google NLP</td><td><span class="mono">google/natural-language</span></td><td>Proprietary</td><td>Proprietary (Google)</td><td><strong>8-category moderation</strong></td></tr>
+            <tr class="dimension-spam"><td>OpenAI Moderation</td><td><span class="mono">openai/omni-moderation-latest</span></td><td>Proprietary</td><td>Proprietary (OpenAI)</td><td><strong>Multi-category safety</strong></td></tr>
             <tr class="dimension-toxic"><td>General Toxicity</td><td><span class="mono">unitary/toxic-bert</span></td><td>BERT</td><td>Jigsaw Toxic Comments dataset</td><td><strong>General toxicity baseline</strong></td></tr>
             <tr class="dimension-offensive"><td>Social Media Offensive</td><td><span class="mono">cardiffnlp/roberta-offensive</span></td><td>RoBERTa</td><td>Twitter data</td><td><strong>Social media offensive language</strong></td></tr>
             <tr class="dimension-hate"><td>Identity-Based Hate</td><td><span class="mono">facebook/roberta-hate-speech</span></td><td>RoBERTa</td><td>DynaBench R4</td><td><strong>Adversarially collected hate speech</strong></td></tr>
-            <tr class="dimension-spam"><td>OpenAI Moderation</td><td><span class="mono">openai/omni-moderation-latest</span></td><td>Proprietary</td><td>Proprietary (OpenAI)</td><td><strong>Multi-category safety</strong></td></tr>
             <tr class="dimension-bias"><td>Language Bias</td><td><span class="mono">valurank/distilroberta-bias</span></td><td>DistilRoBERTa</td><td>Wikipedia revisions</td><td><strong>Non-neutral language detection</strong></td></tr>
           </tbody>
         </table>
         <p class="methodology-copy">
-          4 models are accessed via the HuggingFace Inference API. OpenAI Moderation runs via the OpenAI API using a separate key. No model weights are downloaded or run locally.
+          4 open source models are accessed via the HuggingFace Inference API. OpenAI Moderation runs via the OpenAI API. Hive, Azure Content Safety, and Google NLP run via their respective enterprise APIs. No model weights are downloaded or run locally.
         </p>
       </section>
 
