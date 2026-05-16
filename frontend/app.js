@@ -118,7 +118,7 @@ const MODEL_DISPLAY = {
   "Google NLP": {
     name: "Google NLP",
     subtitle: "google/nlp",
-    chip: "REST API",
+    chip: "Proprietary",
   },
   "OpenAI Moderation": {
     name: "OpenAI Moderation",
