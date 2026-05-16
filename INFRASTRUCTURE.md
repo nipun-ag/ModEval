@@ -84,9 +84,9 @@ Secrets are stored in Doppler under project `modeval`, config `prd`.
 **Currently configured secrets:**
 - `OPENAI_API_KEY` — OpenAI moderation model
 - `HF_API_KEY` — HuggingFace inference API (open source models)
+- `HIVE_API_KEY` — The Hive AI text moderation (replaced Perspective API)
 
 **Not yet configured (models show "Coming Soon"):**
-- `PERSPECTIVE_API_KEY`
 - `AZURE_CS_KEY` + `AZURE_CS_ENDPOINT`
 - `AWS_ACCESS_KEY_ID` + `AWS_SECRET_ACCESS_KEY` + `AWS_REGION`
 - `GOOGLE_NLP_KEY`

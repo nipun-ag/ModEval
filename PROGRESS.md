@@ -4,6 +4,23 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-05-16
+
+**feat: add Hive Moderation as enterprise API, replace Perspective API**
+
+Changes:
+- Created `backend/models/hive_moderation.py` wrapper for The Hive AI V3 Text Moderation API
+- Added HIVE_API_KEY to `backend/config.py`
+- Updated `backend/engine/normalizer.py` with Hive category aliases (bullying→harassment, drugs, weapon→violence)
+- Registered Hive Moderation in `backend/routes/analyze.py` MODEL_RUNNERS, replacing Perspective API in Enterprise APIs tier
+- Replaced Perspective API model card with Hive Moderation in frontend (5 dimension detections, V3 free tier limits documented)
+- Updated `docs/ARCHITECTURE.md` with Hive API endpoint, auth method, output schema, and environment variable
+- Updated `INFRASTRUCTURE.md` to reflect HIVE_API_KEY as configured secret, Perspective API as replaced
+- Perspective API wrapper file remains in codebase but is no longer active
+- Graceful degradation working: missing HIVE_API_KEY shows model as "Coming Soon" in decision matrix
+
+---
+
 ## 2026-05-15
 
 **infra: migrate backend from Render to Hetzner VPS**

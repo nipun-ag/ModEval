@@ -157,7 +157,7 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
 
 ## Current Project State
 - 9 models live and running in parallel:
-  - 4 Enterprise APIs: Perspective API, Azure Content Safety, AWS Comprehend, Google NLP
+  - 4 Enterprise APIs: Hive Moderation, Azure Content Safety, AWS Comprehend, Google NLP
   - 4 HuggingFace models: toxic-bert, RoBERTa offensive, hate-speech, bias-detector
   - 1 Proprietary: OpenAI Moderation
 - Graceful degradation with disabled model handling:

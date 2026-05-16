@@ -67,7 +67,7 @@ Each model has an associated color used for card left borders and row accents:
 
 | Model | Color Class | Maps To |
 |---|---|---|
-| Perspective API | `.dim-blue` | #3b82f6 |
+| Hive Moderation | `.dim-blue` | #3b82f6 |
 | Azure Content Safety | `.dim-blue` | #0078d4 |
 | AWS Comprehend | `.dim-amber` | #ff9900 |
 | Google NLP | `.dim-blue` | #4285f4 |

@@ -20,7 +20,7 @@ from backend.models import (
     hf_roberta_offensive,
     hf_toxic_bert,
     openai_moderation,
-    perspective_api,
+    hive_moderation,
     azure_content,
     aws_comprehend,
     google_nlp,
@@ -30,7 +30,7 @@ analyze_bp = Blueprint("analyze", __name__)
 
 
 MODEL_RUNNERS = {
-    "Perspective API": perspective_api.analyze,
+    "Hive Moderation": hive_moderation.analyze,
     "Azure Content Safety": azure_content.analyze,
     "AWS Comprehend": aws_comprehend.analyze,
     "Google NLP": google_nlp.analyze,

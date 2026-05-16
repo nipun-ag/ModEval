@@ -47,6 +47,9 @@ CATEGORY_ALIASES = {
     "label_2": "hate",
     "illicit_drugs": "illicit_drugs",
     "weapons": "weapons",
+    "bullying": "harassment",
+    "drugs": "drugs",
+    "weapon": "violence",
 }
 
 

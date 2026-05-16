@@ -158,15 +158,16 @@ Models without configured credentials are gracefully disabled and filtered from 
 
 These are third-party cloud APIs that require credentials. If credentials are missing, the model shows "Not Configured" with no analysis failure.
 
-#### 1. Perspective API (Google)
-- **API:** Google Perspective API
-- **Architecture:** Proprietary classifier (Google/Jigsaw)
-- **Training Data:** Online comments, public datasets
-- **Safety Dimensions:** Toxicity, Severe toxicity, Identity attack, Insult, Threat, Sexual content
-- **Output Schema:** 6 independent scored attributes (0-1 confidence each)
-- **Strengths:** Production-grade, used in journalism/civic platforms, widely trusted
-- **Limitations:** English-primary, requires referrer header, quota-limited free tier
-- **Credentials:** `PERSPECTIVE_API_KEY` environment variable
+#### 1. Hive Moderation (The Hive AI)
+- **API:** The Hive AI V3 Text Moderation API
+- **Endpoint:** POST https://api.thehive.ai/api/v2/task/sync
+- **Architecture:** Purpose-built text moderation API (REST)
+- **Auth Method:** Bearer token via `Authorization: Token {HIVE_API_KEY}` header
+- **Safety Dimensions:** Sexual, Violence, Hate, Bullying, Spam
+- **Output Schema:** Multi-class output with class name and float score (0-1) per category
+- **Strengths:** Purpose-built for T&S pipelines, instant API access, flexible pricing, covers 5 core violation categories
+- **Limitations:** 100 req/day on V3 free tier, limited to 1024 characters per request
+- **Credentials:** `HIVE_API_KEY` environment variable
 
 #### 2. Azure Content Safety (Microsoft)
 - **API:** Microsoft Azure Content Safety API
@@ -439,6 +440,12 @@ severity = min(10, max(1, round(score * 10)))
 - HuggingFace User Access Token with read permissions
 - Get at: huggingface.co/settings/tokens
 - Covers all 5 HuggingFace models
+- Set as secret in Doppler (project: modeval, config: prd) or in local `.env`
+
+**HIVE_API_KEY**
+- The Hive AI API key for V3 Text Moderation API
+- Get at: app.thehive.ai (create account and generate token)
+- Used by Hive Moderation enterprise model
 - Set as secret in Doppler (project: modeval, config: prd) or in local `.env`
 
 **OPENAI_API_KEY**

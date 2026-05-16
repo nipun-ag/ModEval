@@ -23,6 +23,7 @@ HF_API_KEY = os.getenv("HF_API_KEY", "").strip()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
 
 PERSPECTIVE_API_KEY = os.getenv("PERSPECTIVE_API_KEY", "").strip()
+HIVE_API_KEY = os.getenv("HIVE_API_KEY", "").strip()
 AZURE_CS_KEY = os.getenv("AZURE_CS_KEY", "").strip()
 AZURE_CS_ENDPOINT = os.getenv("AZURE_CS_ENDPOINT", "").strip()
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID", "").strip()
