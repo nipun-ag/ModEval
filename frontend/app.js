@@ -92,7 +92,6 @@ document.addEventListener("DOMContentLoaded", initColumnTooltips);
 const ENTERPRISE_MODELS = [
   "Hive Moderation",
   "Azure Content Safety",
-  "AWS Comprehend",
   "Google NLP",
   "OpenAI Moderation",
 ];
@@ -115,11 +114,6 @@ const MODEL_DISPLAY = {
     name: "Azure Content Safety",
     subtitle: "microsoft/azure",
     chip: "Proprietary",
-  },
-  "AWS Comprehend": {
-    name: "AWS Comprehend",
-    subtitle: "amazon/comprehend",
-    chip: "Managed",
   },
   "Google NLP": {
     name: "Google NLP",
