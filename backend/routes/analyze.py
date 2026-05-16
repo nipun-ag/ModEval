@@ -21,7 +21,7 @@ from backend.models import (
     hf_toxic_bert,
     openai_moderation,
     hive_moderation,
-    azure_content,
+    azure_content_safety,
     aws_comprehend,
     google_nlp,
 )
@@ -31,7 +31,7 @@ analyze_bp = Blueprint("analyze", __name__)
 
 MODEL_RUNNERS = {
     "Hive Moderation": hive_moderation.analyze,
-    "Azure Content Safety": azure_content.analyze,
+    "Azure Content Safety": azure_content_safety.analyze,
     "AWS Comprehend": aws_comprehend.analyze,
     "Google NLP": google_nlp.analyze,
     "OpenAI Moderation": openai_moderation.analyze,
