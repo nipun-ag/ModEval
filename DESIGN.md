@@ -244,6 +244,33 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Explainer: 11px italic `--muted`
 - Value: DM Serif Display or Inter 600 depending on content
 
+### Insights Bento Grid (.insights-bento)
+- CSS Grid layout with 12 columns and 16px gap
+- Houses both strictest/lenient insight cards and AI analysis insight cards
+- Responsive: collapses to 1 column on mobile (max-width: 900px) with 12px gap
+- Margin-bottom: 32px
+
+### Insight Card New (.insight-card-new)
+- Grid: spans 6 columns in bento layout
+- `--surface2` background (rgba(17,17,20,0.88)), blur(8px) backdrop-filter
+- Border: 1px `--border`, border-radius 10px, 24px padding
+- Used for: Strictest Model and Most Lenient Model cards
+- Animations: fade-up 200ms with staggered 50ms delay
+- Hover: border-color becomes `--border-strong`, transforms -2px Y, box-shadow increases
+
+### AI Insight Card New (.ai-insight-card-new)
+- Grid: spans 4 columns by default in bento layout
+- `--surface2` background, `--border` border, border-radius 10px, 20px padding
+- Used for: Why Models Disagreed, Risk Narrative, Context Sensitivity, Most Contested Category cards
+- Animations: fade-up 200ms with staggered 50-100ms+ delay
+- Hover: border-color becomes `--border-strong`
+- Variants:
+  - `.ai-insight-card-new--wide`: spans 8 columns (Context Sensitivity card)
+  - `.ai-insight-card-new--accent`: spans 4 columns with `--accent-light` background and `--accent` border (Most Contested Category card)
+- Category text: DM Serif Display 32px bold `--text` (updated from JetBrains Mono 18px)
+- Label text: JetBrains Mono 10px uppercase `--accent`
+- Body text: 13px `--text-secondary`, line-height 1.6
+
 ### Decision Matrix Table
 - Rendered as two fully separate tables with individual section labels and column headers
 - Section 1: "ENTERPRISE APIS" — Perspective API, Azure Content Safety, AWS Comprehend, Google NLP, OpenAI Moderation

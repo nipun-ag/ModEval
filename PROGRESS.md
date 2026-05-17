@@ -4,6 +4,24 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-05-17 (Part 2)
+
+**style: add bento grid CSS for Insights tab redesign**
+
+Changes:
+- Added `.insights-bento`: 12-column CSS grid with 16px gap for flexible card layouts
+- Added `.insight-card-new`: base styles with 6-column span, animation stagger, hover effects
+- Added `.ai-insight-card-new`: base styles with 4-column span, animation stagger, hover effects
+- Added `.ai-insight-card-new--wide`: variant spanning 8 columns for Context Sensitivity card
+- Added `.ai-insight-card-new--accent`: variant spanning 4 columns with accent color for Most Contested Category card
+- Updated `.ai-insight-category`: changed font to DM Serif Display at 32px for visual prominence
+- Added responsive media query: mobile (max-width: 900px) collapses all cards to 1 column with 12px gap
+- All animations use staggered fade-up timing for sequential appearance
+- Hover states include subtle translateY and box-shadow for interactivity
+- Deployed on main branch
+
+---
+
 ## 2026-05-17
 
 **style: redesign Section 2 (Output Normalization) with code-window component**
