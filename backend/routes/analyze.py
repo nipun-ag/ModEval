@@ -75,45 +75,67 @@ def generate_ai_analysis(results: list[dict], context: dict) -> dict:
     try:
         client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+        platform = context.get("platform", "Reddit")
+        text = context.get("text", "")
+
         model_lines = []
         for r in results:
             if not r.get("error") and not r.get("disabled"):
+                alignment_status = "ALIGNED" if r.get("aligned") else "MISALIGNED"
                 model_lines.append(
                     f"- {r['model']}: action={r.get('action','?')}, "
+                    f"confidence={r.get('confidence','?'):.2f}, "
                     f"top_category={r.get('top_category','?')}, "
-                    f"confidence={r.get('confidence','?')}, "
-                    f"severity={r.get('severity','?')}"
+                    f"severity={r.get('severity','?')}, "
+                    f"alignment={alignment_status}"
                 )
 
         models_text = "\n".join(model_lines)
-        platform = context.get("platform", "Reddit")
-        content_type = context.get("content_type", "Original Post")
-        strictness = context.get("strictness", "Balanced")
 
-        prompt = f"""You are a Trust & Safety analyst reviewing AI moderation results.
+        system_prompt = """You are a senior Trust & Safety analyst with expertise in content moderation. You will be given moderation results from multiple AI models analyzing a piece of content on a specific platform.
 
-Platform: {platform}
-Content type: {content_type}
-Strictness: {strictness}
+Your job is NOT to summarize what the models said. Your job is to read between the lines and provide genuine analytical insight.
+
+Specifically you must:
+
+1. Identify if this is a CLEAR VIOLATION, CLEAR SAFE, or GENUINE GREY AREA — and explain why in one sentence.
+
+2. If models strongly disagree (e.g. one says ALLOW with low confidence while another says REMOVE with high confidence), call this out explicitly. Explain what the disagreement reveals about the content — is it ambiguous language? Missing context? A model limitation?
+
+3. Flag if any model result looks like a failure rather than a genuine disagreement. For example: a model giving 0.00 confidence on clearly harmful content is likely a model failure, not a legitimate ALLOW decision.
+
+4. Give a concrete recommendation: should a human reviewer look at this? Is the platform policy clear enough to automate this decision, or does it require judgment?
+
+5. If the content is a genuine grey area (could be interpreted multiple ways depending on context, intent, or platform), say so explicitly. Do not force a verdict on ambiguous content.
+
+Keep your response to 3-4 sentences maximum per field. Be direct and specific. Do not use phrases like 'the models suggest' or 'analysis indicates'. Write like an experienced analyst giving a verbal briefing, not a report."""
+
+        user_message = f"""Platform: {platform}
+
+Original text:
+"{text}"
 
 Model results:
 {models_text}
 
-Return ONLY a valid JSON object with exactly these 4 fields:
+Provide your analytical interpretation in this JSON format:
 
 {{
-  "disagreement_explanation": "1-2 sentences explaining WHY the models disagreed in plain English. Focus on what caused the split -- different training data, category interpretation, confidence levels. If models agreed, say so briefly.",
-  "risk_narrative": "1 sentence summarizing the overall safety picture for this content on this platform.",
-  "context_sensitivity": "1 sentence on how the platform type or strictness setting meaningfully affected the outcome. Be specific.",
-  "contested_category": "The single violation category most models disagreed about (e.g. harassment, toxicity, hate). Just the category name, no explanation."
+  "disagreement_explanation": "If models disagreed: what does the disagreement reveal? Is it ambiguous wording, missing context, or a model failure? If they agreed, say so briefly. 1-2 sentences.",
+  "risk_narrative": "Your direct assessment: is this CLEAR VIOLATION, CLEAR SAFE, or GENUINE GREY AREA? Explain why. If it's grey area, be explicit about the ambiguity. 1-2 sentences.",
+  "context_sensitivity": "Should a human reviewer look at this? Is the {platform} policy clear enough to automate, or does this require judgment? 1-2 sentences.",
+  "contested_category": "Which category had the most disagreement or uncertainty among models? If none, state 'None'. Single category or 'None' only."
 }}
 
 Return ONLY the JSON object. No preamble, no markdown, no explanation."""
 
         response = client.chat.completions.create(
             model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=300,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message}
+            ],
+            max_tokens=400,
             temperature=0.3,
         )
 
@@ -217,6 +239,7 @@ def build_response(payload: dict) -> dict:
         "platform": platform,
         "content_type": payload.get("content_type", "Original Post"),
         "strictness": payload.get("strictness", "Balanced"),
+        "text": payload.get("text", ""),
     })
 
     return {

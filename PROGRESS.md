@@ -6,6 +6,31 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ## 2026-05-17
 
+**feat: upgrade AI summary to senior T&S analyst interpretation**
+
+Changes:
+- Replaced basic summarization prompt with senior Trust & Safety analyst persona in generate_ai_analysis()
+- Updated system prompt to emphasize analytical insight over model summarization
+- New instructions focus on: identifying violation severity (clear/safe/grey), explaining disagreements, flagging model failures, recommending human review, and explicitly calling out grey areas
+- Updated user message to include original analyzed text and detailed model results with alignment verdicts
+- Restructured JSON output fields to request direct analytical assessment instead of passive summary:
+  - disagreement_explanation: now asks "what does disagreement reveal?" instead of "why did models disagree?"
+  - risk_narrative: now asks for direct verdict (CLEAR VIOLATION/SAFE/GREY AREA) with explanation
+  - context_sensitivity: now asks whether human review is needed and if policy is clear enough
+  - contested_category: remains category name or "None"
+- Increased max_tokens from 300 to 400 to accommodate deeper analysis
+
+Why:
+- Basic summarization doesn't help Trust & Safety teams; they need analytical interpretation
+- Flagging model failures and grey areas explicitly improves decision quality
+- Human review recommendations make results actionable
+- Senior analyst persona creates authoritative tone matching platform's needs
+- Including original text allows model to contextualize its analysis
+
+---
+
+## 2026-05-17
+
 **feat: simplify platform options to 5 and update policy content with sourced guidelines**
 
 Changes:
