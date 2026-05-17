@@ -402,6 +402,7 @@ th,
 
 .custom-select {
   position: relative;
+  z-index: 5;
 }
 
 textarea,
@@ -659,6 +660,7 @@ textarea:focus {
   position: relative;
   display: inline-flex;
   align-items: center;
+  pointer-events: auto;
 }
 
 .context-info-icon {
@@ -673,6 +675,8 @@ textarea:focus {
   transition: color 150ms ease;
   flex-shrink: 0;
   vertical-align: middle;
+  position: relative;
+  z-index: 10;
 }
 
 .context-info-icon:hover {
@@ -698,6 +702,7 @@ textarea:focus {
   border-left: 3px solid var(--accent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  pointer-events: none;
 }
 
 .context-explainer-wrapper:hover .context-explainer {
@@ -709,6 +714,7 @@ textarea:focus {
   text-decoration: none;
   font-weight: 500;
   cursor: pointer;
+  pointer-events: auto;
 }
 
 .context-explainer-link:hover {
