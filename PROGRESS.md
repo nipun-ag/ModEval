@@ -4,6 +4,26 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-05-17
+
+**style: redesign Section 2 (Output Normalization) with code-window component**
+
+Changes:
+- Replaced Section 2 heading from "Output Normalization" to "Unified Output Normalization" with "STAGE 01" label
+- Restructured Section 2 layout: two-column text + code block replaced with two-column editorial text + macOS-style code window
+- Left column: paragraphs describing normalization process + integrity checklist (4 items with green checkmark bullets)
+- Right column: code-window wrapper with header chrome (red/amber/green dots + filename) containing normalized output schema
+- Added CSS classes to `frontend/style.css`:
+  - `.code-window`: bordered container with box-shadow and border-radius
+  - `.code-window-header`: flex layout with dots and filename styling
+  - `.code-dot` with `.dot-red`, `.dot-amber`, `.dot-green` variants (macOS control colors)
+  - `.code-window-filename`: monospace text styling
+  - `.integrity-card-list`: flex column list with green checkmark bullets (✓)
+- Updated `DESIGN.md` with documentation for code-window, code-dot, and integrity-card-list components
+- Updated `docs/ARCHITECTURE.md` to reference Section 2's new structure in how-it-works-panel
+
+---
+
 ## 2026-05-16
 
 **feat: add Hive Moderation as enterprise API, replace Perspective API**

@@ -424,24 +424,33 @@
       <section class="methodology-section methodology-card">
         <div class="section-heading stacked">
           <div>
-            <p class="section-label mono-label">Section 2</p>
-            <h3>Output Normalization</h3>
+            <p class="section-label mono-label" style="color: var(--accent); letter-spacing: 0.2em;">STAGE 01</p>
+            <h3>Unified Output Normalization</h3>
           </div>
         </div>
-        <div class="methodology-two-col">
+        <div class="methodology-two-col" style="align-items: center;">
           <div>
             <p class="methodology-copy">
-              Each model returns data in a different format. toxic-bert returns multi-label probabilities. roberta-offensive returns a binary offensive/not-offensive score. The hate speech model returns hate/not-hate. The spam model returns spam/ham. The bias model returns biased/neutral. Raw outputs are incompatible for direct comparison.
+              Each model returns data in a different format. toxic-bert returns multi-label probabilities. roberta-offensive returns a binary score. The hate speech model returns hate/not-hate. Raw outputs are incompatible for direct comparison.
             </p>
-            <p class="methodology-copy">
-              The Normalizer converts every model's output into a unified schema.
-            </p>
-            <p class="methodology-copy">
-              Severity is derived by scaling the highest raw score linearly from 0-1 to 1-10. Confidence is the raw highest score preserved directly. Action is determined by comparing confidence against the context-adjusted threshold.
-            </p>
+            <p class="methodology-copy">The Normalizer converts every model's output into a unified schema:</p>
+            <ul class="integrity-card-list">
+              <li>Standardized category mapping across all providers</li>
+              <li>Floating point score alignment (0.00 - 1.00)</li>
+              <li>Severity scaling from raw confidence (1-10)</li>
+              <li>Action assignment based on adjusted thresholds</li>
+            </ul>
           </div>
-          <div>
-            <pre class="methodology-code"><code><span class="code-punctuation">{</span>
+          <div class="code-window">
+            <div class="code-window-header">
+              <div class="code-window-dots">
+                <span class="code-dot dot-red"></span>
+                <span class="code-dot dot-amber"></span>
+                <span class="code-dot dot-green"></span>
+              </div>
+              <span class="code-window-filename">OUTPUT_NORMALIZER.JSON</span>
+            </div>
+            <pre class="methodology-code" style="margin: 0; border-radius: 0 0 8px 8px;"><code><span class="code-punctuation">{</span>
   <span class="code-key">model</span><span class="code-punctuation">:</span> <span class="code-type">string</span><span class="code-punctuation">,</span>
   <span class="code-key">top_category</span><span class="code-punctuation">:</span> <span class="code-type">string</span><span class="code-punctuation">,</span>
   <span class="code-key">severity</span><span class="code-punctuation">:</span> <span class="code-type">number</span> <span class="code-comment">(1-10)</span><span class="code-punctuation">,</span>

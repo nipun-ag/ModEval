@@ -352,6 +352,27 @@ Never use for general reading text. Monospace signals "this is technical data."
   - Comments: `.code-comment` — muted purple (#6272A4)
   - Punctuation: `.code-punctuation` — default text
 
+### Code Window (.code-window)
+- Wrapper component for code blocks with macOS-style chrome
+- Border: `--border-strong`, border-radius 8px
+- Background: `--surface2`, shadow 0 8px 32px rgba(0,0,0,0.4)
+- Contains header with dots (red/amber/green) and filename
+- Header has background rgba(0,0,0,0.3) and border-bottom `--border`
+- Filename: JetBrains Mono 11px, `--text-secondary`, letter-spacing 0.05em
+
+### Code Window Dots (.code-window-dots, .code-dot)
+- Three 12px circles in header (red, amber, green)
+- Colors: #ef4444 (red), #f59e0b (amber), #10b981 (green)
+- Mimics macOS window controls
+- Gap: 8px between dots
+
+### Integrity Card List (.integrity-card-list)
+- Unstyled list (no bullets) with green checkmark bullets
+- Flex column layout, 12px gap between items
+- List items: 14px `--text-secondary`, line-height 1.5
+- Checkmark (✓): `--green`, bold, positioned 24px left
+- Used in methodology sections for feature/step lists
+
 ### Editorial Quote
 - DM Serif Display, larger font
 - `--accent` left border 2px, padding-left 20px

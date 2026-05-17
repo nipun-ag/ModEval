@@ -751,7 +751,10 @@ in frontend/app.js.
 All panels are direct children of .app-shell:
 - .workspace -- the main analysis grid (default visible)
 - #benchmark-panel -- coming soon placeholder
-- #how-it-works-panel -- methodology content
+- #how-it-works-panel -- methodology content with 8 sections:
+  - Section 1: Architecture Flow (icon circles with connectors)
+  - Section 2: Unified Output Normalization (two-col text + code-window)
+  - Section 3-8: Context Engine, Policy Alignment, Decision Logic, Bias Mitigation, Integrity checks
 - #models-panel -- model cards content
 
 ### Results Panel Lower Tabs
