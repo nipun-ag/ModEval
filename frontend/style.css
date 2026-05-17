@@ -2066,6 +2066,10 @@ tbody td {
 }
 
 /* === Model Cards (Models tab) === */
+#models-panel .methodology-hero {
+  margin-bottom: 0;
+}
+
 .model-cards-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
