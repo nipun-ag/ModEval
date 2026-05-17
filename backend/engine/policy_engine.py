@@ -96,11 +96,50 @@ def evaluate_policy_alignment(result: dict, policy_rules: dict, thresholds: dict
 def get_platform_policy_summary(platform: str, custom_policy_text: str = "") -> str:
     """Return the policy summary for Claude Haiku alignment evaluation."""
     platform_policies = {
-        "Reddit": "Zero tolerance for violence, self-harm, content sexualizing minors, and hate speech. Harassment and threatening content are also banned.",
-        "Discord": "Zero tolerance for content sexualizing minors and direct threatening harassment. More lenient on profanity, general toxicity, and insults which are not bannable offenses.",
-        "Facebook": "Zero tolerance for hate speech, violence, sexual content, self-harm, and harassment across all forms.",
-        "Instagram": "Zero tolerance for hate speech, violence, sexual content, self-harm, and harassment across all forms.",
-        "Custom": f"User-defined policy: {custom_policy_text}" if custom_policy_text else "Generic best-practice standards.",
+        "Reddit": """Reddit prohibits:
+- Violence, threats, and content inciting harm against people
+- Hate speech targeting protected groups based on identity
+- Content sexualizing minors (zero tolerance)
+- Self-harm promotion or glorification
+- Harassment, bullying, and doxxing
+- Spam, manipulation, vote manipulation, and ban evasion
+- Impersonation and deceptive identity
+- Fraud, scams, phishing, and illegal transactions
+- Illegal content of any kind
+Note: Reddit explicitly permits discussion of controversial topics, misinformation, and conspiracy theories unless they directly incite harm. Context and community rules matter.""",
+        "Discord": """Discord prohibits:
+- Content sexualizing minors (zero tolerance)
+- Direct threats of real-world violence
+- Non-consensual intimate imagery
+- Coordinated harassment campaigns
+- Hate speech targeting protected groups
+- Phishing, malware, and financial scams
+- Account compromise and unauthorized access
+Note: Discord explicitly permits profanity, insults, general toxicity, and offensive language at the platform level. Server owners may set stricter local rules.""",
+        "Facebook": """Facebook prohibits:
+- Hate speech targeting protected characteristics
+- Violence, threats, and incitement to harm
+- Sexual content and nudity
+- Self-harm promotion and eating disorder content
+- Bullying, harassment, and targeted attacks
+- Child sexual abuse material (zero tolerance)
+- Spam, fraud, scams, and coordinated inauthentic behavior
+- Impersonation and fake accounts
+- Misinformation that causes real-world harm
+- Privacy violations and doxxing
+- Terrorist and extremist content""",
+        "Instagram": """Instagram prohibits (unified with Facebook standards since November 2024):
+- Hate speech targeting protected characteristics
+- Violence, threats, and graphic content
+- Sexual content and nudity
+- Self-harm and eating disorder promotion
+- Bullying, harassment, and targeted attacks
+- Child sexual abuse material (zero tolerance)
+- Spam, fraud, scams, and coordinated inauthentic behavior
+- Impersonation and fake accounts
+- Misinformation causing real-world harm
+- Privacy violations and doxxing""",
+        "Custom": f"User-defined policy: {custom_policy_text}" if custom_policy_text else "Apply general best-practice content moderation standards.",
     }
     return platform_policies.get(platform, "Use general best-practice content moderation standards.")
 
