@@ -2086,7 +2086,6 @@ tbody td {
   border-left-width: 3px;
   border-radius: 10px;
   background: rgba(17, 17, 20, 0.88);
-  backdrop-filter: blur(8px);
   transition: border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
   isolation: isolate;
 }
@@ -2127,7 +2126,6 @@ tbody td {
   vertical-align: middle;
   flex-shrink: 0;
   animation: pulse-dot 1.8s ease-in-out infinite;
-  will-change: opacity;
 }
 
 .model-card-arch {
