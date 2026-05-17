@@ -1133,7 +1133,7 @@ textarea:focus {
   gap: 12px;
   opacity: 0;
   animation: fade-up 200ms ease-out forwards;
-  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+  transition: box-shadow 150ms ease, transform 150ms ease;
 }
 
 .insight-card-new:nth-child(1) {
@@ -1152,10 +1152,12 @@ textarea:focus {
 
 .insight-card-new--remove {
   border-left: 4px solid var(--red);
+  animation-delay: 0ms;
 }
 
 .insight-card-new--allow {
   border-left: 4px solid var(--green);
+  animation-delay: 0ms;
 }
 
 .insight-card-new-label {
