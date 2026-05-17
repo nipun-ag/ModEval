@@ -271,23 +271,30 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Label text: JetBrains Mono 10px uppercase `--accent`
 - Body text: 13px `--text-secondary`, line-height 1.6
 
-### Decision Matrix Table
-- Rendered as two fully separate tables with individual section labels and column headers
-- Section 1: "ENTERPRISE APIS" — Perspective API, Azure Content Safety, AWS Comprehend, Google NLP, OpenAI Moderation
-- Section 2: "OPEN SOURCE MODELS" — Toxicity Classifier, Offensive Language Detector, Hate Speech Detector, Spam Detector, Bias Detector
-- Section label (.matrix-section-label): JetBrains Mono 10px uppercase, var(--muted), padding 20px 0 10px 0
-- Divider (.matrix-section-divider): 1px var(--border-strong), margin 8px 0 between sections
-- Each table has its own full column header row
-- Column headers: 11px uppercase var(--muted) JetBrains Mono, var(--border-strong) bottom border
-- No vertical borders anywhere
-- Horizontal dividers only: 1px var(--border) between rows
-- Row fade-up animation resets index to 0 at start of each table (staggered 50ms per row)
-- Disabled models (.matrix-row-disabled):
-  - Entire row opacity: 0.4
-  - MODEL cell: model name in var(--muted)
-  - Remaining columns: single colspan "Coming Soon" cell in JetBrains Mono 11px italic var(--muted)
+### Model Breakdown Card Layout (.breakdown-card)
+- Rendered as two sections (ENTERPRISE APIS, OPEN SOURCE MODELS), each with a shared column header row
+- Section header row (`.breakdown-header-row`): flex row, `padding: 0 24px 10px 24px`, `margin-bottom: 8px`, `border-bottom: 1px var(--border-strong)`
+  - `.breakdown-header-spacer`: `width: 140px; flex-shrink: 0` — aligns with model info column
+  - `.breakdown-header-fields`: CSS grid `110px 150px 120px auto`, `font-size: 10px`, `color: var(--text-secondary)`, JetBrains Mono uppercase — columns: CATEGORY, SEVERITY, CONFIDENCE, ACTION
+- Each card (`.breakdown-card`): flex row, `flex-wrap: nowrap`, `box-sizing: border-box`, `gap: 24px`, `padding: 16px 24px`, `border-radius: 8px`, `--surface2` background, `overflow: visible`
+- Action left border variants: `.aligned-allow` (3px `--green`), `.aligned-remove` (3px `--red`), `.aligned-review` (3px `--amber`)
+- `.breakdown-model-info`: `width: 140px; flex-shrink: 0` — model name, meta subtitle, arch chip
+  - `.breakdown-model-name`: 13px Inter 600 `--text`
+  - `.breakdown-model-meta`: 11px `--text-secondary`
+  - `.breakdown-arch-chip`: JetBrains Mono 10px chip badge
+- `.breakdown-fields`: CSS grid `110px 150px 120px`, `align-items: center`, `gap: 16px`
+  - Column 1 (`.breakdown-field-value`): category name, 12px `--text`
+  - Column 2 (`.severity-bar-wrap`): severity number + bar track + fill (`.severity-bar-fill.low/mid/high`)
+  - Column 3 (`.breakdown-confidence`): confidence to 2 decimal places, JetBrains Mono 12px
+- `.breakdown-action-btn`: `flex-shrink: 0; min-width: 76px; max-width: 76px`, pill button, JetBrains Mono 11px uppercase
+  - `.action-allow`: `--green-light` bg, `--green` text/border
+  - `.action-review`: `--amber-light` bg, `--amber` text/border
+  - `.action-remove`: `--red-light` bg, `--red` text/border
+- Disabled cards: `opacity: 0.4`, action area replaced with "Coming Soon" italic span
+- No ALIGNMENT column (removed from layout)
 
 ### Disagreement Banner (.disagreement-banner)
+- Scoped to the Summary tab only — first child of `#lower-panel-summary`
 - Background: `--white`
 - Text: `#050505` (near black for maximum contrast)
 - Warning icon: `--amber`
@@ -335,6 +342,7 @@ Never use for general reading text. Monospace signals "this is technical data."
 - DM Serif Display for model name
 - JetBrains Mono for architecture badge
 - `--text-secondary` for body text
+- No `backdrop-filter` or `will-change` — both removed to fix GPU compositing blank-render bug on first panel display
 
 ### Skeleton Loading
 - Table shows up to 9 skeleton rows (matching configured models) while models run

@@ -4,6 +4,62 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-05-17 (Part 4)
+
+**fix: scope disagreement banner to Summary tab only**
+
+Changes:
+- Moved `#disagreement-banner` from between `#batch-summary` and `#results-empty` into `#lower-panel-summary` as first child
+- Banner now only appears on the Summary tab, not floating above all tabs
+
+**fix: remove duplicate OpenAI Moderation card from Models tab**
+
+Changes:
+- Removed duplicate `<article class="model-detail-card dim-blue">` OpenAI Moderation card from the Open Source Models section in `#models-panel`
+- OpenAI Moderation now appears only once (in Enterprise APIs section)
+
+**feat: add GET /models endpoint + dynamic topbar model count**
+
+Changes:
+- Created `backend/routes/models.py` with `GET /models` endpoint
+- Returns `{"active_count": N, "total_count": 8}` based on credential-presence check only (no inference calls)
+- Registered `models_bp` blueprint in `backend/app.py`
+- Added IIFE in `frontend/app.js` to fetch `/models` on page load and update `#models-active-count` text
+- Fallback static text "8 Models Available" shown if fetch fails
+
+**fix: resolve GPU compositing blank render bug on model cards**
+
+Changes:
+- Removed `will-change: opacity` from `.live-indicator` in `style.css`
+- Removed `backdrop-filter: blur(8px)` from `.model-detail-card` in `style.css`
+- Root cause: `backdrop-filter` + `will-change` on a nested element promoted to a new compositing layer, causing text to not paint on first display of the panel
+
+**style: reduce excessive top spacing in Models tab hero**
+
+Changes:
+- Added `#models-panel` inline style: `padding: 0 48px 48px` (was `padding: 48px`)
+- Added scoped rule `#models-panel .methodology-hero { margin-bottom: 0; }` to prevent double spacing
+
+**fix: correct "Five independent AI models" copy to "Eight" in Models tab hero**
+
+Changes:
+- Updated hero subtitle: "Five" → "Eight" in `#models-panel` hero section
+
+**style: redesign Model Breakdown tab with card-per-row layout**
+
+Changes:
+- Replaced two-table decision matrix with card-per-row layout
+- New `renderBreakdownCard(result)` function in `app.js` renders one card per model
+- Each card shows: model name + meta + arch chip (left), category + severity bar + confidence (middle grid), action button (right)
+- Section header rows with CATEGORY, SEVERITY, CONFIDENCE, ACTION column labels injected once per section
+- Removed ALIGNMENT column entirely
+- CSS classes added: `.breakdown-card`, `.breakdown-model-info`, `.breakdown-fields`, `.breakdown-field-value`, `.breakdown-confidence`, `.breakdown-action-btn`, `.breakdown-arch-chip`, `.breakdown-header-row`, `.breakdown-header-spacer`, `.breakdown-header-fields`, `.severity-bar-wrap`, `.severity-bar-number`, `.severity-bar-track`, `.severity-bar-fill`
+- Action left border variants: `.aligned-allow`, `.aligned-remove`, `.aligned-review`
+- Action button color variants: `.action-allow`, `.action-remove`, `.action-review`
+- Confidence displayed to 2 decimal places (`toFixed(2)`)
+
+---
+
 ## 2026-05-17 (Part 3)
 
 **feat: integrate 3 enterprise APIs (Hive, Azure, Google NLP), restructure AI analysis to 4-field insights**

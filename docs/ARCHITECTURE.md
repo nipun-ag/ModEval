@@ -16,7 +16,8 @@ modeval/
 │   ├── __pycache__/
 │   ├── routes/
 │   │   ├── analyze.py                  POST /analyze route, model orchestration, AI summary generation
-│   │   └── batch.py                    POST /batch-analyze route for multi-input bulk analysis
+│   │   ├── batch.py                    POST /batch-analyze route for multi-input bulk analysis
+│   │   └── models.py                   GET /models route, credential-presence check returning active/total counts
 │   ├── models/
 │   │   ├── hf_toxic_bert.py            Unitary toxic-bert model wrapper
 │   │   ├── hf_roberta_offensive.py     Cardiff NLP offensive language detector
@@ -137,6 +138,28 @@ modeval/
   ]
 }
 ```
+
+---
+
+### GET /models
+**Purpose:** Return active and total model counts based on credential presence only. No inference calls.
+
+**Response Body:**
+```json
+{
+  "active_count": 8,
+  "total_count": 8
+}
+```
+
+`active_count` increments for each model whose required credentials are present in the environment:
+- `HIVE_API_KEY` → Hive Moderation
+- `AZURE_CS_KEY` + `AZURE_CS_ENDPOINT` (both required) → Azure Content Safety
+- `GOOGLE_NLP_KEY` → Google NLP
+- `OPENAI_API_KEY` → OpenAI Moderation
+- `HF_API_KEY` → counts 4 HuggingFace models (toxic-bert, RoBERTa offensive, Hate Speech, Bias Detector)
+
+Called on page load by `frontend/app.js` to update the `#models-active-count` topbar status pill dynamically.
 
 ---
 
@@ -380,7 +403,7 @@ Disagreements are flagged when models conflict on safety decisions. Three types 
 | **Severity Gap** | Severity scores differ significantly | Max severity - Min severity >= 3 (on 1-10 scale) |
 
 ### Disagreement Banner
-Displayed prominently when any disagreement is detected. Shows icon, count, and brief explanation. Designed to draw attention to edge cases that warrant human review.
+Displayed when any disagreement is detected. Shows icon, count, and brief explanation. Scoped to the Summary tab only — lives as the first child of `#lower-panel-summary`. Designed to draw attention to edge cases that warrant human review.
 
 ---
 
@@ -610,6 +633,13 @@ Hetzner VPS (hetzner.com) — CX23 plan
 - Aggregates results and computes flag rate
 - Used for testing and bulk analysis
 
+### backend/routes/models.py
+- `GET /models` endpoint handler
+- Reads credential constants from `backend/config.py` (already loaded at import time, no API calls)
+- Computes `active_count` by checking truthiness of each credential
+- `HF_API_KEY` counts as 4 (one per HuggingFace model sharing the key)
+- Returns `{"active_count": N, "total_count": 8}`
+
 ### backend/engine/context_engine.py
 - `calculate_context_adjustment()` — computes final thresholds
 - `determine_action()` — maps confidence to Allow/Review/Remove
@@ -656,9 +686,10 @@ Hetzner VPS (hetzner.com) — CX23 plan
 ### frontend/app.js
 - All client-side logic: state, rendering, API calls
 - Handles form submissions, loading states, error display
-- Renders decision matrix table, disagreement banner, insight cards
+- Renders breakdown cards (`renderBreakdownCard()`), disagreement banner, insight cards
 - Manages modal open/close, tab switching
 - Fetches test case library from embedded array
+- On page load: fetches `GET /models` and updates `#models-active-count` pill text
 
 ### frontend/style.css
 - CSS variables for colors, sizes, animations
@@ -780,10 +811,10 @@ After analysis runs, three lower tabs appear inside
 
 - results-lower-tabs: hidden until results load, 
   shown by JS after showPanelState("results")
-- lower-panel-summary: consensus hero + donut + 
+- lower-panel-summary: disagreement banner (first child) + consensus hero + donut +
   gauge + legend (default active tab)
-- lower-panel-breakdown: decision matrix table 
-  rendered directly, no accordion wrapper
+- lower-panel-breakdown: card-per-row breakdown layout, one card per model,
+  section header rows with column labels (CATEGORY, SEVERITY, CONFIDENCE, ACTION)
 - lower-panel-insights: bento grid with 6 insight cards:
   - Strictest Model (6 cols)
   - Most Lenient Model (6 cols)
@@ -836,3 +867,4 @@ These IDs must never be renamed:
   donut-fraction, donut-action-label (donut chart)
 - gauge-fill-path, gauge-number (severity gauge)
 - hero-action, hero-subtitle (consensus hero)
+- models-active-count (topbar status pill — updated dynamically by /models fetch)

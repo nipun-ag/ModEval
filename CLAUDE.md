@@ -16,6 +16,7 @@ backend/app.py                 Flask app, blueprints, static serving
 backend/config.py              Config: API keys, thresholds, modifiers, policies
 backend/routes/analyze.py      POST /analyze route, model orchestration
 backend/routes/batch.py        POST /batch-analyze route
+backend/routes/models.py       GET /models route, credential-presence check
 backend/engine/context_engine.py    Threshold calculation (platform/content/strictness)
 backend/engine/normalizer.py   Raw output → unified schema conversion
 backend/engine/policy_engine.py     Policy rules and alignment scoring
@@ -50,6 +51,7 @@ docs/ARCHITECTURE.md           Complete technical reference (this file)
 - **Lower panel IDs** — lower-panel-summary, lower-panel-breakdown, lower-panel-insights
 - **Topbar nav IDs** — nav-analysis, nav-benchmark, nav-how-it-works, nav-models
 - **Panel IDs** — benchmark-panel, how-it-works-panel, models-panel
+- **Topbar status pill ID** — models-active-count (updated dynamically by /models fetch on page load)
 All these are referenced in app.js and must not be renamed or removed.
 
 ## Where to Find Things
@@ -171,7 +173,8 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
 - Context Engine with platform (including Neutral default), content type, strictness modifiers
 - Policy alignment scoring for Reddit, Discord, Facebook, Instagram
 - AI analysis with 4 structured fields: disagreement_explanation, risk_narrative, context_sensitivity, contested_category
-- Disagreement detection and banner
+- Disagreement detection and banner (scoped to Summary tab only — first child of #lower-panel-summary)
+- Dynamic topbar model count: GET /models endpoint returns active/total from credential-presence check; JS updates #models-active-count pill on page load
 - 100 pre-loaded test cases across 10 violation categories
 - Phase 0 UX overhaul complete:
   - Topbar navigation with 4 tabs: ANALYSIS (active), BENCHMARK (locked), HOW IT WORKS, MODELS
@@ -179,8 +182,8 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
   - Panel padding increased to 48px
   - Consensus hero card leads results with large action word, AI analysis subtitle, donut chart, severity gauge, and action legend
   - Results panel has three lower tabs: Summary, Model Breakdown, Insights — hidden until analysis runs
-  - Summary tab: consensus hero + donut + gauge + legend
-  - Model Breakdown tab: decision matrix with tier rendering (no accordion)
+  - Summary tab: disagreement banner + consensus hero + donut + gauge + legend
+  - Model Breakdown tab: card-per-row layout with section header rows (CATEGORY, SEVERITY, CONFIDENCE, ACTION); one card per model; no ALIGNMENT column
   - Insights tab: bento grid with 6 cards — strictest/lenient, disagreement explanation, risk narrative, context sensitivity, contested category
   - How It Works panel redesigned with architecture flow, pull quote, equation block, code-window components
   - Benchmark placeholder panel with coming soon state and 3 feature preview cards
