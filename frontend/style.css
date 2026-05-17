@@ -2212,6 +2212,14 @@ tbody td {
 }
 
 /* Architecture Flow Visualization */
+.arch-flow-strip {
+  margin: 0 0 40px 0;
+  padding: 32px 40px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 16px;
+}
+
 .arch-flow-visual {
   display: flex;
   align-items: center;
