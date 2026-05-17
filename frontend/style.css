@@ -665,23 +665,17 @@ textarea:focus {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 1px solid var(--muted);
+  width: 16px;
+  height: 16px;
   color: var(--muted);
-  font-family: Inter;
-  font-size: 9px;
-  font-weight: 600;
-  font-style: italic;
   cursor: default;
   user-select: none;
-  transition: border-color 150ms ease, color 150ms ease;
+  transition: color 150ms ease;
   flex-shrink: 0;
+  vertical-align: middle;
 }
 
 .context-info-icon:hover {
-  border-color: var(--accent);
   color: var(--accent);
 }
 
