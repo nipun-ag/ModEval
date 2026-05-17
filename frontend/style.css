@@ -2984,3 +2984,188 @@ tr.tier-header {
   width: 100%;
   border-collapse: collapse;
 }
+
+/* === Model Breakdown Card Layout === */
+.breakdown-section {
+  margin-bottom: 32px;
+}
+
+.breakdown-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.breakdown-section-icon {
+  font-size: 14px;
+  color: var(--accent);
+}
+
+.breakdown-section-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+}
+
+.breakdown-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 8px;
+  transition: border-color 150ms ease;
+}
+
+.breakdown-card:hover {
+  border-color: var(--border-strong);
+}
+
+.breakdown-card.aligned-allow {
+  border-left: 3px solid var(--green);
+}
+
+.breakdown-card.aligned-review {
+  border-left: 3px solid var(--amber);
+}
+
+.breakdown-card.aligned-remove {
+  border-left: 3px solid var(--red);
+}
+
+.breakdown-model-info {
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.breakdown-model-name {
+  font-family: "Inter", -apple-system, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.breakdown-model-meta {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.breakdown-arch-chip {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  display: inline-block;
+}
+
+.breakdown-fields {
+  display: grid;
+  grid-template-columns: 120px 160px 120px 140px;
+  gap: 16px;
+  flex: 1;
+  align-items: center;
+}
+
+.breakdown-field-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.breakdown-field-value {
+  font-family: "Inter", -apple-system, sans-serif;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.severity-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.severity-bar-number {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 16px;
+  font-weight: 600;
+  min-width: 16px;
+}
+
+.severity-bar-track {
+  height: 3px;
+  width: 64px;
+  background: var(--surface3);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.severity-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+}
+
+.severity-bar-fill.low {
+  background: var(--green);
+}
+
+.severity-bar-fill.mid {
+  background: var(--amber);
+}
+
+.severity-bar-fill.high {
+  background: var(--red);
+}
+
+.breakdown-confidence {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.breakdown-action-btn {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-radius: 6px;
+  padding: 6px 14px;
+  border: 1px solid;
+  cursor: default;
+  white-space: nowrap;
+}
+
+.breakdown-action-btn.action-allow {
+  background: var(--green-light);
+  color: var(--green);
+  border-color: var(--green);
+}
+
+.breakdown-action-btn.action-review {
+  background: var(--amber-light);
+  color: var(--amber);
+  border-color: var(--amber);
+}
+
+.breakdown-action-btn.action-remove {
+  background: var(--red-light);
+  color: var(--red);
+  border-color: var(--red);
+}
