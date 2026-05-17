@@ -684,18 +684,20 @@ textarea:focus {
   position: absolute;
   bottom: calc(100% + 8px);
   left: 0;
-  width: 300px;
-  background: var(--surface2);
+  width: 340px;
+  background: rgba(15, 20, 45, 0.95);
   border: 1px solid var(--border-strong);
   border-radius: 8px;
-  padding: 12px 14px;
+  padding: 16px 18px;
   font-family: Inter, sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.6;
   color: var(--text-secondary);
   z-index: 100;
   box-shadow: 0 4px 20px rgba(0,0,0,0.4);
   border-left: 3px solid var(--accent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .context-explainer-wrapper:hover .context-explainer {
