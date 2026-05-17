@@ -92,7 +92,12 @@ modeval/
     "most_lenient_model": {"model": "string", "action": "string", "reason": "string"},
     "consensus_recommendation": "Allow | Review | Remove"
   },
-  "ai_summary": "string — GPT-4o-mini generated 2-3 sentence interpretation, or empty string on API failure"
+  "ai_analysis": {
+    "disagreement_explanation": "string — why models disagreed (empty if consensus)",
+    "risk_narrative": "string — severity and context of content",
+    "context_sensitivity": "string — how platform/content/strictness modifiers affect verdict",
+    "contested_category": "string — most disputed category across models"
+  }
 }
 ```
 
@@ -147,8 +152,8 @@ modeval/
 
 ## Model Details
 
-**9 models total, running in parallel:**
-- 4 Enterprise APIs (optional, credentials required)
+**8 models total, running in parallel:**
+- 3 Enterprise APIs (optional, credentials required)
 - 4 HuggingFace open-source models (always available)
 - 1 OpenAI proprietary model (requires API key)
 
@@ -179,17 +184,7 @@ These are third-party cloud APIs that require credentials. If credentials are mi
 - **Limitations:** Only 4 categories, severity normalization required, paid service
 - **Credentials:** `AZURE_CS_KEY` and `AZURE_CS_ENDPOINT` environment variables
 
-#### 3. AWS Comprehend (Amazon)
-- **API:** AWS Comprehend DetectToxicContent
-- **Architecture:** AWS managed NLP service
-- **Training Data:** Amazon proprietary dataset
-- **Safety Dimensions:** Violence, Hate, Harassment, Sexual, Insult, Profanity
-- **Output Schema:** 6 toxic content labels with confidence scores
-- **Strengths:** AWS ecosystem integration, enterprise support, pay-per-use
-- **Limitations:** Requires AWS account/IAM, slightly higher latency, boto3 dependency
-- **Credentials:** `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` environment variables
-
-#### 4. Google NLP (Google Cloud)
+#### 3. Google NLP (Google Cloud)
 - **API:** Google Cloud Natural Language API moderateText endpoint
 - **Architecture:** REST API (Google proprietary)
 - **Training Data:** Google proprietary dataset
@@ -203,7 +198,7 @@ These are third-party cloud APIs that require credentials. If credentials are mi
 
 Always available, no credentials required.
 
-#### 5. OpenAI Moderation
+#### 4. OpenAI Moderation
 - **API:** OpenAI Moderation API
 - **Architecture:** Proprietary classification model (not disclosed)
 - **Training Data:** Internal OpenAI dataset
@@ -212,7 +207,7 @@ Always available, no credentials required.
 - **Strengths:** Production-grade, high accuracy, covers edge cases OpenAI has seen
 - **Limitations:** Proprietary, may not align with platform-specific policies
 
-#### 6. Toxicity Classifier (HuggingFace: unitary/toxic-bert)
+#### 5. Toxicity Classifier (HuggingFace: unitary/toxic-bert)
 - **Architecture:** BERT (12-layer, 768-hidden, 12-head)
 - **Creator:** Unitary AI
 - **Training Data:** Jigsaw Toxic Comments dataset (Wikipedia talk page comments)
@@ -221,7 +216,7 @@ Always available, no credentials required.
 - **Strengths:** Widely used in production, covers 6 toxicity dimensions, general-purpose
 - **Limitations:** Trained on formal Wikipedia comments, may underperform on informal slang
 
-#### 7. Offensive Language Detector (HuggingFace: cardiffnlp/twitter-roberta-base-offensive)
+#### 6. Offensive Language Detector (HuggingFace: cardiffnlp/twitter-roberta-base-offensive)
 - **Architecture:** RoBERTa-base (24-layer, 1024-hidden, 16-head)
 - **Creator:** Cardiff NLP
 - **Training Data:** Twitter / SemEval-2019 Task 6 (offensive language identification)
@@ -230,7 +225,7 @@ Always available, no credentials required.
 - **Strengths:** Twitter-specific training, excellent for slang and informal tone
 - **Limitations:** May overfit to Twitter conventions, may miss platform-specific patterns from other networks
 
-#### 8. Hate Speech Detector (HuggingFace: facebook/roberta-hate-speech-dynabench-r4-target)
+#### 7. Hate Speech Detector (HuggingFace: facebook/roberta-hate-speech-dynabench-r4-target)
 - **Architecture:** RoBERTa-base
 - **Creator:** Facebook AI Research
 - **Training Data:** DynaBench R4 — adversarially collected hate speech examples
@@ -239,7 +234,7 @@ Always available, no credentials required.
 - **Strengths:** Adversarial training makes it robust to evasion, focuses on hate not general offense
 - **Limitations:** Binary hate/not-hate less granular, only 3-class output
 
-#### 9. Spam Detector (HuggingFace: mrm8488/bert-tiny-finetuned-sms-spam-detection)
+#### 8. Spam Detector (HuggingFace: mrm8488/bert-tiny-finetuned-sms-spam-detection)
 - **Architecture:** BERT-tiny (2-layer, 128-hidden, 2-head) — only 4.4M parameters
 - **Creator:** Manuel Romero
 - **Training Data:** SMS Spam Collection dataset
@@ -248,7 +243,7 @@ Always available, no credentials required.
 - **Strengths:** Extremely lightweight, 98% validation accuracy, fastest model
 - **Limitations:** SMS-trained, may miss sophisticated social media spam patterns
 
-#### 10. Bias Detector (HuggingFace: valurank/distilroberta-bias)
+#### 9. Bias Detector (HuggingFace: valurank/distilroberta-bias)
 - **Architecture:** DistilRoBERTa (6-layer, 768-hidden, 12-head) — 40% smaller than RoBERTa
 - **Creator:** Valurank
 - **Training Data:** Wikipedia Neutrality Comments (WNC) — real editorial decisions to remove biased language
@@ -285,6 +280,7 @@ Reflects real platform risk tolerance and enforcement philosophy.
 
 | Platform | Modifier | Rationale |
 |---|---|---|
+| Neutral | 0.00 | No platform context (default) |
 | Social Media | 0.00 | Baseline (Reddit, Discord, etc.) |
 | Gaming | -0.10 | Higher tolerance for competitive language and banter |
 | Professional | +0.15 | Lower tolerance, reputational and compliance risk |
@@ -448,11 +444,28 @@ severity = min(10, max(1, round(score * 10)))
 - Used by Hive Moderation enterprise model
 - Set as secret in Doppler (project: modeval, config: prd) or in local `.env`
 
+**AZURE_CS_KEY**
+- Microsoft Azure Content Safety API key
+- Get at: portal.azure.com (create Azure Content Safety resource)
+- Used by Azure Content Safety enterprise model
+- Set as secret in Doppler (project: modeval, config: prd) or in local `.env`
+
+**AZURE_CS_ENDPOINT**
+- Microsoft Azure Content Safety API endpoint URL
+- Provided when you create the Azure resource
+- Set as secret in Doppler (project: modeval, config: prd) or in local `.env`
+
+**GOOGLE_NLP_KEY**
+- Google Cloud Natural Language API key
+- Get at: console.cloud.google.com (create service account and key)
+- Used by Google NLP enterprise model
+- Set as secret in Doppler (project: modeval, config: prd) or in local `.env`
+
 **OPENAI_API_KEY**
-- OpenAI API key for GPT-4o-mini (AI summary generation)
+- OpenAI API key for GPT-4o-mini (AI analysis generation)
 - Get at: platform.openai.ai/api-keys
 - Set as secret in Doppler (project: modeval, config: prd) or in local `.env`
-- Falls back to empty string (AI summary disabled) if not provided
+- Falls back to empty string (AI analysis disabled) if not provided
 
 ### Local Development Only
 Create `.env` file in project root:
@@ -752,10 +765,14 @@ All panels are direct children of .app-shell:
 - .workspace -- the main analysis grid (default visible)
 - #benchmark-panel -- coming soon placeholder
 - #how-it-works-panel -- methodology content with 8 sections:
-  - Section 1: Architecture Flow (icon circles with connectors)
-  - Section 2: Unified Output Normalization (two-col text + code-window)
-  - Section 3-8: Context Engine, Policy Alignment, Decision Logic, Bias Mitigation, Integrity checks
-- #models-panel -- model cards content
+  - Section 1: Hero area ("STAGE 01") + Architecture Flow (icon circles with connectors showing Input → Normalize → Score → Align → Decide)
+  - Section 2: Unified Output Normalization (two-col text + code-window with macOS chrome)
+  - Section 3: Context Engine (two-col with equation block showing threshold formula)
+  - Section 4: Policy Alignment (two-col with pull quote about disagreements)
+  - Section 5-6: Decision Logic, Integrity Checks (methodology-card wrapper)
+  - Section 7: Points to Models tab (one-liner)
+  - Section 8: (deferred or removed)
+- #models-panel -- model cards content (5 enterprise + 4 HuggingFace + OpenAI)
 
 ### Results Panel Lower Tabs
 After analysis runs, three lower tabs appear inside 
@@ -767,7 +784,13 @@ After analysis runs, three lower tabs appear inside
   gauge + legend (default active tab)
 - lower-panel-breakdown: decision matrix table 
   rendered directly, no accordion wrapper
-- lower-panel-insights: insight cards + AI summary
+- lower-panel-insights: bento grid with 6 insight cards:
+  - Strictest Model (6 cols)
+  - Most Lenient Model (6 cols)
+  - Why Models Disagreed (4 cols)
+  - Risk Narrative (8 cols wide)
+  - Context Sensitivity (8 cols wide)
+  - Most Contested Category (4 cols with accent)
 
 Tab switching handled by click handlers on 
 .lower-tab elements in frontend/app.js.

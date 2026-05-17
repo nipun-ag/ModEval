@@ -400,6 +400,104 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Checkmark (✓): `--green`, bold, positioned 24px left
 - Used in methodology sections for feature/step lists
 
+### Architecture Flow Component (.arch-flow-visual, .arch-flow-step, .arch-flow-icon, .arch-flow-connector, .arch-flow-label)
+- `.arch-flow-visual`: container for entire architecture diagram
+- `.arch-flow-step`: individual node/stage in flow (inline-flex, gap 12px)
+- `.arch-flow-icon`: circular icon container (60px, centered SVG icon, `--surface2` background, `--accent` border)
+- `.arch-flow-connector`: SVG arrow/line connecting consecutive steps
+- `.arch-flow-label`: JetBrains Mono 11px `--text-secondary` label below/beside step
+- Used in How It Works Section 1 to show: Input → Normalize → Score → Align → Decide pipeline
+- All text in DM Serif Display for authority, icons in monospace for technical precision
+
+### Architecture Flow Strip (.arch-flow-strip, .arch-title-block)
+- `.arch-flow-strip`: flex row of architecture flow steps with SVG connectors between them
+- `.arch-title-block`: section heading and hero area above flow, contains "STAGE XX" label and section title
+- Grid-based layout for hero area with typography hierarchy
+- Used as intro to How It Works methodology sections
+
+### Pull Quote Block (.pull-quote-block, .pull-quote-mark, .pull-quote-text, .pull-quote-attribution)
+- `.pull-quote-block`: container with `--accent` left border (2px), padding-left 20px, italic styling
+- `.pull-quote-mark`: opening quotation mark mark or visual indicator (DM Serif Display)
+- `.pull-quote-text`: 18px DM Serif Display, `--text`, italic, line-height 1.8
+- `.pull-quote-attribution`: 13px `--text-secondary` JetBrains Mono, margin-top 12px
+- Used for editorial emphasis: "Disagreements are not errors — they are the most analytically interesting output ModEval produces."
+
+### Equation Block (.equation-block, .equation-label, .equation-display, .equation-score, .equation-op, .equation-var, .equation-sigma)
+- `.equation-block`: centered container with generous padding (32px), rendered as mathematical formula
+- `.equation-label`: small JetBrains Mono 10px uppercase `--muted` label above equation
+- `.equation-display`: flex row containing equation components
+- `.equation-score`: threshold value or score (JetBrains Mono 14px bold)
+- `.equation-op`: mathematical operator (+, −, =, etc.) (JetBrains Mono 14px `--text-secondary`)
+- `.equation-var`: variable name (DM Serif Display 16px)
+- `.equation-sigma`: sigma symbol or summation notation (JetBrains Mono 18px)
+- Color-coded: modifiers in amber/green, thresholds in accent blue
+- Used in How It Works Context Engine section to display: threshold_adj = clamp(base + platform_mod + content_mod + strictness_mod, 0.10, 0.90)
+
+### Methodology Two-Column Layout (.methodology-two-col)
+- Flex row layout with 50/50 split or flexible columns
+- Gap: 32px between columns
+- Left column: text content (paragraphs, lists)
+- Right column: visual element (code window, equation block, etc.)
+- Responsive: stacks to single column below 900px
+- Used extensively in How It Works sections
+
+### Code Window (.code-window, .code-window-header, .code-window-dots, .code-dot, .code-window-filename)
+- `.code-window`: bordered container with macOS-style chrome
+- Border: `--border-strong`, border-radius 8px, background `--surface2`
+- Box-shadow: 0 8px 32px rgba(0,0,0,0.4)
+- `.code-window-header`: flex row at top, background rgba(0,0,0,0.3), border-bottom `--border`
+- Padding: 12px 16px
+- `.code-window-dots`: flex row of three control dots (red, amber, green)
+- `.code-dot`: individual 12px circles with three variants: `.dot-red` #ef4444, `.dot-amber` #f59e0b, `.dot-green` #10b981
+- Gap between dots: 8px
+- `.code-window-filename`: JetBrains Mono 11px `--text-secondary`, margin-left auto, letter-spacing 0.05em
+- Inside: normalized output schema or code snippet rendered as monospace text
+- Used in How It Works Section 2 to display unified output format
+
+### Insights Bento Grid (.insights-bento)
+- CSS Grid layout: 12 columns, 16px gap
+- Max-width inherited from parent panel
+- Responsive: collapses to 1 column on mobile (max-width: 900px) with 12px gap
+- Margin-bottom: 32px
+- Houses both model insight cards and AI analysis insight cards
+
+### Insight Card New (.insight-card-new)
+- Grid: spans 6 columns in bento layout (3 columns on mobile)
+- `--surface2` background (rgba(17,17,20,0.88)), blur(8px) backdrop-filter
+- Border: 1px `--border`, border-radius 10px, 24px padding
+- Used for: Strictest Model and Most Lenient Model cards
+- Animations: fade-up 200ms with staggered 50ms delay
+- Hover: border-color becomes `--border-strong`, transform -2px Y, box-shadow increases
+- Left border: 3px colored by action (red/amber/green)
+
+### Insight Card New Label (.insight-card-new-label)
+- JetBrains Mono 10px uppercase `--accent`
+- Eyebrow above value
+- Margin-bottom: 8px
+
+### Insight Card New Value (.insight-card-new-value, .insight-card-new-desc)
+- `.insight-card-new-value`: DM Serif Display 32px bold `--text` for model name or value
+- `.insight-card-new-desc`: 13px `--text-secondary` for description text, line-height 1.6
+
+### AI Insight Card New (.ai-insight-card-new, .ai-insight-card-new--wide, .ai-insight-card-new--accent)
+- Grid: spans 4 columns by default in bento layout
+- `--surface2` background, `--border` border, border-radius 10px, 20px padding
+- Used for: Why Models Disagreed, Risk Narrative, Context Sensitivity, Most Contested Category cards
+- Animations: fade-up 200ms with staggered 50-100ms+ delay
+- Hover: border-color becomes `--border-strong`
+- Variants:
+  - `.ai-insight-card-new--wide`: spans 8 columns (Context Sensitivity card)
+  - `.ai-insight-card-new--accent`: spans 4 columns with `--accent-light` background and `--accent` border (Most Contested Category card)
+- Category text: DM Serif Display 32px bold `--text`
+- Label text: JetBrains Mono 10px uppercase `--accent`
+- Body text: 13px `--text-secondary`, line-height 1.6
+
+### AI Insight Card Header (.ai-insight-card-new-header, .ai-insight-icon)
+- `.ai-insight-card-new-header`: flex row with icon and title
+- `.ai-insight-icon`: 24px icon element, margin-right 12px
+- Title: JetBrains Mono 10px uppercase `--accent`
+- Margin-bottom: 16px
+
 ### Editorial Quote
 - DM Serif Display, larger font
 - `--accent` left border 2px, padding-left 20px

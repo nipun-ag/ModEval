@@ -4,6 +4,89 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-05-17 (Part 3)
+
+**feat: integrate 3 enterprise APIs (Hive, Azure, Google NLP), restructure AI analysis to 4-field insights**
+
+Changes:
+- Added three enterprise API wrappers: Hive Moderation (The Hive AI V3), Azure Content Safety (Microsoft), Google NLP (Google Cloud)
+- Removed AWS Comprehend from active models (maintenance mode — wrapper remains but not in pipeline)
+- Replaced Perspective API with Hive Moderation as the primary enterprise text moderation API
+- Restructured AI analysis response from single `ai_summary` string to `ai_analysis` dict with 4 structured fields:
+  - `disagreement_explanation`: string explaining why models disagreed (empty if consensus)
+  - `risk_narrative`: string describing the severity and context of the content
+  - `context_sensitivity`: string explaining how platform/content/strictness modifiers affect the verdict
+  - `contested_category`: string naming the most disputed category across models
+- Added Neutral as default platform context with 0.00 modifier (no strictness change)
+- Updated response schema in `/analyze` endpoint to use `ai_analysis` field name
+- Updated backend decision matrix to reflect 3 active enterprise APIs + 4 HuggingFace + OpenAI (8 total)
+- Graceful degradation: disabled models show "Coming Soon" instead of errors
+
+**style: redesign Insights tab with bento grid layout**
+
+Changes:
+- Replaced stacked insight cards layout with 12-column CSS bento grid (16px gap)
+- Added 6 insight cards in grid layout:
+  - Strictest Model card (6 columns)
+  - Most Lenient Model card (6 columns)
+  - Why Models Disagreed card (4 columns)
+  - Risk Narrative card (8 columns wide)
+  - Context Sensitivity card (8 columns wide)
+  - Most Contested Category card (4 columns with accent background)
+- Added CSS classes for bento grid and new insight card variants
+- Responsive: collapses to 1 column on mobile (max-width: 900px)
+- All cards use fade-up animation with staggered timing
+
+**style: redesign How It Works panel with hero section, architecture flow, pull quote, equation block**
+
+Changes:
+- Added Section 1 header block with "STAGE" labels and section titles
+- Added architecture flow component: icon circles with labeled connectors showing pipeline stages
+- Added pull quote block ("Disagreements are not errors...") with italic styling and accent border
+- Added equation block showing threshold calculation formula with color-coded operators and variables
+- Added integrity cards checklist component with green checkmark bullets
+- Restructured Section 2 with two-column text + code-window layout
+- Added code-window component with macOS chrome (red/amber/green dots + filename)
+- Simplified Section 7 to one-liner pointing users to Models tab
+- Removed duplicate Policy Alignment Scoring section
+- Wrapped Section 6.5 methodology content in methodology-card
+- Fixed blank flash bug on model cards by adding GPU compositing to card elements
+
+**docs: update DESIGN.md with new component documentation**
+
+Changes:
+- Added documentation for architecture flow components (.arch-flow-visual, .arch-flow-step, etc.)
+- Added documentation for pull quote block (.pull-quote-block, .pull-quote-text)
+- Added documentation for equation block (.equation-block, .equation-display, etc.)
+- Added documentation for code-window components (.code-window, .code-window-dots, .code-dot)
+- Added documentation for integrity card list (.integrity-card-list with green checkmarks)
+- Added documentation for insights bento grid (.insights-bento, .insight-card-new, .ai-insight-card-new variants)
+- Updated Decision Matrix Table spec to reflect new enterprise APIs
+
+**docs: update ARCHITECTURE.md**
+
+Changes:
+- Updated Enterprise APIs section: replaced Perspective API with Hive Moderation, added Azure Content Safety and Google NLP as active
+- Removed AWS Comprehend from active models (now in maintenance mode)
+- Added Platform Modifiers section with Neutral (0.00) as default
+- Updated AI analysis response schema to document `ai_analysis` dict with 4 fields instead of single `ai_summary`
+- Updated Environment Variables section with HIVE_API_KEY, AZURE_CS_KEY, AZURE_CS_ENDPOINT, GOOGLE_NLP_KEY
+- Updated Frontend Components section with Insights bento grid layout
+- Updated How It Works panel documentation to reflect new sections and components
+
+**docs: update CLAUDE.md Current Project State**
+
+Changes:
+- Updated model count: now 8 active models (3 enterprise APIs + 4 HuggingFace + OpenAI)
+- Updated enterprise APIs list: Hive Moderation, Azure Content Safety, Google NLP (AWS Comprehend removed)
+- Documented Neutral as default platform context
+- Documented AI analysis as structured dict with 4 fields
+- Updated Insights tab description to reflect bento grid layout with 6 cards
+
+Rationale: Enterprise moderation APIs enable larger organizations to use their preferred vendors. Structured AI analysis allows frontend to display insights in tailored cards rather than free-form text. Bento grid layout provides better visual hierarchy and information density in Insights tab. Architecture flow and pull quote in How It Works improve pedagogical clarity.
+
+---
+
 ## 2026-05-17 (Part 2)
 
 **style: add bento grid CSS for Insights tab redesign**

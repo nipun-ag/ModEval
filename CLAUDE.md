@@ -156,8 +156,8 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
 3. Update modifier tables after changes
 
 ## Current Project State
-- 9 models live and running in parallel:
-  - 4 Enterprise APIs: Hive Moderation, Azure Content Safety, AWS Comprehend, Google NLP
+- 8 models live and running in parallel:
+  - 3 Enterprise APIs: Hive Moderation, Azure Content Safety, Google NLP
   - 4 HuggingFace models: toxic-bert, RoBERTa offensive, hate-speech, bias-detector
   - 1 Proprietary: OpenAI Moderation
 - Graceful degradation with disabled model handling:
@@ -165,23 +165,24 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
   - Consensus, disagreements, and insights calculated only from active models
   - Dynamic model count in topbar reflects configured credentials
 - Decision matrix rendered in two tiers:
-  - Enterprise APIs tier with 5 vendor models
+  - Enterprise APIs tier with 3 vendor models
   - Open Source Models tier with 4 HuggingFace + OpenAI
   - Disabled models show gray rows at 0.4 opacity
-- Context Engine with platform, content type, strictness modifiers
+- Context Engine with platform (including Neutral default), content type, strictness modifiers
 - Policy alignment scoring for Reddit, Discord, Facebook, Instagram
+- AI analysis with 4 structured fields: disagreement_explanation, risk_narrative, context_sensitivity, contested_category
 - Disagreement detection and banner
-- AI Consensus Summary via GPT-4o-mini
 - 100 pre-loaded test cases across 10 violation categories
 - Phase 0 UX overhaul complete:
   - Topbar navigation with 4 tabs: ANALYSIS (active), BENCHMARK (locked), HOW IT WORKS, MODELS
   - HOW IT WORKS and MODELS are full-page panels accessed from topbar, not results tabs
   - Panel padding increased to 48px
-  - Consensus hero card leads results with large action word, AI summary subtitle, donut chart, severity gauge, and action legend
+  - Consensus hero card leads results with large action word, AI analysis subtitle, donut chart, severity gauge, and action legend
   - Results panel has three lower tabs: Summary, Model Breakdown, Insights — hidden until analysis runs
   - Summary tab: consensus hero + donut + gauge + legend
   - Model Breakdown tab: decision matrix with tier rendering (no accordion)
-  - Insights tab: bento grid with strictest/most lenient cards (6-col) + 4 AI insight cards (4-col/8-col variants)
+  - Insights tab: bento grid with 6 cards — strictest/lenient, disagreement explanation, risk narrative, context sensitivity, contested category
+  - How It Works panel redesigned with architecture flow, pull quote, equation block, code-window components
   - Benchmark placeholder panel with coming soon state and 3 feature preview cards
   - Ambient glow blobs on results panel background
 - Deployed on Hetzner VPS at modeval.bynipun.com — no cold starts
