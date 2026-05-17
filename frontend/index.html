@@ -419,7 +419,7 @@
         <div class="arch-flow-connector"></div>
         <div class="arch-flow-step">
           <div class="arch-flow-icon">⚙</div>
-          <span class="arch-flow-label">Normalizer → Context → Policy</span>
+          <span class="arch-flow-label">Normalize + Platform</span>
         </div>
         <div class="arch-flow-connector"></div>
         <div class="arch-flow-step arch-flow-step-accent">
@@ -496,13 +496,9 @@
             <table class="methodology-table">
               <tbody>
                 <tr><td>Reddit</td><td>0.00</td><td>Baseline</td></tr>
-                <tr><td>Discord</td><td class="modifier-positive">+0.05</td><td>Community-moderated norms</td></tr>
+                <tr><td>Discord</td><td>0.00</td><td>Community-moderated norms</td></tr>
                 <tr><td>Facebook</td><td class="modifier-negative">-0.05</td><td>Broader audience, mainstream enforcement</td></tr>
                 <tr><td>Instagram</td><td class="modifier-negative">-0.10</td><td>Visual context, stricter on harassment</td></tr>
-                <tr><td>Gaming Platform</td><td class="modifier-positive">+0.10</td><td>Competitive context, higher tolerance</td></tr>
-                <tr><td>Professional</td><td class="modifier-negative">-0.15</td><td>Reputational risk, strictest</td></tr>
-                <tr><td>Community/Forum</td><td class="modifier-positive">+0.05</td><td>Niche culture, higher tolerance for debate</td></tr>
-                <tr><td>VR/Metaverse</td><td class="modifier-positive">+0.15</td><td>Emerging norms, experimental enforcement</td></tr>
                 <tr><td>Custom</td><td>user-defined</td><td>User policy controls threshold</td></tr>
               </tbody>
             </table>
@@ -521,7 +517,7 @@
           </div>
         </div>
         <p class="methodology-copy">
-          After all eight models return normalized results, ModEval evaluates how each model aligns with the selected platform's content policy. Instead of simple keyword matching, a batched AI call to GPT-4o-mini assesses each model's output in context of platform-specific rules.
+          After all eight models return normalized results, ModEval evaluates how each model aligns with the selected platform's content policy. Instead of simple keyword matching, a batched AI call to Claude Haiku assesses each model's output in context of platform-specific rules.
         </p>
         <p class="methodology-copy">
           The platform context determines which categories are zero-tolerance, which are deprioritized, and what the expected enforcement rigor is. Each model's category prediction and confidence score are evaluated against these expectations. The AI returns three values per model:
@@ -535,7 +531,7 @@
           This approach captures nuance that keyword rules cannot. A high-confidence hate speech detection on Reddit aligns perfectly. The same detection on a gaming platform may not align as strongly due to different enforcement norms. The AI understands context; the numbers follow.
         </p>
         <p class="methodology-copy">
-          If the GPT call fails, ModEval falls back to keyword-based alignment rules, ensuring the analysis always completes.
+          If the Claude call fails, ModEval falls back to keyword-based alignment rules, ensuring the analysis always completes.
         </p>
       </section>
 
@@ -569,9 +565,9 @@
       <section class="methodology-section methodology-card">
         <p class="section-label mono-label" style="color: var(--accent); letter-spacing: 0.2em;">SECTION 5</p>
         <h3>AI Interpretation Layer</h3>
-        <p class="methodology-copy">After all eight models have returned results and disagreements have been detected, ModEval passes the full output to a language model for synthesis. GPT-4o-mini receives each model's action, confidence score, and top category, along with AI alignment assessments per model and the detected disagreement type, and generates a 2-3 sentence plain English interpretation.</p>
+        <p class="methodology-copy">After all eight models have returned results and disagreements have been detected, ModEval passes the full output to a language model for synthesis. Claude Haiku receives each model's action, confidence score, and top category, along with AI alignment assessments per model and the detected disagreement type, and generates an analytical verdict.</p>
         <p class="methodology-copy">This layer exists because structured data alone does not always communicate risk clearly. A Trust & Safety reviewer scanning hundreds of results needs to understand not just what the models said, but what the disagreement means in context. The AI interpretation translates model outputs into an actionable summary.</p>
-        <p class="methodology-copy">If the GPT call fails or times out, ModEval falls back to a rule-based consensus summary generated from the same structured data — ensuring the Explainability section always renders.</p>
+        <p class="methodology-copy">If the Claude call fails or times out, ModEval falls back to a rule-based consensus summary generated from the same structured data — ensuring the Explainability section always renders.</p>
         <table class="methodology-table">
           <thead>
             <tr>
@@ -581,8 +577,8 @@
           </thead>
           <tbody>
             <tr>
-              <td>8 model results (action, confidence, top category, alignment assessment)</td>
-              <td>Plain English 2-3 sentence interpretation</td>
+              <td>8 model results (action, confidence, top category), AI alignment assessments per model</td>
+              <td>Analytical verdict: CLEAR VIOLATION, CLEAR SAFE, or GENUINE GREY AREA with reasoning</td>
             </tr>
             <tr>
               <td>Detected disagreement type</td>
@@ -590,7 +586,7 @@
             </tr>
             <tr>
               <td>Platform context</td>
-              <td>Fallback rule-based summary if GPT unavailable</td>
+              <td>Fallback rule-based summary if Claude unavailable</td>
             </tr>
           </tbody>
         </table>
