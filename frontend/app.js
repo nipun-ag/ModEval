@@ -419,7 +419,8 @@ function initializeModalSelects() {
 
     const hiddenInput = selectEl.querySelector("input[type='hidden']");
     const fieldBlock = selectEl.closest(".field-block");
-    const labelText = fieldBlock ? fieldBlock.querySelector("label").textContent.trim() : "";
+    const labelEl = fieldBlock ? (fieldBlock.querySelector("label") || fieldBlock.querySelector(".platform-label-text")) : null;
+    const labelText = labelEl ? labelEl.textContent.trim() : "";
     const options = Array.from(selectEl.querySelectorAll(".custom-select-option"));
 
     heading.textContent = `Select ${labelText}`;
