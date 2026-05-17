@@ -30,6 +30,17 @@ const consensusHero = document.getElementById("consensus-hero");
 const heroAction = document.getElementById("hero-action");
 const heroSubtitle = document.getElementById("hero-subtitle");
 const exampleButtons = Array.from(document.querySelectorAll(".example-pill"));
+const confirmPolicyBtn = document.getElementById("confirm-policy-btn");
+const confirmPolicyMsg = document.getElementById("confirm-policy-msg");
+
+if (confirmPolicyBtn) {
+  confirmPolicyBtn.addEventListener("click", () => {
+    confirmPolicyMsg.classList.remove("hidden");
+    setTimeout(() => {
+      confirmPolicyMsg.classList.add("hidden");
+    }, 2000);
+  });
+}
 
 // Initialize column info icon tooltips
 function initColumnTooltips() {

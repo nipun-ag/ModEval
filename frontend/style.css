@@ -3505,3 +3505,42 @@ tbody td {
   flex: 0 0 35px;
   text-align: right;
 }
+
+/* Custom Policy Actions */
+
+.custom-policy-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.confirm-policy-btn {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.confirm-policy-btn:hover {
+  background: var(--accent-light);
+}
+
+.confirm-policy-msg {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  color: var(--green);
+  letter-spacing: 0.05em;
+}
+
+.confirm-policy-msg.hidden {
+  display: none;
+}
