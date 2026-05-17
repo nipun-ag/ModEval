@@ -589,23 +589,14 @@ function renderBreakdownCard(result) {
         <span class="breakdown-arch-chip">${escapeHtml(display.chip)}</span>
       </div>
       <div class="breakdown-fields">
-        <div>
-          <div class="breakdown-field-label">Category</div>
-          <div class="breakdown-field-value">${escapeHtml(result.top_category)}</div>
-        </div>
-        <div>
-          <div class="breakdown-field-label">Severity</div>
-          <div class="severity-bar-wrap">
-            <span class="severity-bar-number" style="color:${sevColorVar};">${severity}</span>
-            <div class="severity-bar-track">
-              <div class="severity-bar-fill ${sevClass}" style="width:${sevWidth}%;"></div>
-            </div>
+        <div class="breakdown-field-value">${escapeHtml(result.top_category)}</div>
+        <div class="severity-bar-wrap">
+          <span class="severity-bar-number" style="color:${sevColorVar};">${severity}</span>
+          <div class="severity-bar-track">
+            <div class="severity-bar-fill ${sevClass}" style="width:${sevWidth}%;"></div>
           </div>
         </div>
-        <div>
-          <div class="breakdown-field-label">Confidence</div>
-          <div class="breakdown-confidence">${Number(result.confidence).toFixed(4)}</div>
-        </div>
+        <div class="breakdown-confidence">${Number(result.confidence).toFixed(4)}</div>
       </div>
       <button class="breakdown-action-btn ${actionBtnClass}">${escapeHtml(result.action)}</button>
     </div>
@@ -620,11 +611,22 @@ function renderResults(results) {
 
   let html = "";
 
+  const headerRow = `
+    <div class="breakdown-header-row">
+      <div class="breakdown-header-spacer"></div>
+      <div class="breakdown-header-fields">
+        <span>CATEGORY</span>
+        <span>SEVERITY</span>
+        <span>CONFIDENCE</span>
+      </div>
+    </div>`;
+
   html += `<div class="breakdown-section">`;
   html += `<div class="breakdown-section-header">
     <span class="breakdown-section-icon">◈</span>
     <span class="breakdown-section-label">Enterprise APIs</span>
   </div>`;
+  html += headerRow;
   ENTERPRISE_MODELS.forEach((modelName) => {
     const result = results.find(r => r.model === modelName);
     if (result) html += renderBreakdownCard(result);
@@ -636,6 +638,7 @@ function renderResults(results) {
     <span class="breakdown-section-icon">⬡</span>
     <span class="breakdown-section-label">Open Source Models</span>
   </div>`;
+  html += headerRow;
   OPENSOURCE_MODELS.forEach((modelName) => {
     const result = results.find(r => r.model === modelName);
     if (result) html += renderBreakdownCard(result);

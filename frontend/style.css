@@ -3018,10 +3018,12 @@ tr.tier-header {
   padding: 20px 24px;
   display: flex;
   align-items: center;
+  flex-wrap: nowrap;
+  box-sizing: border-box;
   gap: 24px;
   margin-bottom: 8px;
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
   transition: border-color 150ms ease;
 }
 
@@ -3042,7 +3044,7 @@ tr.tier-header {
 }
 
 .breakdown-model-info {
-  width: 160px;
+  width: 140px;
   flex-shrink: 0;
 }
 
@@ -3075,21 +3077,11 @@ tr.tier-header {
 
 .breakdown-fields {
   display: grid;
-  grid-template-columns: 120px 160px 140px;
+  grid-template-columns: 110px 150px 120px;
   gap: 16px;
   flex: 1;
   min-width: 0;
   align-items: center;
-}
-
-.breakdown-field-label {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 9px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--muted);
-  margin-bottom: 4px;
 }
 
 .breakdown-field-value {
@@ -3153,6 +3145,9 @@ tr.tier-header {
   border: 1px solid;
   cursor: default;
   white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 76px;
+  max-width: 76px;
 }
 
 .breakdown-action-btn.action-allow {
@@ -3171,4 +3166,30 @@ tr.tier-header {
   background: var(--red-light);
   color: var(--red);
   border-color: var(--red);
+}
+
+.breakdown-header-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 0 24px 8px 24px;
+  margin-bottom: 4px;
+}
+
+.breakdown-header-spacer {
+  width: 140px;
+  flex-shrink: 0;
+}
+
+.breakdown-header-fields {
+  display: grid;
+  grid-template-columns: 110px 150px 120px;
+  gap: 16px;
+  flex: 1;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
 }
