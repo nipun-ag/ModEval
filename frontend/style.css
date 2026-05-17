@@ -1148,8 +1148,51 @@ textarea:focus {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
+.insight-card-new--remove {
+  border-left: 4px solid var(--red);
+}
+
+.insight-card-new--allow {
+  border-left: 4px solid var(--green);
+}
+
+.insight-card-new-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.insight-card-new-desc {
+  font-size: 11px;
+  color: var(--muted);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.insight-card-new-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.5;
+  margin-top: auto;
+}
+
+.ai-insight-card-new-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ai-insight-icon {
+  font-size: 16px;
+  color: var(--accent);
+  line-height: 1;
+}
+
 .ai-insight-card-new {
-  grid-column: span 4;
+  grid-column: span 6;
   padding: 20px;
   background: var(--surface2);
   border: 1px solid var(--border);
