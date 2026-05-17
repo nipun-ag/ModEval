@@ -308,48 +308,63 @@
               </div>
 
               <div class="lower-panel hidden" id="lower-panel-insights">
-              <section class="insights-strip">
-                <article id="strictest-card" class="insight-card" data-tone="review">
-                  <span>Strictest Model</span>
-                  <em>The model that flagged this content most aggressively</em>
-                  <strong id="strictest-model">-</strong>
-                </article>
-                <article id="lenient-card" class="insight-card" data-tone="allow">
-                  <span>Most Lenient</span>
-                  <em>The model most likely to allow this content through</em>
-                  <strong id="most-lenient-model">-</strong>
-                </article>
-              </section>
 
-              <section class="ai-insights-strip">
-                <article class="ai-insight-card" id="ai-disagreement-card">
-                  <p class="ai-insight-label">WHY MODELS DISAGREED</p>
-                  <p class="ai-insight-text" id="ai-disagreement-text">Analyzing...</p>
-                </article>
-                <article class="ai-insight-card" id="ai-risk-card">
-                  <p class="ai-insight-label">RISK NARRATIVE</p>
-                  <p class="ai-insight-text" id="ai-risk-text">Analyzing...</p>
-                </article>
-                <article class="ai-insight-card" id="ai-context-card">
-                  <p class="ai-insight-label">CONTEXT SENSITIVITY</p>
-                  <p class="ai-insight-text" id="ai-context-text">Analyzing...</p>
-                </article>
-                <article class="ai-insight-card" id="ai-category-card">
-                  <p class="ai-insight-label">MOST CONTESTED CATEGORY</p>
-                  <p class="ai-insight-text ai-insight-category" id="ai-category-text">-</p>
-                </article>
-              </section>
+  <div class="insights-bento">
 
-              <section class="explainability-section">
-                <div class="section-heading stacked">
-                  <div>
-                    <p class="section-label mono-label">Interpretation Layer</p>
-                    <h3>AI Summary</h3>
-                  </div>
-                </div>
-                <div id="explainability-list" class="explainability-grid"></div>
-              </section>
-            </div>
+    <article id="strictest-card" class="insight-card-new insight-card-new--remove" data-tone="review">
+      <p class="insight-card-new-label">Strictest Model</p>
+      <p class="insight-card-new-desc">The model that flagged this content most aggressively</p>
+      <strong id="strictest-model" class="insight-card-new-value">-</strong>
+    </article>
+
+    <article id="lenient-card" class="insight-card-new insight-card-new--allow" data-tone="allow">
+      <p class="insight-card-new-label">Most Lenient</p>
+      <p class="insight-card-new-desc">The model most likely to allow this content through</p>
+      <strong id="most-lenient-model" class="insight-card-new-value">-</strong>
+    </article>
+
+    <article class="ai-insight-card-new" id="ai-disagreement-card">
+      <div class="ai-insight-card-new-header">
+        <span class="ai-insight-icon">⇄</span>
+        <p class="ai-insight-label">WHY MODELS DISAGREED</p>
+      </div>
+      <p class="ai-insight-text" id="ai-disagreement-text">Analyzing...</p>
+    </article>
+
+    <article class="ai-insight-card-new" id="ai-risk-card">
+      <div class="ai-insight-card-new-header">
+        <span class="ai-insight-icon">◈</span>
+        <p class="ai-insight-label">RISK NARRATIVE</p>
+      </div>
+      <p class="ai-insight-text" id="ai-risk-text">Analyzing...</p>
+    </article>
+
+    <article class="ai-insight-card-new ai-insight-card-new--wide" id="ai-context-card">
+      <div class="ai-insight-card-new-header">
+        <span class="ai-insight-icon">⊕</span>
+        <p class="ai-insight-label">CONTEXT SENSITIVITY</p>
+      </div>
+      <p class="ai-insight-text" id="ai-context-text">Analyzing...</p>
+    </article>
+
+    <article class="ai-insight-card-new ai-insight-card-new--accent" id="ai-category-card">
+      <p class="ai-insight-label">MOST CONTESTED CATEGORY</p>
+      <p class="ai-insight-text ai-insight-category" id="ai-category-text">-</p>
+    </article>
+
+  </div>
+
+  <section class="explainability-section">
+    <div class="section-heading stacked">
+      <div>
+        <p class="section-label mono-label">Interpretation Layer</p>
+        <h3>AI Summary</h3>
+      </div>
+    </div>
+    <div id="explainability-list" class="explainability-grid"></div>
+  </section>
+
+              </div>
           </div>
 
         </div>
