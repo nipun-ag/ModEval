@@ -1182,11 +1182,11 @@ textarea:focus {
   border-color: var(--border-strong);
 }
 
-.ai-insight-card-new--wide {
+.ai-insight-card-new.ai-insight-card-new--wide {
   grid-column: span 8;
 }
 
-.ai-insight-card-new--accent {
+.ai-insight-card-new.ai-insight-card-new--accent {
   grid-column: span 4;
   background: var(--accent-light);
   border-color: var(--accent);
