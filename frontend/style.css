@@ -57,7 +57,7 @@ button {
 }
 
 .app-shell {
-  max-width: 1280px;
+  max-width: 1440px;
   margin: 0 auto;
   position: relative;
   z-index: 1;
@@ -208,7 +208,7 @@ button {
 
 .workspace {
   display: grid;
-  grid-template-columns: 38% 62%;
+  grid-template-columns: 32% 68%;
 }
 
 .input-panel,
