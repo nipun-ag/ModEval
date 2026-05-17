@@ -166,16 +166,19 @@ Return only the JSON array. No other text."""
 
         response = client.messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=600,
+            max_tokens=1200,
             system=system_prompt,
             messages=[{"role": "user", "content": user_message}],
         )
 
         raw = response.content[0].text.strip()
-        if raw.startswith("```"):
-            raw = raw.split("```")[1]
-            if raw.startswith("json"):
-                raw = raw[4:]
+
+        # Try to extract JSON array from anywhere in the response
+        import re
+        start = raw.find("[")
+        end = raw.rfind("]")
+        if start != -1 and end != -1 and end > start:
+            raw = raw[start:end+1]
         raw = raw.strip()
 
         alignment_results = json.loads(raw)
