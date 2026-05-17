@@ -5,42 +5,20 @@ from __future__ import annotations
 from backend.config import (
     BASE_REMOVE_THRESHOLD,
     BASE_REVIEW_THRESHOLD,
-    CONTENT_TYPE_MODIFIERS,
-    MAX_THRESHOLD,
-    MIN_THRESHOLD,
-    PLATFORM_MAP,
-    STRICTNESS_MODIFIERS,
 )
-
-
-def clamp(value: float, minimum: float = MIN_THRESHOLD, maximum: float = MAX_THRESHOLD) -> float:
-    """Clamp a numeric threshold into a safe moderation range."""
-    return max(minimum, min(maximum, value))
 
 
 def calculate_context_adjustment(
     platform: str, content_type: str, strictness: str
 ) -> dict:
-    """Return threshold modifiers and final thresholds for the selected context."""
-    platform_config = PLATFORM_MAP.get(platform, {})
-    platform_modifier = platform_config.get("threshold_modifier", 0.0)
-    content_modifier = CONTENT_TYPE_MODIFIERS.get(content_type, 0.0)
-    strictness_modifier = STRICTNESS_MODIFIERS.get(strictness, 0.0)
-    total_modifier = platform_modifier + content_modifier + strictness_modifier
+    """Return fixed base thresholds independent of platform or content context.
 
-    review_threshold = clamp(BASE_REVIEW_THRESHOLD + total_modifier)
-    remove_threshold = clamp(BASE_REMOVE_THRESHOLD + total_modifier)
-
-    if review_threshold >= remove_threshold:
-        review_threshold = clamp(remove_threshold - 0.05)
-
+    Platform-specific policy judgment is handled by Claude Haiku's alignment
+    assessment, not by adjusting thresholds before that call.
+    """
     return {
-        "platform_modifier": platform_modifier,
-        "content_modifier": content_modifier,
-        "strictness_modifier": strictness_modifier,
-        "total_modifier": total_modifier,
-        "review_threshold": round(review_threshold, 2),
-        "remove_threshold": round(remove_threshold, 2),
+        "review_threshold": round(BASE_REVIEW_THRESHOLD, 2),
+        "remove_threshold": round(BASE_REMOVE_THRESHOLD, 2),
     }
 
 

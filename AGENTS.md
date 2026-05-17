@@ -206,7 +206,9 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
   - Benchmark placeholder panel with coming soon state and 3 feature preview cards
   - Ambient glow blobs on results panel background
 - Deployed on Hetzner VPS at modeval.bynipun.com — no cold starts
-- Custom policy template: When users select "Custom" platform, textarea auto-fills with structured template (ZERO TOLERANCE, DEPRIORITIZE, CONTEXT sections); template only applies to empty textarea, preserving user edits when switching away and back
+- Fixed threshold model: All platforms use identical base thresholds (review=0.40, remove=0.70) — platform-specific policy judgment delegated entirely to Claude Haiku alignment assessment
+- Platform threshold modifiers completely removed — prior approach (Discord +0.05, Facebook -0.05, Instagram -0.10, etc.) was discarded as it distorted raw model signal before Claude evaluation
+- Content Type and Strictness modifiers removed — these inputs accepted but not used (v1 convenience, non-essential)
 
 ## Known Limitations
 - HuggingFace free tier may rate-limit under high traffic

@@ -6,6 +6,30 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ## 2026-05-18
 
+**refactor: remove platform threshold modifiers, use fixed base thresholds**
+
+Changes:
+- Removed threshold_modifier field from all 5 platform entries in PLATFORM_MAP (backend/config.py)
+- Simplified calculate_context_adjustment() in backend/engine/context_engine.py to always return BASE_REVIEW_THRESHOLD (0.40) and BASE_REMOVE_THRESHOLD (0.70)
+- Removed all modifier logic, platform lookups, content_type_modifiers, strictness_modifiers, and clamping from context_engine.py
+- Function signature unchanged so all call sites continue to work without modification
+- No changes to analyze.py needed — it calls calculate_context_adjustment but never directly reads threshold_modifier
+
+Why:
+- Claude Haiku's AI-powered alignment assessment already handles platform-specific policy judgment
+- Pre-threshold adjustments distort the raw model signal before Claude can evaluate them in proper context
+- Simplified threshold logic reduces cognitive load on maintainability
+- Clearer separation of concerns: models → normalization → Claude policy judgment (not threshold tweaking before Claude)
+
+Tradeoffs:
+- All platforms now use identical thresholds; platform context is handled purely through Claude alignment assessment
+- Removed ability to adjust thresholds per content type or strictness; these inputs are still accepted but ignored
+- Historical behavior changes: platforms previously had modifiers (Discord +0.05, etc.) which are now removed
+
+---
+
+## 2026-05-18
+
 **feat: add pre-filled template to custom policy textarea**
 
 Changes:

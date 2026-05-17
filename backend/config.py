@@ -82,11 +82,11 @@ PREDEFINED_POLICIES = {
 
 
 PLATFORM_MAP = {
-    "Reddit": {"threshold_modifier": 0.00, "policy_key": "reddit"},
-    "Discord": {"threshold_modifier": 0.00, "policy_key": "discord"},
-    "Facebook": {"threshold_modifier": 0.00, "policy_key": "facebook"},
-    "Instagram": {"threshold_modifier": 0.00, "policy_key": "instagram"},
-    "Custom": {"threshold_modifier": 0.00, "policy_key": "custom"},
+    "Reddit": {"policy_key": "reddit"},
+    "Discord": {"policy_key": "discord"},
+    "Facebook": {"policy_key": "facebook"},
+    "Instagram": {"policy_key": "instagram"},
+    "Custom": {"policy_key": "custom"},
 }
 
 
