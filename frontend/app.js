@@ -606,10 +606,6 @@ function renderBreakdownCard(result) {
           <div class="breakdown-field-label">Confidence</div>
           <div class="breakdown-confidence">${Number(result.confidence).toFixed(4)}</div>
         </div>
-        <div>
-          <div class="breakdown-field-label">Alignment</div>
-          ${badge(result.aligned ? "Aligned" : "Misaligned", result.aligned ? "allow" : "remove")}
-        </div>
       </div>
       <button class="breakdown-action-btn ${actionBtnClass}">${escapeHtml(result.action)}</button>
     </div>

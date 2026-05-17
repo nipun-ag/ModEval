@@ -3075,7 +3075,7 @@ tr.tier-header {
 
 .breakdown-fields {
   display: grid;
-  grid-template-columns: 100px 140px 110px 120px;
+  grid-template-columns: 120px 160px 140px;
   gap: 16px;
   flex: 1;
   min-width: 0;
