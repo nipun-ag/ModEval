@@ -6,9 +6,9 @@
 
 ## What Is This
 
-ModEval is a live web tool that evaluates text content using up to nine AI moderation models simultaneously — four enterprise APIs (Perspective API, Azure Content Safety, AWS Comprehend, Google NLP) alongside five open source models. It normalizes their outputs into a unified format, applies platform context and strictness rules, scores each model's alignment with real platform policies, and surfaces disagreements between models.
+ModEval is a live web tool that evaluates text content using 8 independent AI moderation models simultaneously — four enterprise APIs (Hive Moderation, Azure Content Safety, Google NLP, OpenAI Moderation) alongside four open source models. It normalizes their outputs into a unified format, uses AI-powered policy alignment to score each model's decision against real platform policies, and surfaces disagreements between models.
 
-The core insight behind it: **no single moderation model should be trusted blindly.** The same piece of content can be classified completely differently depending on which model you use, what platform it appears on, and what policy framework is being applied. ModEval makes those differences visible.
+The core insight behind it: **no single moderation model should be trusted blindly.** The same piece of content can be classified completely differently depending on which model you use and what platform policy is being applied. ModEval makes those differences visible — and uses an AI interpretation layer to explain what those differences actually mean.
 
 > "Disagreements are not errors — they are the most analytically interesting output ModEval produces."
 
@@ -26,30 +26,27 @@ ModEval is both a functional tool and a demonstration of applied AI governance t
 
 ## What It Does
 
-- Runs text through up to nine moderation models in parallel -- four enterprise APIs and five open source models, each covering a distinct safety dimension
+- Runs text through 8 moderation models in parallel — four enterprise APIs and four open source models, each covering a distinct safety dimension
 - Normalizes all outputs into a unified schema (category, severity, confidence, action)
-- Adjusts decision thresholds based on platform context (Social Media, Gaming, Professional, Community/Forum, VR/Metaverse)
-- Adjusts further based on content type (Original Post, Comment/Reply, Username, Bio, UGC) and strictness level
-- Scores each model's alignment with the selected platform's real policy
+- Uses Claude Haiku to assess how well each model's decision aligns with the selected platform's actual content policy
 - Detects and explains disagreements between models (action conflicts, category mismatches, severity gaps)
-- Surfaces an explainability layer showing what each model flagged and why
+- Generates an AI executive summary that reads between the lines: identifies CLEAR VIOLATION, CLEAR SAFE, or GENUINE GREY AREA, flags model failures, and recommends whether human review is needed
 - Includes a pre-loaded test case library with 100 real-world content examples across 10 violation categories
 - Documents the full methodology in a dedicated "How It Works" tab
-- Provides detailed model cards for all 9 models (enterprise and open source) in a dedicated "Models" tab
+- Provides detailed model cards for all 8 models in a dedicated "Models" tab
 
 ---
 
 ## Models Used
 
-ModEval runs up to nine models in parallel across two tiers. Enterprise APIs require credentials configured in environment variables. Open source models run via the HuggingFace Inference API and are always available.
+ModEval runs 8 models in parallel across two tiers. Enterprise APIs require credentials configured in environment variables. Open source models run via the HuggingFace Inference API and are always available.
 
 ### Enterprise APIs
 
 | Display Name | Provider | Safety Dimension |
 |---|---|---|
-| Perspective API | Google / Jigsaw | Toxicity and civil discourse (6 attributes) |
+| Hive Moderation | The Hive AI | Sexual, Violence, Hate, Bullying, Spam |
 | Azure Content Safety | Microsoft | Hate, Violence, Sexual, Self-Harm |
-| AWS Comprehend | Amazon | Violence, Hate, Harassment, Sexual, Insult, Profanity |
 | Google NLP | Google Cloud | 8-category moderation including weapons and drugs |
 | OpenAI Moderation | OpenAI | Multi-category (harassment, hate, violence, sexual, self-harm) |
 
@@ -57,11 +54,10 @@ ModEval runs up to nine models in parallel across two tiers. Enterprise APIs req
 
 | Display Name | Model | Architecture | Creator | Safety Dimension |
 |---|---|---|---|---|
-| Toxicity Classifier | `unitary/toxic-bert` | BERT | Unitary AI | General toxicity baseline |
-| Offensive Language Detector | `cardiffnlp/twitter-roberta-base-offensive` | RoBERTa | Cardiff NLP | Social media offensive language |
-| Hate Speech Detector | `facebook/roberta-hate-speech-dynabench-r4-target` | RoBERTa | Facebook AI Research | Identity-based hate speech |
-| Spam Detector | `mrm8488/bert-tiny-finetuned-sms-spam-detection` | BERT-tiny | Manuel Romero | Spam and manipulative content |
-| Bias Detector | `valurank/distilroberta-bias` | DistilRoBERTa | Valurank | Non-neutral language detection |
+| General Toxicity | `unitary/toxic-bert` | BERT | Unitary AI | General toxicity baseline |
+| Social Media Offensive | `cardiffnlp/twitter-roberta-base-offensive` | RoBERTa | Cardiff NLP | Social media offensive language |
+| Identity-Based Hate | `facebook/roberta-hate-speech-dynabench-r4-target` | RoBERTa | Facebook AI Research | Identity-based hate speech |
+| Language Bias | `valurank/distilroberta-bias` | DistilRoBERTa | Valurank | Non-neutral language detection |
 
 ---
 
@@ -98,31 +94,32 @@ ModEval includes a built-in test case library with 100 pre-loaded content exampl
 
 ## Methodology
 
-### Context Engine
+### Fixed Thresholds
 
-The models themselves are frozen -- their scores cannot be changed. The Context Engine adjusts the decision threshold at which a score triggers a Review or Remove action. This mirrors how real T&S pipelines work.
+All platforms use identical base thresholds for action assignment:
+- Below 0.40 confidence → Allow
+- 0.40–0.70 confidence → Review
+- Above 0.70 confidence → Remove
 
-```
-adjusted_threshold = base_threshold + platform_modifier + content_type_modifier + strictness_modifier
-```
+The models themselves are frozen. Their scores cannot be changed.
 
-All thresholds are clamped between 0.10 and 0.90.
+### AI-Powered Policy Alignment
 
-**Platform modifiers:**
+After all models return results, a single batched call to Claude Haiku evaluates each model's action against the selected platform's actual content policy. For each model it returns:
+- `aligned` (bool) — is the action correct under this platform's policy?
+- `alignment_score` (0.0–1.0) — how closely does it match?
+- `alignment_reason` — plain English explanation referencing the actual content
 
-| Platform | Modifier | Rationale |
-|---|---|---|
-| Social Media | 0.00 | Baseline |
-| Gaming | -0.10 | Higher tolerance for competitive language |
-| Professional | +0.15 | Lower tolerance, reputational risk |
-| Community / Forum | -0.05 | Slightly higher tolerance for debate |
-| VR / Metaverse | -0.15 | Evolving norms, higher tolerance |
+This approach replaces keyword-based alignment scoring. Claude Haiku understands context and nuance: a model that flags the wrong category but takes the correct action is marked ALIGNED. A model that allows clearly violating content is marked MISALIGNED regardless of its category label.
 
-### Policy Alignment Scoring
+### AI Executive Summary
 
-```
-alignment_score = 1 - abs(model_confidence - policy_expected_threshold)
-```
+After alignment assessment, a second Claude Haiku call generates an analytical interpretation acting as a senior T&S analyst:
+- Identifies CLEAR VIOLATION, CLEAR SAFE, or GENUINE GREY AREA
+- Explains what model disagreements reveal about the content
+- Flags model failures (0.00 confidence on harmful content)
+- Recommends whether human review is needed
+- Never just summarizes — always reads between the lines
 
 ### Disagreement Detection
 
@@ -136,7 +133,7 @@ alignment_score = 1 - abs(model_confidence - policy_expected_threshold)
 
 - **Models Are Frozen** — scores reflect training data, novel slang may score incorrectly
 - **Platform Policies Are Approximations** — real enforcement involves human judgment and account history
-- **English Only** — all five models trained primarily on English data
+- **English Only** — all models trained primarily on English data
 - **Text Only** — images, video, and audio are outside scope
 - **Free Tier Rate Limits** — HuggingFace free tier may rate-limit under high traffic
 
@@ -145,24 +142,17 @@ alignment_score = 1 - abs(model_confidence - policy_expected_threshold)
 ## UI Features
 
 - **Premium dark theme** — enterprise-grade UI inspired by Vercel, Stripe, and OpenAI
-- **Four tabs** — Analysis, How It Works, Models, (Did You Know planned)
-- **Topbar navigation** — ANALYSIS (active) and BENCHMARK (locked) tabs for switching between analysis workspace and benchmark preview
-- **Modal overlay selectors** — all three context dropdowns open as centered modals with blurred backdrop, animating from the trigger button position
-- **Try an Example** — 100 pre-loaded test cases across 10 violation categories
-- **Analysis Context** — Platform Context, Content Type, and Strictness with descriptive option labels
-- **Consensus Hero Card** — leads results with large action word (ALLOW/REVIEW/REMOVE), AI summary subtitle, and verdict visuals
-- **Verdict Visuals Row** — donut chart showing model vote distribution, severity arc gauge (1-10), and action legend
-- **Two-Tier Decision Matrix** — Enterprise APIs and Open Source Models rendered as separate tables, each with independent column headers and section labels
-- **Decision Matrix** — comparison table with model chip badges, color-coded action badges, alignment scores
-- **Insight Strip** — strictest model, most lenient model, consensus recommendation with plain-English explainers
+- **Four tabs** — Analysis, How It Works, Models, Benchmark (coming)
+- **Single Platform selector** — Reddit, Discord, Facebook, Instagram, Custom with live policy guidelines shown below
+- **Execute Analysis button** — runs all 8 models in parallel
+- **Summary tab** — consensus verdict (ALLOW/REVIEW/REMOVE), donut chart showing model vote distribution, severity gauge
+- **Model Breakdown tab** — card-per-row layout showing category, severity, confidence, and action per model
+- **Insights tab** — asymmetric grid with strictest/most lenient model cards, disagreement explanation, risk narrative, full alignment assessment matrix, and elevated AI executive summary with confidence bars
 - **Disagreement Banner** — high-contrast alert when models conflict
-- **AI Consensus Summary** — GPT-4o-mini analyzes all active model results and generates a 2-3 sentence plain English interpretation, surfacing model agreements, disagreements, and safety recommendation
-- **AI Interpretation Layer (Section 6.5)** — Documents the GPT-4o-mini synthesis layer, inputs, outputs, and fallback behavior
 - **Skeleton shimmer loading** — premium loading state while models run
-- **Model Cards** — detailed cards for all 5 models with architecture, training data, strengths, limitations, and HuggingFace links
-- **Dynamic Models Active** indicator in navigation — reflects count of configured models (up to 9)
-- **Benchmark Placeholder Panel** — preview of upcoming benchmark features with skeleton leaderboard and feature preview cards
-- **Ambient glow blobs** — subtle blue and purple glow layers behind results panel for visual depth
+- **Model Cards** — detailed cards for all 8 models with architecture, training data, strengths, and limitations
+- **Dynamic Models Active indicator** — reflects count of configured models in topbar
+- **Benchmark Placeholder** — preview of upcoming benchmark features
 
 ---
 
@@ -170,10 +160,10 @@ alignment_score = 1 - abs(model_confidence - policy_expected_threshold)
 
 | Layer | Technology |
 |---|---|
-| Backend | Python 3.14, Flask 3.1, Gunicorn |
-| Enterprise APIs | Perspective API, Azure Content Safety, AWS Comprehend, Google NLP, OpenAI Moderation |
+| Backend | Python 3.12, Flask 3.1, Gunicorn |
+| Enterprise APIs | Hive Moderation, Azure Content Safety, Google NLP, OpenAI Moderation |
 | Open Source Models | HuggingFace Inference API (4 models) |
-| AI Summary | OpenAI GPT-4o-mini |
+| AI Interpretation | Claude Haiku (claude-haiku-4-5-20251001) via Anthropic API |
 | Frontend | Plain HTML, CSS, JavaScript |
 | Fonts | DM Serif Display, Inter, JetBrains Mono |
 | Deployment | Hetzner VPS (self-hosted) |
