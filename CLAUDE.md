@@ -181,7 +181,7 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
   - Results panel has three lower tabs: Summary, Model Breakdown, Insights — hidden until analysis runs
   - Summary tab: consensus hero + donut + gauge + legend
   - Model Breakdown tab: decision matrix with tier rendering (no accordion)
-  - Insights tab: strictest/most lenient cards + AI summary
+  - Insights tab: bento grid with strictest/most lenient cards (6-col) + 4 AI insight cards (4-col/8-col variants)
   - Benchmark placeholder panel with coming soon state and 3 feature preview cards
   - Ambient glow blobs on results panel background
 - Deployed on Hetzner VPS at modeval.bynipun.com — no cold starts
