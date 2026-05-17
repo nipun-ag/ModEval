@@ -269,7 +269,7 @@ const EXAMPLE_LIBRARY = {
 
 const lastExampleByCategory = {};
 let activeTab = "analysis";
-let selectedPlatform = "Social Media";
+let selectedPlatform = "Neutral";
 let selectedContentType = "Original Post";
 let selectedStrictness = "Balanced";
 

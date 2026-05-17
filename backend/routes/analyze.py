@@ -86,7 +86,7 @@ def generate_ai_analysis(results: list[dict], context: dict) -> dict:
                 )
 
         models_text = "\n".join(model_lines)
-        platform = context.get("platform_context", "Social Media")
+        platform = context.get("platform_context", "Neutral")
         content_type = context.get("content_type", "Original Post")
         strictness = context.get("strictness", "Balanced")
 
@@ -138,7 +138,7 @@ Return ONLY the JSON object. No preamble, no markdown, no explanation."""
 def build_response(payload: dict) -> dict:
     """Build the full API response for one text input."""
     thresholds = calculate_context_adjustment(
-        payload.get("platform_context", "Social Media"),
+        payload.get("platform_context", "Neutral"),
         payload.get("content_type", "Original Post"),
         payload.get("strictness", "Balanced"),
     )
@@ -153,7 +153,7 @@ def build_response(payload: dict) -> dict:
             result = build_error_result(raw_result["model"], raw_result["error"])
             result["explanation"] = explain_result(
                 result,
-                payload.get("platform_context", "Social Media"),
+                payload.get("platform_context", "Neutral"),
                 payload.get("content_type", "Original Post"),
                 payload.get("strictness", "Balanced"),
                 thresholds,
@@ -177,7 +177,7 @@ def build_response(payload: dict) -> dict:
         result["aligned"] = policy_data["aligned"]
         result["explanation"] = explain_result(
             result,
-            payload.get("platform_context", "Social Media"),
+            payload.get("platform_context", "Neutral"),
             payload.get("content_type", "Original Post"),
             payload.get("strictness", "Balanced"),
             thresholds,

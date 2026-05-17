@@ -75,13 +75,18 @@
                   <div class="field-block">
                     <label for="platform_context">Platform Context</label>
                     <div class="custom-select">
-                      <input type="hidden" name="platform_context" value="Social Media">
+                      <input type="hidden" name="platform_context" value="Neutral">
                       <button type="button" class="custom-select-trigger" aria-expanded="false" aria-haspopup="listbox">
-                        <span class="custom-select-trigger-label">Social Media</span>
+                        <span class="custom-select-trigger-label">Neutral</span>
                         <span class="chevron">⌄</span>
                       </button>
                       <div id="platform-context-panel" class="custom-select-panel hidden" role="listbox">
-                        <button type="button" class="custom-select-option selected" data-value="Social Media">
+                        <button type="button" class="custom-select-option selected" data-value="Neutral">
+                          <span class="custom-select-name">Neutral</span>
+                          <span class="modifier-badge">0.00</span>
+                          <span class="custom-select-description">No platform bias applied — pure model outputs with default thresholds</span>
+                        </button>
+                        <button type="button" class="custom-select-option" data-value="Social Media">
                           <span class="custom-select-name">Social Media</span>
                           <span class="modifier-badge">0.00</span>
                           <span class="custom-select-description">Public feeds, posts and comments (e.g., Facebook, Instagram, X)</span>

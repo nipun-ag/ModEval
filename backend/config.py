@@ -42,6 +42,7 @@ MAX_THRESHOLD = 0.90
 
 
 PLATFORM_MODIFIERS = {
+    "Neutral": 0.00,
     "Gaming": -0.10,
     "Social Media": 0.00,
     "Professional": 0.15,
