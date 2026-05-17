@@ -6,6 +6,26 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ## 2026-05-17
 
+**feat: simplify platform options to 5 and update policy content with sourced guidelines**
+
+Changes:
+- Removed 4 platforms from PLATFORM_MAP in config.py: Gaming Platform, Professional, Community/Forum, VR/Metaverse
+- Removed dropdown options for those 4 platforms from frontend/index.html
+- Removed PLATFORM_POLICIES entries for those 4 platforms from frontend/app.js
+- Updated PLATFORM_POLICIES with accurate sourced rules for Reddit (7 official rules), Discord (8 platform rules), Facebook (8 community standards), Instagram (8 community standards), and Custom (2 explanatory rules)
+- Platform selector now shows exactly 5 options: Reddit, Discord, Facebook, Instagram, Custom
+- Policy box continues to display accurate guidelines for selected platform
+
+Why:
+- Focused platform set (5 instead of 9) reduces complexity and cognitive load
+- Sourced rules directly reflect official platform guidelines rather than approximations
+- Removes speculative enforcement profiles for non-existent platforms
+- Clearer, more accurate policy enforcement definitions improve user understanding
+
+---
+
+## 2026-05-17
+
 **feat: restore alignment column with AI reasons, update How It Works**
 
 Changes:

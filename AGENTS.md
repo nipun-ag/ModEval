@@ -170,11 +170,12 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
   - Enterprise APIs tier with 3 vendor models
   - Open Source Models tier with 4 HuggingFace + OpenAI
   - Disabled models show gray rows at 0.4 opacity
-- Unified platform selector (Reddit, Discord, Facebook, Instagram, Gaming Platform, Professional, Community / Forum, VR / Metaverse, Custom) combining threshold modifier + policy rules
+- Unified platform selector (Reddit, Discord, Facebook, Instagram, Custom) combining threshold modifier + policy rules
 - PLATFORM_MAP in config.py maps each platform to threshold_modifier and policy_key
 - Content Type hardcoded to "Original Post" and Strictness hardcoded to "Balanced" in all analyses
 - AI-powered policy alignment using GPT-4o-mini: single batched call evaluates all model results against platform policy, returns alignment_score, aligned (bool), and alignment_reason for each model
 - Fallback to keyword-based alignment logic if GPT call fails, ensuring analysis always completes
+- Dynamic platform policy guidelines box below platform selector showing accurate sourced rules for each platform (Reddit, Discord, Facebook, Instagram based on official documentation)
 - AI analysis with 4 structured fields: disagreement_explanation, risk_narrative, context_sensitivity, contested_category
 - Disagreement detection and banner (scoped to Summary tab only — first child of #lower-panel-summary)
 - Dynamic topbar model count: GET /models endpoint returns active/total from credential-presence check; JS updates #models-active-count pill on page load and does not overwrite it during analysis

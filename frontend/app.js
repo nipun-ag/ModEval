@@ -262,79 +262,55 @@ let selectedPlatform = "Reddit";
 const PLATFORM_POLICIES = {
   "Reddit": {
     rules: [
-      "Zero tolerance for content sexualizing minors",
-      "Zero tolerance for credible violence and threats",
-      "Zero tolerance for content promoting self-harm",
-      "Zero tolerance for hate speech targeting protected groups",
-      "Harassment and doxxing are bannable offenses"
+      "Rule 1: Do not post content that incites violence or promotes hate based on identity or vulnerability",
+      "Rule 2: Do not engage in content manipulation including spamming, vote manipulation, or ban evasion",
+      "Rule 3: Do not reveal personal or confidential information about others (doxxing)",
+      "Rule 4: Do not share or encourage sexual or suggestive content involving minors",
+      "Rule 5: Do not impersonate individuals or entities in a misleading manner",
+      "Rule 6: Label graphic, sexually-explicit, or offensive content appropriately",
+      "Rule 7: Do not post illegal content or facilitate illegal transactions"
     ]
   },
   "Discord": {
     rules: [
-      "Zero tolerance for content sexualizing minors",
-      "Zero tolerance for direct threatening harassment",
-      "Profanity, insults, and general toxicity are permitted",
-      "Hate speech targeting protected groups is banned",
-      "Context-dependent enforcement for grey areas"
+      "Do not share content that sexualizes minors in any way — zero tolerance",
+      "Do not use Discord to threaten others or organize real-world violence",
+      "Do not share non-consensual intimate imagery",
+      "Do not harass, bully, or coordinate harassment of individuals",
+      "Do not promote hate speech targeting identity or vulnerability",
+      "Profanity, insults, and general toxicity are not prohibited at platform level",
+      "Server owners may set stricter local rules beyond platform guidelines",
+      "Do not engage in phishing, malware distribution, or financial scams"
     ]
   },
   "Facebook": {
     rules: [
-      "Zero tolerance for hate speech in any form",
-      "Zero tolerance for violence and graphic content",
-      "Zero tolerance for sexual content and nudity",
-      "Zero tolerance for self-harm promotion",
-      "Zero tolerance for harassment and bullying"
+      "Hate speech: Content promoting hatred or violence based on race, ethnicity, religion, gender, sexual orientation, or disability is prohibited",
+      "Violence and incitement: Content that threatens, incites, or glorifies real-world violence is prohibited",
+      "Suicide and self-injury: Content promoting, glorifying, or instructing self-harm is prohibited",
+      "Bullying and harassment: Repeated unwanted contact, demeaning attacks, and shaming content is prohibited",
+      "Graphic violence: Gratuitous graphic or violent content is prohibited",
+      "Adult nudity and sexual activity: Explicit nudity and sexual content is prohibited",
+      "Child safety: Any sexual content involving minors is strictly prohibited",
+      "Privacy violations: Sharing personal information without consent is prohibited"
     ]
   },
   "Instagram": {
     rules: [
-      "Zero tolerance for hate speech in any form",
-      "Zero tolerance for violence and graphic content",
-      "Zero tolerance for sexual content and nudity",
-      "Zero tolerance for self-harm promotion",
-      "Zero tolerance for harassment and bullying"
-    ]
-  },
-  "Gaming Platform": {
-    rules: [
-      "Higher tolerance for competitive and trash-talk language",
-      "Threats of real-world violence are banned",
-      "Hate speech targeting protected groups is banned",
-      "Spam and scam content is banned",
-      "Context-sensitive: in-game banter vs. targeted harassment"
-    ]
-  },
-  "Professional": {
-    rules: [
-      "Low tolerance for any offensive or inappropriate language",
-      "Strict enforcement of harassment and discrimination policies",
-      "Hate speech and bias are zero tolerance",
-      "Reputational and legal risk drives stricter standards",
-      "Professional conduct expected at all times"
-    ]
-  },
-  "Community / Forum": {
-    rules: [
-      "Debate and strong opinions are permitted",
-      "Personal attacks and doxxing are banned",
-      "Hate speech targeting protected groups is banned",
-      "Spam and manipulation are banned",
-      "Slightly higher tolerance for contentious discussion"
-    ]
-  },
-  "VR / Metaverse": {
-    rules: [
-      "Evolving norms — enforcement is context-sensitive",
-      "Harassment in immersive environments treated seriously",
-      "Hate speech and discrimination are banned",
-      "Higher tolerance for edgy or unconventional expression",
-      "User safety in spatial contexts prioritized"
+      "Hate speech: Content promoting discrimination or violence based on protected characteristics is prohibited",
+      "Violence and graphic content: Content glorifying or threatening real-world violence is prohibited",
+      "Self-injury and eating disorders: Content that promotes or glorifies self-harm is prohibited",
+      "Harassment and bullying: Targeted harassment and shaming content is prohibited",
+      "Sexual content: Explicit nudity and sexually suggestive content is prohibited",
+      "Child safety: Any sexual content involving minors is strictly prohibited — zero tolerance",
+      "Misinformation: False information that could cause real-world harm is actioned",
+      "Note: Instagram and Facebook share unified Community Standards (unified November 2024)"
     ]
   },
   "Custom": {
     rules: [
-      "Rules defined by your custom policy input below"
+      "Rules are defined by your custom policy input below",
+      "The AI interpretation model will use your custom rules to assess alignment"
     ]
   }
 };
