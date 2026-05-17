@@ -8,7 +8,12 @@ OPENAI_MODERATION_URL = "https://api.openai.com/v1/moderations"
 def analyze(text: str) -> dict:
     """Return OpenAI Moderation API scores in a consistent local shape."""
     if not OPENAI_API_KEY:
-        raise RuntimeError("OpenAI API key is missing.")
+        return {
+            "model": "OpenAI Moderation",
+            "disabled": True,
+            "action": "Disabled",
+            "scores": {},
+        }
     response = requests.post(
         OPENAI_MODERATION_URL,
         headers={"Authorization": f"Bearer {OPENAI_API_KEY}"},

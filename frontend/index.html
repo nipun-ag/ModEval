@@ -80,7 +80,7 @@
                         <span class="custom-select-trigger-label">Neutral</span>
                         <span class="chevron">⌄</span>
                       </button>
-                      <div id="platform-context-panel" class="custom-select-panel hidden" role="listbox">
+                      <div class="custom-select-panel hidden" role="listbox">
                         <button type="button" class="custom-select-option selected" data-value="Neutral">
                           <span class="custom-select-name">Neutral</span>
                           <span class="modifier-badge">0.00</span>
@@ -93,22 +93,22 @@
                         </button>
                         <button type="button" class="custom-select-option" data-value="Gaming">
                           <span class="custom-select-name">Gaming</span>
-                          <span class="modifier-badge">-0.10</span>
+                          <span class="modifier-badge">+0.10</span>
                           <span class="custom-select-description">In-game chat, voice and player profiles (e.g., Roblox, Discord, Twitch)</span>
                         </button>
                         <button type="button" class="custom-select-option" data-value="Professional">
                           <span class="custom-select-name">Professional</span>
-                          <span class="modifier-badge">+0.15</span>
+                          <span class="modifier-badge">-0.15</span>
                           <span class="custom-select-description">Workplace tools and business networks (e.g., LinkedIn, Slack)</span>
                         </button>
                         <button type="button" class="custom-select-option" data-value="Forum">
                           <span class="custom-select-name">Community / Forum</span>
-                          <span class="modifier-badge">-0.05</span>
+                          <span class="modifier-badge">+0.05</span>
                           <span class="custom-select-description">Interest groups and discussion boards (e.g., Reddit, Quora)</span>
                         </button>
                         <button type="button" class="custom-select-option" data-value="VR/Metaverse">
                           <span class="custom-select-name">VR / Metaverse</span>
-                          <span class="modifier-badge">-0.15</span>
+                          <span class="modifier-badge">+0.15</span>
                           <span class="custom-select-description">Immersive environments and spatial audio (e.g., VRChat, Horizon)</span>
                         </button>
                       </div>
@@ -159,7 +159,7 @@
                       <div class="custom-select-panel hidden" role="listbox">
                         <button type="button" class="custom-select-option" data-value="Strict">
                           <span class="custom-select-name">Strict</span>
-                          <span class="modifier-badge">+0.15</span>
+                          <span class="modifier-badge">-0.15</span>
                           <span class="custom-select-description">Lower tolerance, flags borderline content aggressively</span>
                         </button>
                         <button type="button" class="custom-select-option selected" data-value="Balanced">
@@ -169,12 +169,56 @@
                         </button>
                         <button type="button" class="custom-select-option" data-value="Lenient">
                           <span class="custom-select-name">Lenient</span>
-                          <span class="modifier-badge">-0.15</span>
+                          <span class="modifier-badge">+0.15</span>
                           <span class="custom-select-description">Higher tolerance, flags only clear violations</span>
                         </button>
                       </div>
                     </div>
                   </div>
+
+                  <div class="field-block">
+                    <label for="policy">Policy Alignment</label>
+                    <div class="custom-select">
+                      <input type="hidden" name="policy" value="Reddit">
+                      <button type="button" class="custom-select-trigger" aria-expanded="false" aria-haspopup="listbox">
+                        <span class="custom-select-trigger-label">Reddit</span>
+                        <span class="chevron">âŒ„</span>
+                      </button>
+                      <div class="custom-select-panel hidden" role="listbox">
+                        <button type="button" class="custom-select-option selected" data-value="Reddit">
+                          <span class="custom-select-name">Reddit</span>
+                          <span class="custom-select-description">Zero tolerance for violence, self-harm, sexual/minors, and hate</span>
+                        </button>
+                        <button type="button" class="custom-select-option" data-value="Discord">
+                          <span class="custom-select-name">Discord</span>
+                          <span class="custom-select-description">Stricter on threatening harassment, more lenient on profanity and toxicity</span>
+                        </button>
+                        <button type="button" class="custom-select-option" data-value="Facebook">
+                          <span class="custom-select-name">Facebook</span>
+                          <span class="custom-select-description">Broad zero tolerance across hate, violence, sexual content, self-harm, and harassment</span>
+                        </button>
+                        <button type="button" class="custom-select-option" data-value="Instagram">
+                          <span class="custom-select-name">Instagram</span>
+                          <span class="custom-select-description">Broad zero tolerance across hate, violence, sexual content, self-harm, and harassment</span>
+                        </button>
+                        <button type="button" class="custom-select-option" data-value="Custom">
+                          <span class="custom-select-name">Custom</span>
+                          <span class="custom-select-description">Write your own zero-tolerance or deprioritized policy guidance</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="field-block hidden" id="custom-policy-field">
+                  <label for="custom_policy_text">Custom Policy Notes</label>
+                  <textarea
+                    id="custom_policy_text"
+                    name="custom_policy_text"
+                    rows="4"
+                    maxlength="500"
+                    placeholder="Example: Zero tolerance for hate and self-harm. Deprioritize profanity unless directly targeted."
+                  ></textarea>
                 </div>
               </div>
             </section>
@@ -196,7 +240,7 @@
             <div class="progress-bar hidden" aria-hidden="true"></div>
           </div>
 
-          <div id="analysis-view" class="results-view active" role="tabpanel" aria-labelledby="analysis-tab">
+          <div class="results-view active" role="tabpanel">
             <div class="results-header">
               <div>
                 <p class="section-label">Analysis Output</p>
@@ -221,6 +265,9 @@
                 <div class="skeleton-line short"></div>
               </div>
               <div class="skeleton-table">
+                <div class="skeleton-row"></div>
+                <div class="skeleton-row"></div>
+                <div class="skeleton-row"></div>
                 <div class="skeleton-row"></div>
                 <div class="skeleton-row"></div>
                 <div class="skeleton-row"></div>
@@ -284,17 +331,17 @@
 
 </div>
 <div class="verdict-action-legend">
-  <span class="verdict-legend-item" id="legend-remove">
+  <span class="verdict-legend-item">
     <span class="verdict-legend-dot" 
           style="background:var(--red)"></span>
     REMOVE
   </span>
-  <span class="verdict-legend-item" id="legend-review">
+  <span class="verdict-legend-item">
     <span class="verdict-legend-dot" 
           style="background:var(--amber)"></span>
     REVIEW
   </span>
-  <span class="verdict-legend-item" id="legend-allow">
+  <span class="verdict-legend-item">
     <span class="verdict-legend-dot" 
           style="background:var(--green)"></span>
     ALLOW
@@ -523,11 +570,11 @@
             <p class="section-label mono-label">Platform Modifiers</p>
             <table class="methodology-table">
               <tbody>
-                <tr><td>Gaming</td><td class="modifier-negative">-0.10</td><td>Higher tolerance for competitive language</td></tr>
+                <tr><td>Gaming</td><td class="modifier-positive">+0.10</td><td>Higher tolerance for competitive language</td></tr>
                 <tr><td>Social Media</td><td>0.00</td><td>Baseline</td></tr>
-                <tr><td>Professional</td><td class="modifier-positive">+0.15</td><td>Lower tolerance, reputational risk</td></tr>
-                <tr><td>Forum</td><td class="modifier-negative">-0.05</td><td>Slightly higher tolerance for debate</td></tr>
-                <tr><td>VR/Metaverse</td><td class="modifier-negative">-0.15</td><td>Evolving norms, higher tolerance</td></tr>
+                <tr><td>Professional</td><td class="modifier-negative">-0.15</td><td>Lower tolerance, reputational risk</td></tr>
+                <tr><td>Forum</td><td class="modifier-positive">+0.05</td><td>Slightly higher tolerance for debate</td></tr>
+                <tr><td>VR/Metaverse</td><td class="modifier-positive">+0.15</td><td>Evolving norms, higher tolerance</td></tr>
               </tbody>
             </table>
           </div>
@@ -536,10 +583,10 @@
             <table class="methodology-table">
               <tbody>
                 <tr><td>Original Post</td><td>0.00</td><td>Baseline</td></tr>
-                <tr><td>Comment/Reply</td><td>-0.05</td><td>Reactive content, slight tolerance</td></tr>
-                <tr><td>Username</td><td>+0.20</td><td>Permanent identity-linked content</td></tr>
-                <tr><td>Bio</td><td>+0.15</td><td>Persistent public-facing content</td></tr>
-                <tr><td>UGC</td><td>-0.05</td><td>Creative content, some leeway</td></tr>
+                <tr><td>Comment/Reply</td><td class="modifier-positive">+0.05</td><td>Reactive content, slight tolerance</td></tr>
+                <tr><td>Username</td><td class="modifier-negative">-0.20</td><td>Permanent identity-linked content</td></tr>
+                <tr><td>Bio</td><td class="modifier-negative">-0.15</td><td>Persistent public-facing content</td></tr>
+                <tr><td>UGC</td><td class="modifier-positive">+0.05</td><td>Creative content, some leeway</td></tr>
               </tbody>
             </table>
           </div>
@@ -547,9 +594,9 @@
             <p class="section-label mono-label">Strictness Modifiers</p>
             <table class="methodology-table">
               <tbody>
-                <tr><td>Strict</td><td>+0.15</td></tr>
+                <tr><td>Strict</td><td class="modifier-negative">-0.15</td></tr>
                 <tr><td>Balanced</td><td>0.00</td></tr>
-                <tr><td>Lenient</td><td>-0.15</td></tr>
+                <tr><td>Lenient</td><td class="modifier-positive">+0.15</td></tr>
               </tbody>
             </table>
           </div>
@@ -754,7 +801,7 @@
           <p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);">Enterprise APIs</p>
         </div>
 
-        <article class="model-detail-card" style="border-left: 3px solid var(--accent);">
+        <article class="model-detail-card dim-blue">
           <div class="model-card-header">
             <h3 class="model-card-title"><span class="live-indicator"></span>Hive Moderation</h3>
             <span class="model-card-arch">REST API</span>
@@ -781,7 +828,7 @@
           <a href="https://docs.thehive.ai/docs/text-moderation-api" target="_blank" rel="noopener noreferrer" class="model-card-link">View Documentation →</a>
         </article>
 
-        <article class="model-detail-card" style="border-left: 3px solid #0078d4;">
+        <article class="model-detail-card dim-blue">
           <div class="model-card-header">
             <h3 class="model-card-title"><span class="live-indicator"></span>Azure Content Safety</h3>
             <span class="model-card-arch">Proprietary</span>
@@ -808,7 +855,7 @@
           <a href="https://azure.microsoft.com/services/cognitive-services/content-safety" target="_blank" rel="noopener noreferrer" class="model-card-link">View Documentation →</a>
         </article>
 
-        <article class="model-detail-card" style="border-left: 3px solid #4285f4;">
+        <article class="model-detail-card dim-blue">
           <div class="model-card-header">
             <h3 class="model-card-title"><span class="live-indicator"></span>Google NLP</h3>
             <span class="model-card-arch">REST API</span>

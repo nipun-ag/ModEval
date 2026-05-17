@@ -12,24 +12,27 @@ from backend.config import (
     AZURE_CS_ENDPOINT,
     GOOGLE_NLP_KEY,
 )
+from backend.routes.analyze import MODEL_RUNNERS
 
 models_bp = Blueprint("models", __name__)
 
-_ACTIVE = [
-    bool(HIVE_API_KEY),
-    bool(AZURE_CS_KEY and AZURE_CS_ENDPOINT),
-    bool(GOOGLE_NLP_KEY),
-    bool(OPENAI_API_KEY),
-    bool(HF_API_KEY),   # toxic-bert
-    bool(HF_API_KEY),   # RoBERTa offensive
-    bool(HF_API_KEY),   # Hate Speech
-    bool(HF_API_KEY),   # Bias Detector
-]
 
-_TOTAL = len(_ACTIVE)
+def is_model_active(model_name: str) -> bool:
+    """Check whether the required credentials for one model are configured."""
+    if model_name == "Hive Moderation":
+        return bool(HIVE_API_KEY)
+    if model_name == "Azure Content Safety":
+        return bool(AZURE_CS_KEY and AZURE_CS_ENDPOINT)
+    if model_name == "Google NLP":
+        return bool(GOOGLE_NLP_KEY)
+    if model_name == "OpenAI Moderation":
+        return bool(OPENAI_API_KEY)
+    return bool(HF_API_KEY)
 
 
 @models_bp.get("/models")
 def get_models():
     """Return active and total model counts without calling any model API."""
-    return jsonify({"active_count": sum(_ACTIVE), "total_count": _TOTAL})
+    model_names = list(MODEL_RUNNERS.keys())
+    active_count = sum(1 for model_name in model_names if is_model_active(model_name))
+    return jsonify({"active_count": active_count, "total_count": len(model_names)})

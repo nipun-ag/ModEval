@@ -7,11 +7,10 @@ const disagreementBanner = document.getElementById("disagreement-banner");
 const explainabilityList = document.getElementById("explainability-list");
 const strictestModel = document.getElementById("strictest-model");
 const mostLenientModel = document.getElementById("most-lenient-model");
-const batchButton = document.getElementById("batch-button");
-const batchFileInput = document.getElementById("batch-file");
 const batchSummary = document.getElementById("batch-summary");
 const contextToggle = document.getElementById("context-toggle");
 const contextContent = document.getElementById("context-content");
+const customPolicyField = document.getElementById("custom-policy-field");
 const analyzeButton = document.getElementById("analyze-button");
 const workspace = document.querySelector(".workspace");
 const benchmarkPanel = document.getElementById("benchmark-panel");
@@ -69,8 +68,6 @@ function initColumnTooltips() {
       const viewportHeight = window.innerHeight;
 
       const spaceAbove = rect.top;
-      const spaceBelow = viewportHeight - rect.bottom;
-
       const horizontalCenter = rect.left + rect.width / 2;
       currentTooltip.style.left = horizontalCenter - 90 + "px"; // Center the tooltip (180px wide, so 90px offset)
 
@@ -104,7 +101,6 @@ const OPENSOURCE_MODELS = [
   "HuggingFace toxic-bert",
   "HuggingFace RoBERTa offensive",
   "HuggingFace Hate Speech",
-  "HuggingFace Spam Detector",
   "HuggingFace Bias Detector",
 ];
 
@@ -143,11 +139,6 @@ const MODEL_DISPLAY = {
     name: "Identity-Based Hate",
     subtitle: "facebook/roberta-hate-speech",
     chip: "facebook",
-  },
-  "HuggingFace Spam Detector": {
-    name: "Spam Detector",
-    subtitle: "facebook/roberta-spam",
-    chip: "RoBERTa",
   },
   "HuggingFace Bias Detector": {
     name: "Language Bias",
@@ -268,15 +259,13 @@ const EXAMPLE_LIBRARY = {
 };
 
 const lastExampleByCategory = {};
-let activeTab = "analysis";
-let selectedPlatform = "Neutral";
-let selectedContentType = "Original Post";
-let selectedStrictness = "Balanced";
+let selectedPolicy = "Reddit";
 
 const STATE_MAP = {
-  platform_context: (v) => { selectedPlatform = v; },
-  content_type:     (v) => { selectedContentType = v; },
-  strictness:       (v) => { selectedStrictness = v; },
+  policy: (value) => {
+    selectedPolicy = value;
+    updateCustomPolicyVisibility();
+  },
 };
 
 function escapeHtml(value) {
@@ -307,6 +296,13 @@ function setAnalyzeLoading(isLoading) {
   analyzeButton.disabled = isLoading;
   analyzeButton.classList.toggle("loading", isLoading);
   analyzeButton.querySelector(".button-label").textContent = isLoading ? "Analyzing..." : "Execute Analysis";
+}
+
+function updateCustomPolicyVisibility() {
+  if (!customPolicyField) {
+    return;
+  }
+  customPolicyField.classList.toggle("hidden", selectedPolicy !== "Custom");
 }
 
 function initializeModalSelects() {
@@ -403,15 +399,15 @@ function initializeModalSelects() {
   document.querySelectorAll(".custom-select").forEach((selectEl) => {
     const hiddenInput = selectEl.querySelector("input[type='hidden']");
     const initialSelected = selectEl.querySelector(".custom-select-option.selected");
-    if (initialSelected) hiddenInput.value = initialSelected.dataset.value;
+    if (initialSelected) {
+      hiddenInput.value = initialSelected.dataset.value;
+      if (STATE_MAP[hiddenInput.name]) {
+        STATE_MAP[hiddenInput.name](initialSelected.dataset.value);
+      }
+    }
 
     selectEl.querySelector(".custom-select-trigger").addEventListener("click", () => openModal(selectEl));
   });
-}
-
-function switchTab(tab) {
-  // Legacy function - tabs now handled by topbar nav
-  // Kept for backwards compatibility only
 }
 
 function updateCounter() {
@@ -443,6 +439,9 @@ function actionTone(action) {
   const normalized = String(action || "").toLowerCase();
   if (normalized === "allow") {
     return "allow";
+  }
+  if (normalized === "error") {
+    return "error";
   }
   if (normalized === "remove") {
     return "remove";
@@ -572,6 +571,29 @@ function renderBreakdownCard(result) {
     `;
   }
 
+  if (result.error) {
+    return `
+      <div class="breakdown-card aligned-error">
+        <div class="breakdown-model-info">
+          <div class="breakdown-model-name">${escapeHtml(display.name)}</div>
+          <div class="breakdown-model-meta">${escapeHtml(display.subtitle)} â€¢ Model unavailable</div>
+          <span class="breakdown-arch-chip">${escapeHtml(display.chip)}</span>
+        </div>
+        <div class="breakdown-fields">
+          <div class="breakdown-field-value">unavailable</div>
+          <div class="severity-bar-wrap">
+            <span class="severity-bar-number" style="color:var(--muted);">â€”</span>
+            <div class="severity-bar-track">
+              <div class="severity-bar-fill" style="width:0;"></div>
+            </div>
+          </div>
+          <div class="breakdown-confidence">â€”</div>
+        </div>
+        <button class="breakdown-action-btn action-error">Error</button>
+      </div>
+    `;
+  }
+
   const tone = actionTone(result.action);
   const borderClass = tone === "allow" ? "aligned-allow" : tone === "remove" ? "aligned-remove" : "aligned-review";
   const actionBtnClass = tone === "allow" ? "action-allow" : tone === "remove" ? "action-remove" : "action-review";
@@ -649,8 +671,43 @@ function renderResults(results) {
   resultsBody.innerHTML = html;
 }
 
+function getDisagreementItems(disagreements) {
+  const items = [];
+
+  if (disagreements?.action_mismatch?.length > 1) {
+    items.push({
+      key: "action_mismatch",
+      type: "Action Mismatch",
+      description: "Models disagree on the final moderation recommendation.",
+      models: disagreements.action_mismatch,
+    });
+  }
+
+  if (disagreements?.severity_gap?.length > 1) {
+    items.push({
+      key: "severity_gap",
+      type: "Severity Gap",
+      description: "Models disagree on how severe this content is.",
+      models: disagreements.severity_gap,
+    });
+  }
+
+  if (disagreements?.category_mismatch?.length > 1) {
+    items.push({
+      key: "category_mismatch",
+      type: "Category Mismatch",
+      description: "Models flagged different primary risk categories.",
+      models: disagreements.category_mismatch,
+    });
+  }
+
+  return items;
+}
+
 function renderDisagreements(disagreements) {
-  if (!disagreements.length) {
+  const items = getDisagreementItems(disagreements);
+
+  if (!items.length) {
     disagreementBanner.classList.add("hidden");
     disagreementBanner.classList.remove("visible");
     disagreementBanner.innerHTML = "";
@@ -658,7 +715,7 @@ function renderDisagreements(disagreements) {
   }
 
   const priorityOrder = ["Action Mismatch", "Severity Gap", "Category Mismatch"];
-  const mostCritical = [...disagreements].sort(
+  const mostCritical = [...items].sort(
     (left, right) => priorityOrder.indexOf(left.type) - priorityOrder.indexOf(right.type)
   )[0];
 
@@ -677,14 +734,17 @@ function renderDisagreements(disagreements) {
 }
 
 function renderInsights(insights, results) {
-  strictestModel.innerHTML = insights.strictest_model ? renderModelDisplay(insights.strictest_model) : "-";
-  mostLenientModel.innerHTML = insights.most_lenient_model ? renderModelDisplay(insights.most_lenient_model) : "-";
+  const strictest = insights?.strictest_model;
+  const lenient = insights?.most_lenient_model;
 
-  const strictestResult = results.find((result) => result.model === insights.strictest_model);
-  const lenientResult = results.find((result) => result.model === insights.most_lenient_model);
+  strictestModel.innerHTML = strictest?.model ? renderModelDisplay(strictest.model) : "-";
+  mostLenientModel.innerHTML = lenient?.model ? renderModelDisplay(lenient.model) : "-";
 
-  strictestCard.dataset.tone = actionTone(strictestResult?.action || "review");
-  lenientCard.dataset.tone = actionTone(lenientResult?.action || "allow");
+  const strictestResult = results.find((result) => result.model === strictest?.model);
+  const lenientResult = results.find((result) => result.model === lenient?.model);
+
+  strictestCard.dataset.tone = actionTone(strictest?.action || strictestResult?.action || "review");
+  lenientCard.dataset.tone = actionTone(lenient?.action || lenientResult?.action || "allow");
 }
 
 function renderAiAnalysis(aiAnalysis) {
@@ -701,52 +761,16 @@ function renderAiAnalysis(aiAnalysis) {
   if (aiCategoryText) aiCategoryText.textContent = aiAnalysis.contested_category || "-";
 }
 
-function generateInsight(action, confidence, flagged) {
-  const tone = actionTone(action);
-  const conf = parseFloat(confidence);
-  const hasFlags = flagged && flagged.toLowerCase() !== "none" && flagged.trim() !== "";
-  const category = hasFlags ? flagged : null;
-
-  if (tone === "allow" && !hasFlags) {
-    if (conf < 0.10) return "No harmful patterns detected. Content cleared across all checked categories.";
-    return "No significant flags raised. Content appears safe for this platform context.";
-  }
-
-  if (tone === "allow" && hasFlags) {
-    return `${capitalize(category)} detected but below removal threshold. Content allowed under current strictness settings.`;
-  }
-
-  if (tone === "review") {
-    if (hasFlags) return `${capitalize(category)} patterns present but inconclusive. Recommend human review before action.`;
-    return "Ambiguous signal. No dominant category flagged — manual review advised.";
-  }
-
-  if (tone === "remove" && hasFlags && conf >= 0.80) {
-    return `Strong ${category} signal detected with high confidence. Automatic removal recommended.`;
-  }
-
-  if (tone === "remove" && hasFlags && conf < 0.80) {
-    return `${capitalize(category)} patterns detected. Confidence is moderate — removal flagged but human review may refine this.`;
-  }
-
-  if (tone === "remove" && !hasFlags) {
-    return "Model flagged this content for removal based on combined signal patterns, though no single dominant category was identified.";
-  }
-
-  return "Insufficient signal to generate a clear interpretation.";
-}
-
-function capitalize(str) {
-  if (!str) return "";
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
 
 function generateConsensusSummary(results, insights, disagreements) {
   if (!results || results.length === 0) return "";
 
-  const total = results.length;
+  const activeResults = results.filter((result) => !result.disabled && !result.error);
+  if (!activeResults.length) return "";
+
+  const total = activeResults.length;
   const actions = { allow: [], review: [], remove: [] };
-  results.forEach(r => {
+  activeResults.forEach(r => {
     const tone = actionTone(r.action);
     if (actions[tone]) actions[tone].push(r.model);
   });
@@ -754,7 +778,6 @@ function generateConsensusSummary(results, insights, disagreements) {
   const removeCount = actions.remove.length;
   const reviewCount = actions.review.length;
   const allowCount = actions.allow.length;
-  const consensus = insights?.consensus_action || "";
 
   // Build verdict sentence
   let verdict = "";
@@ -772,7 +795,7 @@ function generateConsensusSummary(results, insights, disagreements) {
 
   // Collect all flagged categories from explanations
   const allCategories = [];
-  results.forEach(r => {
+  activeResults.forEach(r => {
     const match = /Categories above[\d\s.:]+(.+?)(?:\.|$)/i.exec(r.explanation || "");
     if (match) {
       const cats = match[1].match(/([\w][\w\/.-]+)\s*\([\d.]+\)/g) || [];
@@ -794,18 +817,19 @@ function generateConsensusSummary(results, insights, disagreements) {
 
   // Build disagreement sentence
   let disagreementSentence = "";
-  if (disagreements && disagreements.length > 0) {
-    const hasActionMismatch = disagreements.some(d => d.type === "Action Mismatch");
+  const disagreementItems = getDisagreementItems(disagreements);
+  if (disagreementItems.length > 0) {
+    const hasActionMismatch = disagreementItems.some((d) => d.type === "Action Mismatch");
     if (hasActionMismatch && reviewCount > 0) {
       const reviewModels = actions.review.map(m => {
         const d = modelDisplay(m);
-        return d.title;
+        return d.name;
       }).join(", ");
       disagreementSentence = `Notable disagreement: ${reviewModels} flagged for review only.`;
     } else if (hasActionMismatch && allowCount > 0) {
       const allowModels = actions.allow.map(m => {
         const d = modelDisplay(m);
-        return d.title;
+        return d.name;
       }).join(", ");
       disagreementSentence = `Notable disagreement: ${allowModels} cleared this content.`;
     }
@@ -828,15 +852,16 @@ function highlightSummary(text) {
 
 function renderExplainability(results, insights, disagreements, aiSummary) {
   const summary = aiSummary || generateConsensusSummary(results, insights, disagreements);
-  if (!summary && !insights.consensus_action) {
+  if (!summary && !insights?.consensus_recommendation) {
     explainabilityList.innerHTML = "";
     return;
   }
 
-  const consensusAction = insights?.consensus_action || "No Consensus";
+  const consensusAction = insights?.consensus_recommendation || "No Consensus";
   const tone = actionTone(consensusAction);
 
-  const topDisagreement = disagreements && disagreements.length > 0 ? disagreements[0] : null;
+  const disagreementItems = getDisagreementItems(disagreements);
+  const topDisagreement = disagreementItems.length > 0 ? disagreementItems[0] : null;
 
   const footer = topDisagreement ? `
     <div class="consensus-footer">
@@ -891,26 +916,25 @@ form.addEventListener("submit", async (event) => {
   }
 
   const payload = Object.fromEntries(new FormData(form).entries());
-  payload.policy = selectedPlatform;
 
   try {
     const data = await postJson("/analyze", payload);
-    const activeModels = (data.results || []).filter(r => !r.disabled).length;
-    const modelsCountSpan = document.getElementById('models-active-count');
-    if (modelsCountSpan) {
-      modelsCountSpan.textContent = activeModels + ' Models Active';
-    }
     renderResults(data.results || []);
-    renderDisagreements(data.disagreements || []);
+    renderDisagreements(data.disagreements || {});
     renderInsights(data.insights || {}, data.results || []);
-    renderExplainability(data.results || [], data.insights || {}, data.disagreements || [], data.ai_summary || "");
+    renderExplainability(
+      data.results || [],
+      data.insights || {},
+      data.disagreements || {},
+      data.ai_analysis?.risk_narrative || ""
+    );
     renderAiAnalysis(data.ai_analysis || {});
     setHeroState(
-      data.insights?.consensus_recommendation || data.insights?.consensus_action || "Review",
-      data.ai_analysis?.risk_narrative || generateConsensusSummary(data.results || [], data.insights || {}, data.disagreements || [])
+      data.insights?.consensus_recommendation || "Review",
+      data.ai_analysis?.risk_narrative || generateConsensusSummary(data.results || [], data.insights || {}, data.disagreements || {})
     );
     // --- Donut Chart ---
-    const activeResults = data.results.filter(r => !r.disabled);
+    const activeResults = (data.results || []).filter((r) => !r.disabled && !r.error);
     const actionCounts = { remove: 0, review: 0, allow: 0 };
     activeResults.forEach(r => {
       const a = (r.action || '').toLowerCase();
@@ -950,10 +974,11 @@ form.addEventListener("submit", async (event) => {
     if (donutLabel) donutLabel.textContent = dominant[0].toUpperCase();
 
     // --- Severity Gauge ---
-    const avgSeverity = Math.round(
-      data.results.reduce((sum, r) => sum + (r.severity || 0), 0) 
-      / data.results.length
-    );
+    const avgSeverity = activeResults.length
+      ? Math.round(
+          activeResults.reduce((sum, r) => sum + (r.severity || 0), 0) / activeResults.length
+        )
+      : 0;
     const gaugeNumber = document.getElementById('gauge-number');
     const gaugeFill = document.getElementById('gauge-fill-path');
     const gaugeColor = avgSeverity <= 3 ? 'var(--green)' :
@@ -998,68 +1023,9 @@ form.addEventListener("submit", async (event) => {
   }
 });
 
-if (batchButton) batchButton.addEventListener("click", () => batchFileInput.click());
 exampleButtons.forEach((button) => {
   button.addEventListener("click", () => applyExample(button.dataset.category, button));
 });
-
-if (batchFileInput) batchFileInput.addEventListener("change", async () => {
-  const [file] = batchFileInput.files;
-  if (!file) {
-    return;
-  }
-
-  setStatus("Waiting for input", "loading");
-
-  const progressBar = document.querySelector(".progress-bar");
-  if (progressBar) {
-    progressBar.classList.remove("hidden");
-    progressBar.style.animation = "progress-bar 400ms ease";
-  }
-
-  try {
-    const csvText = await file.text();
-    const inputs = csvText
-      .split(/\r?\n/)
-      .map((line) => line.trim())
-      .filter(Boolean);
-
-    const payload = {
-      ...Object.fromEntries(new FormData(form).entries()),
-      inputs,
-    };
-
-    const data = await postJson("/batch-analyze", payload);
-    batchSummary.classList.remove("hidden");
-    batchSummary.innerHTML = `
-      <strong>Batch Summary</strong>
-      <p>Total inputs: ${data.total} | Flagged inputs: ${data.flagged_count} | Flag rate: ${(data.flag_rate * 100).toFixed(1)}%</p>
-    `;
-    setStatus("Analysis complete", "success");
-  } catch (error) {
-    batchSummary.classList.remove("hidden");
-    batchSummary.innerHTML = `<p class="error-text">${escapeHtml(error.message)}</p>`;
-    setStatus("Request failed", "error");
-  } finally {
-    const progressBar = document.querySelector(".progress-bar");
-    if (progressBar) progressBar.classList.add("hidden");
-    if (batchFileInput) batchFileInput.value = "";
-  }
-});
-
-// Ensure any other references to lower tab IDs are null-checked
-const lowerPanelSummary = document.getElementById('lower-panel-summary');
-if (lowerPanelSummary) {
-  // Any operations on lowerPanelSummary go here
-}
-const lowerPanelBreakdown = document.getElementById('lower-panel-breakdown');
-if (lowerPanelBreakdown) {
-  // Any operations on lowerPanelBreakdown go here
-}
-const lowerPanelInsights = document.getElementById('lower-panel-insights');
-if (lowerPanelInsights) {
-  // Any operations on lowerPanelInsights go here
-}
 
 if (textInput) {
   textInput.addEventListener("input", updateCounter);
@@ -1082,6 +1048,7 @@ window.addEventListener("resize", () => {
 
 updateCounter();
 initializeModalSelects();
+updateCustomPolicyVisibility();
 
 (function () {
   fetch("/models")
@@ -1093,7 +1060,7 @@ initializeModalSelects();
       }
     })
     .catch((err) => {
-      console.error("Failed to fetch model count:", err);
+      console.warn("Failed to fetch model count:", err);
     });
 })();
 setSectionExpanded(contextToggle, contextContent, false);

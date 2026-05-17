@@ -1,7 +1,7 @@
 # ModEval — AI Codebase Assistant Guide
 
 ## What This App Is
-ModEval is a context and policy-aware AI moderation evaluation system. Runs text through 5 independent models (OpenAI Moderation, toxic-bert, RoBERTa offensive, Facebook hate speech, Valurank bias), normalizes outputs, applies platform context and strictness rules, scores policy alignment, and surfaces disagreements. Live at [modeval.bynipun.com](https://modeval.bynipun.com).
+ModEval is a context and policy-aware AI moderation evaluation system. Runs text through 8 independent models (Hive Moderation, Azure Content Safety, Google NLP, OpenAI Moderation, toxic-bert, RoBERTa offensive, Facebook hate speech, Valurank bias), normalizes outputs, applies platform context and strictness rules, scores policy alignment, and surfaces disagreements. Live at [modeval.bynipun.com](https://modeval.bynipun.com).
 
 ## Tech Stack
 - **Backend:** Python 3.14, Flask 3.1, Gunicorn
@@ -171,11 +171,11 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
   - Open Source Models tier with 4 HuggingFace + OpenAI
   - Disabled models show gray rows at 0.4 opacity
 - Context Engine with platform (including Neutral default), content type, strictness modifiers
-- Policy alignment scoring for Reddit, Discord, Facebook, Instagram
+- Policy alignment scoring for Reddit, Discord, Facebook, Instagram, and Custom keyword policies
 - AI analysis with 4 structured fields: disagreement_explanation, risk_narrative, context_sensitivity, contested_category
 - Disagreement detection and banner (scoped to Summary tab only — first child of #lower-panel-summary)
-- Dynamic topbar model count: GET /models endpoint returns active/total from credential-presence check; JS updates #models-active-count pill on page load
-- 100 pre-loaded test cases across 10 violation categories
+- Dynamic topbar model count: GET /models endpoint returns active/total from credential-presence check; JS updates #models-active-count pill on page load and does not overwrite it during analysis
+- Batch analysis validates each row independently and excludes error rows from flagged-rate calculations`r`n- 100 pre-loaded test cases across 10 violation categories
 - Phase 0 UX overhaul complete:
   - Topbar navigation with 4 tabs: ANALYSIS (active), BENCHMARK (locked), HOW IT WORKS, MODELS
   - HOW IT WORKS and MODELS are full-page panels accessed from topbar, not results tabs
@@ -195,3 +195,4 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
 - English only — all models trained on English
 - Platform policies are approximations, not real enforcement rules
 - No content persistence — submissions are ephemeral by design
+

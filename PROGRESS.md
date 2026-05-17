@@ -4,6 +4,24 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-05-17
+
+**fix: full audit remediation -- bugs, dead code, inconsistencies, warnings**
+
+Changes:
+- Fixed policy routing end to end: backend now ships Reddit/Discord/Facebook/Instagram rules, the frontend sends the selected policy value correctly, and custom policy text stays isolated to the Custom path
+- Corrected threshold modifier direction across config, context documentation, and visible methodology tables so stricter contexts lower thresholds while lenient/high-tolerance contexts raise them
+- Standardized error and disabled handling: missing provider credentials now return disabled model rows, error placeholders use `action=\"Error\"` with `flagged=false`, and batch flagged-rate math excludes invalid/error rows
+- Brought response contracts back into sync: `/analyze` disagreements now return keyed buckets, insights now expose nested strictest/lenient model objects plus `consensus_recommendation`, `/batch-analyze` now accepts `texts` and returns `{text, analysis}` items, and the frontend reads `ai_analysis` consistently
+- Removed dead implementation paths: deleted unused spam/perspective/aws/legacy azure wrappers, removed dead batch-upload JS, removed unused IDs, and pruned stale matrix/table/timeline CSS left from older layouts
+- Preserved the topbar model-count contract by deriving `/models` totals from `MODEL_RUNNERS` and keeping the UI pill tied to credential availability instead of per-request success counts
+
+Why:
+- The audit surfaced several behavior regressions where the UI, backend, and docs had drifted apart, especially around policy handling, threshold semantics, model availability, and stale code left behind after the 8-model overhaul
+
+Tradeoffs:
+- I kept the active 8-model pipeline as the source of truth and removed dormant wrappers instead of reviving the spam path, which reduced ambiguity and let the docs/UI/code converge on a single supported model set
+
 ## 2026-05-17 (Part 4)
 
 **fix: scope disagreement banner to Summary tab only**

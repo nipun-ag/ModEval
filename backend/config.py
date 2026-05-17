@@ -22,13 +22,9 @@ load_dotenv(PROJECT_ROOT / ".env")
 HF_API_KEY = os.getenv("HF_API_KEY", "").strip()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
 
-PERSPECTIVE_API_KEY = os.getenv("PERSPECTIVE_API_KEY", "").strip()
 HIVE_API_KEY = os.getenv("HIVE_API_KEY", "").strip()
 AZURE_CS_KEY = os.getenv("AZURE_CS_KEY", "").strip()
 AZURE_CS_ENDPOINT = os.getenv("AZURE_CS_ENDPOINT", "").strip()
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID", "").strip()
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY", "").strip()
-AWS_REGION = os.getenv("AWS_REGION", "us-east-1").strip()
 GOOGLE_NLP_KEY = os.getenv("GOOGLE_NLP_KEY", "").strip()
 
 REQUEST_TIMEOUT = 20
@@ -43,43 +39,44 @@ MAX_THRESHOLD = 0.90
 
 PLATFORM_MODIFIERS = {
     "Neutral": 0.00,
-    "Gaming": -0.10,
+    "Gaming": 0.10,
     "Social Media": 0.00,
-    "Professional": 0.15,
-    "Forum": -0.05,
+    "Professional": -0.15,
+    "Forum": 0.05,
+    "VR/Metaverse": 0.15,
 }
 
 CONTENT_TYPE_MODIFIERS = {
     "Original Post": 0.00,
-    "Comment/Reply": -0.05,
-    "Username": 0.20,
-    "Bio": 0.15,
-    "UGC": -0.05,
+    "Comment/Reply": 0.05,
+    "Username": -0.20,
+    "Bio": -0.15,
+    "UGC": 0.05,
 }
 
 STRICTNESS_MODIFIERS = {
-    "Strict": 0.15,
+    "Strict": -0.15,
     "Balanced": 0.00,
-    "Lenient": -0.15,
+    "Lenient": 0.15,
 }
 
 
 PREDEFINED_POLICIES = {
-    "Social Media": {
+    "Reddit": {
         "zero_tolerance": {"violence", "self-harm", "sexual/minors", "hate"},
-        "deprioritized": {"profanity", "insult"},
+        "deprioritized": set(),
     },
-    "Gaming": {
+    "Discord": {
         "zero_tolerance": {"sexual/minors", "harassment/threatening"},
         "deprioritized": {"profanity", "insult", "toxicity"},
     },
-    "Professional": {
+    "Facebook": {
         "zero_tolerance": {"hate", "violence", "sexual", "self-harm", "harassment"},
         "deprioritized": set(),
     },
-    "Forum": {
-        "zero_tolerance": {"violence", "self-harm", "sexual/minors"},
-        "deprioritized": {"profanity", "insult", "bias"},
+    "Instagram": {
+        "zero_tolerance": {"hate", "violence", "sexual", "self-harm", "harassment"},
+        "deprioritized": set(),
     },
 }
 

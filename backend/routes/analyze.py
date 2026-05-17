@@ -185,7 +185,10 @@ def build_response(payload: dict) -> dict:
         )
         normalized_results.append(result)
 
-    active_results = [r for r in normalized_results if not r.get("disabled")]
+    active_results = [
+        result for result in normalized_results
+        if not result.get("disabled") and not result.get("error")
+    ]
     ai_analysis = generate_ai_analysis(active_results, payload)
 
     return {

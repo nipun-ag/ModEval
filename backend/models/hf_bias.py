@@ -13,7 +13,12 @@ HF_MODEL_URL = "https://router.huggingface.co/hf-inference/models/valurank/disti
 def analyze(text: str) -> dict:
     """Return raw HuggingFace scores in a consistent local shape."""
     if not HF_API_KEY:
-        raise RuntimeError("HuggingFace API key is missing.")
+        return {
+            "model": "HuggingFace Bias Detector",
+            "disabled": True,
+            "action": "Disabled",
+            "scores": {},
+        }
 
     response = requests.post(
         HF_MODEL_URL,

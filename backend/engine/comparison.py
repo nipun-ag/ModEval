@@ -1,4 +1,4 @@
-"""Comparison helpers for the current five-model HuggingFace lineup."""
+"""Comparison helpers for the current eight-model moderation pipeline."""
 
 from __future__ import annotations
 
@@ -8,47 +8,27 @@ from collections import Counter
 ACTION_RANK = {"Allow": 0, "Review": 1, "Remove": 2}
 
 
-def detect_disagreements(results: list[dict]) -> list[dict]:
+def detect_disagreements(results: list[dict]) -> dict:
     """Find action/category/severity disagreements across model outputs."""
-    disagreements = []
     valid_results = [result for result in results if not result.get("error")]
+    disagreements = {
+        "action_mismatch": [],
+        "category_mismatch": [],
+        "severity_gap": [],
+    }
 
     if len({result["action"] for result in valid_results}) > 1:
-        action_snapshot = ", ".join(
-            f"{result['model']} recommends {result['action']}" for result in valid_results
-        )
-        disagreements.append(
-            {
-                "type": "Action Mismatch",
-                "description": f"Models disagree on the final action: {action_snapshot}.",
-            }
-        )
+        disagreements["action_mismatch"] = [result["model"] for result in valid_results]
 
     if len({result["top_category"] for result in valid_results}) > 1:
-        category_snapshot = ", ".join(
-            f"{result['model']} flagged {result['top_category']}" for result in valid_results
-        )
-        disagreements.append(
-            {
-                "type": "Category Mismatch",
-                "description": f"Models surfaced different top categories: {category_snapshot}.",
-            }
-        )
+        disagreements["category_mismatch"] = [result["model"] for result in valid_results]
 
     if valid_results:
         max_result = max(valid_results, key=lambda item: item["severity"])
         min_result = min(valid_results, key=lambda item: item["severity"])
         severity_gap = max_result["severity"] - min_result["severity"]
         if severity_gap >= 3:
-            disagreements.append(
-                {
-                    "type": "Severity Gap",
-                    "description": (
-                        f"{max_result['model']} scored severity {max_result['severity']} while "
-                        f"{min_result['model']} scored {min_result['severity']}."
-                    ),
-                }
-            )
+            disagreements["severity_gap"] = [max_result["model"], min_result["model"]]
 
     return disagreements
 
@@ -58,10 +38,17 @@ def build_insights(results: list[dict]) -> dict:
     valid_results = [result for result in results if not result.get("error")]
     if not valid_results:
         return {
-            "strictest_model": "Unavailable",
-            "most_lenient_model": "Unavailable",
-            "consensus_action": "No Consensus",
-            "summary": "No model results were available.",
+            "strictest_model": {
+                "model": "Unavailable",
+                "action": "Unavailable",
+                "reason": "No model results were available.",
+            },
+            "most_lenient_model": {
+                "model": "Unavailable",
+                "action": "Unavailable",
+                "reason": "No model results were available.",
+            },
+            "consensus_recommendation": "No Consensus",
         }
 
     strictest = max(valid_results, key=lambda item: (ACTION_RANK[item["action"]], item["confidence"]))
@@ -74,14 +61,16 @@ def build_insights(results: list[dict]) -> dict:
         else "No Consensus"
     )
 
-    summary = (
-        f"{strictest['model']} was the strictest while {lenient['model']} was the most lenient. "
-        f"Consensus action: {consensus_action}."
-    )
-
     return {
-        "strictest_model": strictest["model"],
-        "most_lenient_model": lenient["model"],
-        "consensus_action": consensus_action,
-        "summary": summary,
+        "strictest_model": {
+            "model": strictest["model"],
+            "action": strictest["action"],
+            "reason": "Highest combined action severity after policy alignment.",
+        },
+        "most_lenient_model": {
+            "model": lenient["model"],
+            "action": lenient["action"],
+            "reason": "Lowest combined action severity after policy alignment.",
+        },
+        "consensus_recommendation": consensus_action,
     }

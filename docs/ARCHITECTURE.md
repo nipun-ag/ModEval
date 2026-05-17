@@ -22,7 +22,6 @@ modeval/
 │   │   ├── hf_toxic_bert.py            Unitary toxic-bert model wrapper
 │   │   ├── hf_roberta_offensive.py     Cardiff NLP offensive language detector
 │   │   ├── hf_hate_speech.py           Facebook FAIR hate speech detector
-│   │   ├── hf_spam.py                  Manuel Romero SMS spam detector
 │   │   ├── hf_bias.py                  Valurank bias detector
 │   │   └── openai_moderation.py        OpenAI Moderation API wrapper
 │   └── engine/
@@ -50,13 +49,13 @@ modeval/
 ## API Endpoints
 
 ### POST /analyze
-**Purpose:** Analyze a single text input across up to 9 moderation models (4 enterprise APIs + 4 HuggingFace + OpenAI).
+**Purpose:** Analyze a single text input across 8 moderation models (3 enterprise APIs + 4 HuggingFace + OpenAI).
 
 **Request Body:**
 ```json
 {
   "text": "string (1-500 characters, required)",
-  "platform_context": "Social Media | Gaming | Professional | Forum | VR/Metaverse (default: Social Media)",
+  "platform_context": "Neutral | Social Media | Gaming | Professional | Forum | VR/Metaverse (default: Neutral)",
   "content_type": "Original Post | Comment/Reply | Username | Bio | UGC (default: Original Post)",
   "strictness": "Strict | Balanced | Lenient (default: Balanced)",
   "policy": "Reddit | Discord | Facebook | Instagram | Custom (default: Reddit)",
@@ -81,7 +80,7 @@ modeval/
       "explanation": "string — plain English explainer text",
       "error": "string (optional) — only on model failures"
     },
-    ...up to 9 models total
+    ...up to 8 models total
   ],
   "disagreements": {
     "action_mismatch": ["list of model names"],
@@ -105,7 +104,7 @@ modeval/
 **Status Codes:**
 - 200 OK — Analysis complete, all fields valid
 - 400 Bad Request — Missing or invalid text input
-- 500 Server Error — Model inference or AI summary failure (results still returned)
+- 500 Server Error — Model inference or AI analysis failure (results still returned)
 
 ---
 
@@ -127,7 +126,7 @@ modeval/
 ```json
 {
   "total": "integer — count of inputs",
-  "flagged": "integer — count of flagged results",
+  "flagged_count": "integer — count of flagged inputs",
   "flag_rate": "float 0.0-1.0",
   "results": [
     {
@@ -177,7 +176,7 @@ Called on page load by `frontend/app.js` to update the `#models-active-count` to
 
 **8 models total, running in parallel:**
 - 3 Enterprise APIs (optional, credentials required)
-- 4 HuggingFace open-source models (always available)
+- 4 HuggingFace open-source models (share one credential gate)
 - 1 OpenAI proprietary model (requires API key)
 
 Models without configured credentials are gracefully disabled and filtered from consensus/disagreement/insight calculations. The decision matrix renders them in two tiers for clarity.
@@ -219,7 +218,7 @@ These are third-party cloud APIs that require credentials. If credentials are mi
 
 ### Open Source & Proprietary Models (Tier 2)
 
-Always available, no credentials required.
+These models run when their shared provider credentials are configured. If credentials are missing, the API returns {"disabled": true, "action": "Disabled"} for that model and excludes it from consensus math.
 
 #### 4. OpenAI Moderation
 - **API:** OpenAI Moderation API
@@ -257,16 +256,7 @@ Always available, no credentials required.
 - **Strengths:** Adversarial training makes it robust to evasion, focuses on hate not general offense
 - **Limitations:** Binary hate/not-hate less granular, only 3-class output
 
-#### 8. Spam Detector (HuggingFace: mrm8488/bert-tiny-finetuned-sms-spam-detection)
-- **Architecture:** BERT-tiny (2-layer, 128-hidden, 2-head) — only 4.4M parameters
-- **Creator:** Manuel Romero
-- **Training Data:** SMS Spam Collection dataset
-- **Safety Dimension:** Spam and manipulative content
-- **Output Schema:** Binary scores for `ham` (label 0), `spam` (label 1)
-- **Strengths:** Extremely lightweight, 98% validation accuracy, fastest model
-- **Limitations:** SMS-trained, may miss sophisticated social media spam patterns
-
-#### 9. Bias Detector (HuggingFace: valurank/distilroberta-bias)
+#### 8. Bias Detector (HuggingFace: valurank/distilroberta-bias)
 - **Architecture:** DistilRoBERTa (6-layer, 768-hidden, 12-head) — 40% smaller than RoBERTa
 - **Creator:** Valurank
 - **Training Data:** Wikipedia Neutrality Comments (WNC) — real editorial decisions to remove biased language
@@ -304,11 +294,11 @@ Reflects real platform risk tolerance and enforcement philosophy.
 | Platform | Modifier | Rationale |
 |---|---|---|
 | Neutral | 0.00 | No platform context (default) |
-| Social Media | 0.00 | Baseline (Reddit, Discord, etc.) |
-| Gaming | -0.10 | Higher tolerance for competitive language and banter |
-| Professional | +0.15 | Lower tolerance, reputational and compliance risk |
-| Forum / Community | -0.05 | Slightly higher tolerance for debate and discussion |
-| VR / Metaverse | -0.15 | Evolving norms, experimental, higher tolerance |
+| Social Media | 0.00 | Baseline platform context |
+| Gaming | +0.10 | Higher tolerance for competitive language and banter |
+| Professional | -0.15 | Lower thresholds for stricter workplace/compliance moderation |
+| Forum / Community | +0.05 | Slightly higher tolerance for debate and discussion |
+| VR / Metaverse | +0.15 | Higher tolerance for emergent norms and in-world banter |
 
 ### Content Type Modifiers
 Reflects different moderation intensity by content placement.
@@ -316,19 +306,19 @@ Reflects different moderation intensity by content placement.
 | Content Type | Modifier | Rationale |
 |---|---|---|
 | Original Post | 0.00 | Baseline moderation |
-| Comment / Reply | -0.05 | Slightly more lenient, inline context helps interpretation |
-| Username | +0.20 | Very strict — username is permanent, visible, identity |
-| Bio / Profile | +0.15 | Strict — persistent identity signal |
-| UGC (User-Generated Content) | -0.05 | Slightly lenient — bulk volume requires balance |
+| Comment / Reply | +0.05 | Slightly more lenient, inline context helps interpretation |
+| Username | -0.20 | Very strict — username is permanent, visible, identity |
+| Bio / Profile | -0.15 | Strict — persistent identity signal |
+| UGC (User-Generated Content) | +0.05 | Slightly lenient — bulk volume requires balance |
 
 ### Strictness Modifiers
 User-controlled policy strictness slider.
 
 | Strictness | Modifier | Rationale |
 |---|---|---|
-| Strict | +0.15 | Raise thresholds, flag more content |
+| Strict | -0.15 | Lower thresholds, flag more content |
 | Balanced | 0.00 | Baseline, no adjustment |
-| Lenient | -0.15 | Lower thresholds, only extreme violations |
+| Lenient | +0.15 | Raise thresholds, only extreme violations |
 
 ### Example Threshold Calculation
 
@@ -336,12 +326,12 @@ User-controlled policy strictness slider.
 
 ```
 platform_mod: 0.00 (Social Media baseline)
-content_mod: -0.05 (Comment/Reply = more lenient)
-strictness_mod: +0.15 (Strict = stricter)
-total_mod: 0.10
+content_mod: +0.05 (Comment/Reply = slightly more lenient)
+strictness_mod: -0.15 (Strict = stricter)
+total_mod: -0.10
 
-review_threshold = clamp(0.40 + 0.10) = 0.50
-remove_threshold = clamp(0.70 + 0.10) = 0.80
+review_threshold = clamp(0.40 - 0.10) = 0.30
+remove_threshold = clamp(0.70 - 0.10) = 0.60
 ```
 
 ---
@@ -574,7 +564,7 @@ Hetzner VPS (hetzner.com) — CX23 plan
 
 ### Model-Level
 - **Frozen Models** — Scores reflect training data. Novel slang may score incorrectly.
-- **English Only** — All five models trained primarily on English data.
+- **English Only** — All moderation models are tuned for English-language text.
 - **Text Only** — Images, video, audio, and other formats are out of scope.
 
 ### Platform-Level
@@ -583,7 +573,7 @@ Hetzner VPS (hetzner.com) — CX23 plan
 - **Inference Latency** — Models run sequentially or in parallel depending on infrastructure. Expect 2-8 seconds per request.
 
 ### System-Level
-- **AI Summary Fallback** — If OpenAI API fails, `ai_summary` field returns empty string. UI handles gracefully.
+- **AI Summary Fallback** — If OpenAI AI analysis generation fails, `ai_analysis` returns an empty object. UI handles gracefully.
 - **No Content Storage** — All submissions are ephemeral. No logging, no persistence by design.
 
 ---
@@ -595,7 +585,7 @@ Hetzner VPS (hetzner.com) — CX23 plan
 | Backend Framework | Flask | 3.1 | HTTP routing, request handling |
 | WSGI Server | Gunicorn | (latest) | Production HTTP server |
 | Python | Python | 3.14 | Core language |
-| Model Inference | HuggingFace, Enterprise APIs | (live) | 4 Enterprise APIs + 4 HuggingFace + OpenAI |
+| Model Inference | HuggingFace, Enterprise APIs | (live) | 3 Enterprise APIs + 4 HuggingFace + OpenAI |
 | AI Summary | OpenAI API | gpt-4o-mini | Natural language synthesis |
 | Frontend | Vanilla HTML/CSS/JS | (native) | Single-page app, no frameworks |
 | Fonts | Google Fonts | (live) | DM Serif Display, Inter, JetBrains Mono |
@@ -621,22 +611,22 @@ Hetzner VPS (hetzner.com) — CX23 plan
 
 ### backend/routes/analyze.py
 - `POST /analyze` endpoint handler
-- Model orchestration via `ThreadPoolExecutor` (up to 9 parallel calls)
+- Model orchestration via `ThreadPoolExecutor` (up to 8 parallel calls)
 - Per-model error handling (failures don't crash whole response)
 - Calls normalizer, policy engine, comparison engine, explainer
-- Generates AI summary via OpenAI GPT-4o-mini
+- Generates structured AI analysis via OpenAI GPT-4o-mini
 - Returns unified response schema
 
 ### backend/routes/batch.py
 - `POST /batch-analyze` endpoint handler
-- Loops over multiple inputs, calls `/analyze` logic for each
+- Loops over multiple inputs, validates each item, then calls `/analyze` logic for each valid row
 - Aggregates results and computes flag rate
 - Used for testing and bulk analysis
 
 ### backend/routes/models.py
 - `GET /models` endpoint handler
-- Reads credential constants from `backend/config.py` (already loaded at import time, no API calls)
-- Computes `active_count` by checking truthiness of each credential
+- Derives the model list from `backend/routes/analyze.py` so totals stay in sync
+- Computes `active_count` by checking the required credential(s) for each configured runner
 - `HF_API_KEY` counts as 4 (one per HuggingFace model sharing the key)
 - Returns `{"active_count": N, "total_count": 8}`
 
@@ -711,17 +701,17 @@ validate_payload()
     ├─→ check text length, required fields
     ↓
 run_models() (parallel ThreadPoolExecutor)
-    ├─→ perspective_api.analyze()
-    ├─→ azure_content.analyze()
-    ├─→ aws_comprehend.analyze()
-    ├─→ google_nlp.analyze()
-    ├─→ openai_moderation.analyze()
-    ├─→ hf_toxic_bert.analyze()
-    ├─→ hf_roberta_offensive.analyze()
-    ├─→ hf_hate_speech.analyze()
+    |- hive_moderation.analyze()
+    |- azure_content_safety.analyze()
+    |- google_nlp.analyze()
+    |- openai_moderation.analyze()
+    |- hf_toxic_bert.analyze()
+    |- hf_roberta_offensive.analyze()
+    |- hf_hate_speech.analyze()
+    \- hf_bias.analyze()
     └─→ hf_bias.analyze()
     ↓
-normalize_result() × 5
+normalize_result() x 8
     ├─→ normalize_scores() (category aliasing)
     ├─→ score_to_severity() (1-10 scaling)
     └─→ determine_action() (Allow/Review/Remove)
@@ -741,7 +731,7 @@ build_insights()
     ├─→ most_lenient_model
     └─→ consensus_recommendation
     ↓
-generate_ai_summary()
+generate_ai_analysis()
     └─→ OpenAI GPT-4o-mini (async)
     ↓
 JSON Response
@@ -868,3 +858,7 @@ These IDs must never be renamed:
 - gauge-fill-path, gauge-number (severity gauge)
 - hero-action, hero-subtitle (consensus hero)
 - models-active-count (topbar status pill — updated dynamically by /models fetch)
+
+
+
+

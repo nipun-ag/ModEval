@@ -38,7 +38,7 @@ def get_policy_rules(policy_name: str, custom_policy_text: str = "") -> dict:
     if policy_name == "Custom":
         return summarize_custom_policy(custom_policy_text)
 
-    policy = PREDEFINED_POLICIES.get(policy_name, {})
+    policy = PREDEFINED_POLICIES.get(policy_name, PREDEFINED_POLICIES.get("Reddit", {}))
     return {
         "zero_tolerance": set(policy.get("zero_tolerance", set())),
         "deprioritized": set(policy.get("deprioritized", set())),

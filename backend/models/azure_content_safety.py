@@ -5,6 +5,8 @@ from __future__ import annotations
 import os
 import requests
 
+from backend.config import REQUEST_TIMEOUT
+
 
 CATEGORY_MAPPINGS = {
     "Hate": "hate",
@@ -38,7 +40,7 @@ def analyze(text: str) -> dict:
     }
 
     try:
-        response = requests.post(url, json=payload, headers=headers, timeout=10)
+        response = requests.post(url, json=payload, headers=headers, timeout=REQUEST_TIMEOUT)
         response.raise_for_status()
         data = response.json()
 
