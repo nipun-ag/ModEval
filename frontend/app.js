@@ -846,16 +846,22 @@ function renderAlignmentAssessment(results, platform) {
 }
 
 function renderFindingTag(insights, data) {
-  const action = data.action || "Review";
-  let tagClass = "grey";
-  let tagText = "AMBIGUOUS";
+  const riskText = (
+    data?.ai_analysis?.risk_narrative || ""
+  ).toUpperCase();
 
-  if (action === "Remove") {
+  let tagClass = "grey";
+  let tagText = "GREY AREA";
+
+  if (riskText.includes("CLEAR VIOLATION")) {
     tagClass = "violation";
-    tagText = "Clear Violation";
-  } else if (action === "Allow") {
+    tagText = "CLEAR VIOLATION";
+  } else if (riskText.includes("CLEAR SAFE")) {
     tagClass = "safe";
-    tagText = "Safe Content";
+    tagText = "CLEAR SAFE";
+  } else if (riskText.includes("GENUINE GREY AREA")) {
+    tagClass = "grey";
+    tagText = "GENUINE GREY AREA";
   }
 
   return `<span class="insights-finding-tag ${tagClass}">${tagText}</span>`;
@@ -883,38 +889,39 @@ function renderConfidenceBars(results) {
 }
 
 function renderInsightsMatrix(alignmentMap, results) {
-  if (!alignmentMap || Object.keys(alignmentMap).length === 0) {
-    return '<div style="padding: 16px; text-align: center; color: var(--text-tertiary); font-size: 13px;">No alignment data available.</div>';
+  const activeResults = (results || []).filter(
+    r => !r.disabled && !r.error
+  );
+
+  if (!activeResults.length) {
+    return '<div style="padding:16px;text-align:center;color:var(--muted);font-size:12px;">No alignment data available.</div>';
   }
 
-  let html = '';
-  const activeResults = results.filter(r => !r.disabled && !r.error);
+  return activeResults.map(result => {
+    const isAligned = result.aligned;
+    const reason = result.alignment_reason || "";
+    const badgeClass = isAligned ? "aligned" : "misaligned";
+    const badgeText = isAligned ? "ALIGNED" : "MISALIGNED";
 
-  for (const result of activeResults) {
-    const modelName = result.model || "Unknown";
-    const alignmentInfo = alignmentMap[modelName];
-
-    if (!alignmentInfo) continue;
-
-    const isAligned = alignmentInfo.aligned;
-    const badgeClass = isAligned ? 'aligned' : 'misaligned';
-    const badgeText = isAligned ? 'ALIGNED' : 'MISALIGNED';
-
-    html += `
+    return `
       <div class="insights-matrix-row">
-        <div class="insights-matrix-model">${escapeHtml(modelName)}</div>
+        <div class="insights-matrix-model">
+          ${escapeHtml(result.model || "")}
+        </div>
         <div class="insights-matrix-alignment">
-          <span class="insights-alignment-badge ${badgeClass}">${badgeText}</span>
-          <div class="insights-alignment-reason">${escapeHtml(alignmentInfo.alignment_reason || "")}</div>
+          <span class="insights-alignment-badge ${badgeClass}">
+            ${badgeText}
+          </span>
+          <div class="insights-alignment-reason">
+            ${escapeHtml(reason)}
+          </div>
         </div>
       </div>
     `;
-  }
-
-  return html;
+  }).join("");
 }
 
-function renderInsights(insights, results, platform, alignmentMap, data, aiAnalysis) {
+function renderInsights(insights, results, platform, alignmentMap, data) {
   const strictest = insights?.strictest_model;
   const lenient = insights?.most_lenient_model;
 
@@ -963,13 +970,13 @@ function renderInsights(insights, results, platform, alignmentMap, data, aiAnaly
       <!-- Disagreement Explanation -->
       <div class="insights-grid-item">
         <h4>Disagreement Explained</h4>
-        <p>${escapeHtml(insights?.disagreement_explanation || "Models aligned on action.")}</p>
+        <p>${escapeHtml(data?.ai_analysis?.disagreement_explanation || "No disagreement data available.")}</p>
       </div>
 
       <!-- Risk Narrative -->
       <div class="insights-grid-item">
         <h4>Risk Assessment</h4>
-        <p>${escapeHtml(insights?.risk_narrative || "No immediate risk identified.")}</p>
+        <p>${escapeHtml(data?.ai_analysis?.risk_narrative || "No risk assessment available.")}</p>
       </div>
     </div>
 
@@ -977,7 +984,7 @@ function renderInsights(insights, results, platform, alignmentMap, data, aiAnaly
     <div class="insights-alignment-section">
       <h4 class="insights-alignment-header">Policy Alignment</h4>
       <div class="insights-matrix">
-        ${renderInsightsMatrix(alignmentMap, results)}
+        ${renderInsightsMatrix({}, results)}
       </div>
       <div class="insights-matrix-footer">
         Alignment assessed by Claude Haiku against ${escapeHtml(platform)} content policy.
@@ -990,14 +997,14 @@ function renderInsights(insights, results, platform, alignmentMap, data, aiAnaly
         <span class="insights-ai-label">Executive Summary</span>
         <span class="insights-consensus-badge">
           <span class="dot">●</span>
-          Consensus: <strong>${escapeHtml(data?.action || "—")}</strong>
+          Consensus: <strong>${escapeHtml(data?.insights?.consensus_recommendation || insights?.consensus_recommendation || "—")}</strong>
         </span>
       </div>
 
       ${renderFindingTag(insights, data)}
 
       <div class="insights-ai-summary">
-        ${escapeHtml(aiAnalysis || "Analysis complete. Review results above for detailed findings.")}
+        ${escapeHtml(data?.ai_analysis?.risk_narrative || "Analysis complete.")}
       </div>
 
       <div class="insights-confidence-bars">
@@ -1203,9 +1210,8 @@ form.addEventListener("submit", async (event) => {
       data.insights || {},
       data.results || [],
       selectedPlatform,
-      data.alignment_map || {},
-      data,
-      data.ai_analysis?.risk_narrative || ""
+      {},
+      data
     );
     renderExplainability(
       data.results || [],
@@ -1213,7 +1219,6 @@ form.addEventListener("submit", async (event) => {
       data.disagreements || {},
       data.ai_analysis?.risk_narrative || ""
     );
-    renderAiAnalysis(data.ai_analysis || {});
     setHeroState(
       data.insights?.consensus_recommendation || "Review",
       data.ai_analysis?.risk_narrative || generateConsensusSummary(data.results || [], data.insights || {}, data.disagreements || {})
@@ -1296,7 +1301,7 @@ form.addEventListener("submit", async (event) => {
     }
   } catch (error) {
     renderResults([]);
-    renderInsights({}, []);
+    renderInsights({}, [], selectedPlatform, {}, {});
     explainabilityList.innerHTML = `<p class="error-text">${escapeHtml(error.message)}</p>`;
     setHeroState("Review", "");
     showPanelState("results");
