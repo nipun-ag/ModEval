@@ -259,10 +259,91 @@ const EXAMPLE_LIBRARY = {
 const lastExampleByCategory = {};
 let selectedPlatform = "Reddit";
 
+const PLATFORM_POLICIES = {
+  "Reddit": {
+    rules: [
+      "Zero tolerance for content sexualizing minors",
+      "Zero tolerance for credible violence and threats",
+      "Zero tolerance for content promoting self-harm",
+      "Zero tolerance for hate speech targeting protected groups",
+      "Harassment and doxxing are bannable offenses"
+    ]
+  },
+  "Discord": {
+    rules: [
+      "Zero tolerance for content sexualizing minors",
+      "Zero tolerance for direct threatening harassment",
+      "Profanity, insults, and general toxicity are permitted",
+      "Hate speech targeting protected groups is banned",
+      "Context-dependent enforcement for grey areas"
+    ]
+  },
+  "Facebook": {
+    rules: [
+      "Zero tolerance for hate speech in any form",
+      "Zero tolerance for violence and graphic content",
+      "Zero tolerance for sexual content and nudity",
+      "Zero tolerance for self-harm promotion",
+      "Zero tolerance for harassment and bullying"
+    ]
+  },
+  "Instagram": {
+    rules: [
+      "Zero tolerance for hate speech in any form",
+      "Zero tolerance for violence and graphic content",
+      "Zero tolerance for sexual content and nudity",
+      "Zero tolerance for self-harm promotion",
+      "Zero tolerance for harassment and bullying"
+    ]
+  },
+  "Gaming Platform": {
+    rules: [
+      "Higher tolerance for competitive and trash-talk language",
+      "Threats of real-world violence are banned",
+      "Hate speech targeting protected groups is banned",
+      "Spam and scam content is banned",
+      "Context-sensitive: in-game banter vs. targeted harassment"
+    ]
+  },
+  "Professional": {
+    rules: [
+      "Low tolerance for any offensive or inappropriate language",
+      "Strict enforcement of harassment and discrimination policies",
+      "Hate speech and bias are zero tolerance",
+      "Reputational and legal risk drives stricter standards",
+      "Professional conduct expected at all times"
+    ]
+  },
+  "Community / Forum": {
+    rules: [
+      "Debate and strong opinions are permitted",
+      "Personal attacks and doxxing are banned",
+      "Hate speech targeting protected groups is banned",
+      "Spam and manipulation are banned",
+      "Slightly higher tolerance for contentious discussion"
+    ]
+  },
+  "VR / Metaverse": {
+    rules: [
+      "Evolving norms — enforcement is context-sensitive",
+      "Harassment in immersive environments treated seriously",
+      "Hate speech and discrimination are banned",
+      "Higher tolerance for edgy or unconventional expression",
+      "User safety in spatial contexts prioritized"
+    ]
+  },
+  "Custom": {
+    rules: [
+      "Rules defined by your custom policy input below"
+    ]
+  }
+};
+
 const STATE_MAP = {
   platform: (value) => {
     selectedPlatform = value;
     updateCustomPolicyVisibility();
+    updatePlatformPolicyBox(value);
   },
 };
 
@@ -301,6 +382,26 @@ function updateCustomPolicyVisibility() {
     return;
   }
   customPolicyField.classList.toggle("hidden", selectedPlatform !== "Custom");
+}
+
+function updatePlatformPolicyBox(platform) {
+  const policyBox = document.getElementById("platform-policy-box");
+  if (!policyBox) return;
+
+  const policy = PLATFORM_POLICIES[platform];
+  if (!policy) return;
+
+  const rulesHtml = policy.rules
+    .map((rule) => `<li>${escapeHtml(rule)}</li>`)
+    .join("");
+
+  policyBox.innerHTML = `
+    <div class="platform-policy-box-label">PLATFORM POLICY GUIDELINES</div>
+    <ul>${rulesHtml}</ul>
+    <div class="platform-policy-footer">
+      These rules are used by the AI interpretation model to assess alignment of moderation results.
+    </div>
+  `;
 }
 
 function initializeModalSelects() {
@@ -1043,6 +1144,7 @@ if (textInput) {
 updateCounter();
 initializeModalSelects();
 updateCustomPolicyVisibility();
+updatePlatformPolicyBox("Reddit");
 
 (function () {
   fetch("/models")

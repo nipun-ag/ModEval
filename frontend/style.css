@@ -663,6 +663,59 @@ textarea:focus {
   text-decoration: underline;
 }
 
+.platform-policy-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin-top: 8px;
+  font-size: 11px;
+}
+
+.platform-policy-box-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.platform-policy-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px 0;
+}
+
+.platform-policy-box ul li {
+  font-family: "Inter", -apple-system, sans-serif;
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  padding: 3px 0;
+  padding-left: 12px;
+  position: relative;
+}
+
+.platform-policy-box ul li::before {
+  content: "·";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+
+.platform-policy-footer {
+  font-family: "Inter", -apple-system, sans-serif;
+  font-size: 10px;
+  font-style: italic;
+  color: var(--muted);
+  line-height: 1.4;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
 .policy-guidelines {
   margin: 0;
   padding-left: 18px;
