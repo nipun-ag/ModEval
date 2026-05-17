@@ -3020,6 +3020,8 @@ tr.tier-header {
   align-items: center;
   gap: 24px;
   margin-bottom: 8px;
+  min-width: 0;
+  overflow: hidden;
   transition: border-color 150ms ease;
 }
 
@@ -3040,7 +3042,7 @@ tr.tier-header {
 }
 
 .breakdown-model-info {
-  width: 200px;
+  width: 160px;
   flex-shrink: 0;
 }
 
@@ -3073,9 +3075,10 @@ tr.tier-header {
 
 .breakdown-fields {
   display: grid;
-  grid-template-columns: 120px 160px 120px 140px;
+  grid-template-columns: 100px 140px 110px 120px;
   gap: 16px;
   flex: 1;
+  min-width: 0;
   align-items: center;
 }
 
