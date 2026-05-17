@@ -1165,6 +1165,20 @@ window.addEventListener("resize", () => {
 
 updateCounter();
 initializeModalSelects();
+
+(function () {
+  fetch("/models")
+    .then((r) => r.json())
+    .then((data) => {
+      const el = document.getElementById("models-active-count");
+      if (el && data.active_count != null) {
+        el.textContent = data.active_count + " Models Available";
+      }
+    })
+    .catch((err) => {
+      console.error("Failed to fetch model count:", err);
+    });
+})();
 setSectionExpanded(contextToggle, contextContent, false);
 setHeroState("Review", "");
 setPrimaryView("analysis");

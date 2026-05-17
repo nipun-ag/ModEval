@@ -8,6 +8,7 @@ from flask import Flask, jsonify, send_from_directory
 
 from backend.routes.analyze import analyze_bp
 from backend.routes.batch import batch_bp
+from backend.routes.models import models_bp
 
 
 def create_app() -> Flask:
@@ -17,6 +18,7 @@ def create_app() -> Flask:
 
     app.register_blueprint(analyze_bp)
     app.register_blueprint(batch_bp)
+    app.register_blueprint(models_bp)
 
     @app.get("/health")
     def healthcheck():
