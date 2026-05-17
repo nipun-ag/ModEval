@@ -6,21 +6,11 @@ from __future__ import annotations
 def build_context_summary(
     platform_context: str, content_type: str, strictness: str, thresholds: dict
 ) -> str:
-    """Explain how the chosen context changed moderation thresholds."""
-    total_modifier = thresholds["total_modifier"]
-    direction = "raised" if total_modifier > 0 else "lowered" if total_modifier < 0 else "kept"
-
-    if total_modifier == 0:
-        return (
-            f"{platform_context}, {content_type}, and {strictness} strictness kept the default "
-            f"thresholds in place."
-        )
-
+    """Explain the active thresholds (now fixed; platform judgment handled by Claude Haiku)."""
     return (
-        f"{platform_context} platform, {content_type} content, and {strictness} strictness "
-        f"{direction} thresholds by {abs(total_modifier):.2f}. "
-        f"Review starts at {thresholds['review_threshold']:.2f} and Remove starts at "
-        f"{thresholds['remove_threshold']:.2f}."
+        f"Fixed thresholds in use: Review at {thresholds['review_threshold']:.2f}, "
+        f"Remove at {thresholds['remove_threshold']:.2f}. "
+        f"Platform-specific policy judgment is handled by the alignment assessment."
     )
 
 
