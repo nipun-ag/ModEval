@@ -65,14 +65,24 @@
               </div>
             </div>
 
-            <p class="context-explainer">
-              Platform selection determines which policy rules ModEval uses to
-              score each model's output. A model flagging content on Discord is
-              judged differently than the same model on a professional network —
-              because their policies differ.
-              <a class="context-explainer-link" id="explainer-howtoworks-link"
-                 href="#">See How It Works →</a>
-            </p>
+            <div class="button-row">
+              <button type="submit" id="analyze-button" class="primary-button">
+                <span class="button-label">Execute Analysis</span>
+              </button>
+            </div>
+
+            <div class="context-explainer-wrapper">
+              <span class="context-info-icon" id="context-info-icon">ⓘ</span>
+              <div class="context-explainer" id="context-explainer-popup">
+                The platform you select determines how our AI interpretation layer
+                assesses each model's output. The moderation models themselves are
+                frozen — they always return the same scores regardless of platform.
+                What changes is how those scores are evaluated against each
+                platform's specific content policies.
+                <a class="context-explainer-link" id="explainer-howtoworks-link"
+                   href="#">See How It Works →</a>
+              </div>
+            </div>
 
             <div class="field-block">
               <label for="platform">PLATFORM</label>
@@ -125,12 +135,6 @@
                 maxlength="500"
                 placeholder="Example: Zero tolerance for hate and self-harm. Deprioritize profanity unless directly targeted."
               ></textarea>
-            </div>
-
-            <div class="button-row">
-              <button type="submit" id="analyze-button" class="primary-button">
-                <span class="button-label">Execute Analysis</span>
-              </button>
             </div>
           </form>
         </div>

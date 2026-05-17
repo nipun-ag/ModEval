@@ -639,17 +639,45 @@ textarea:focus {
   opacity: 1;
 }
 
+.context-explainer-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.context-info-icon {
+  font-size: 14px;
+  color: var(--muted);
+  cursor: default;
+  user-select: none;
+  transition: color 150ms ease;
+}
+
+.context-info-icon:hover {
+  color: var(--accent);
+}
+
 .context-explainer {
+  display: none;
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 8px);
+  width: 320px;
+  background: var(--surface2);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  padding: 12px 14px;
   font-family: Inter, sans-serif;
   font-size: 11px;
   line-height: 1.6;
-  color: var(--muted);
-  margin-bottom: 12px;
-  padding: 10px 12px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  color: var(--text-secondary);
+  z-index: 100;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
   border-left: 3px solid var(--accent);
+}
+
+.context-explainer-wrapper:hover .context-explainer {
+  display: block;
 }
 
 .context-explainer-link {
