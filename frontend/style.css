@@ -1228,13 +1228,13 @@ textarea:focus {
 }
 
 .ai-insight-card-new.ai-insight-card-new--wide {
-  grid-column: span 8;
+  grid-column: span 6;
 }
 
 .ai-insight-card-new.ai-insight-card-new--accent {
-  grid-column: span 4;
-  background: var(--accent-light);
-  border-color: var(--accent);
+  grid-column: span 6;
+  background: var(--surface2);
+  border-color: var(--border);
 }
 
 @media (max-width: 900px) {
