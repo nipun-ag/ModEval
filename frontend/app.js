@@ -1114,6 +1114,15 @@ showPanelState("empty");
     showPanel('models-panel');
     setActiveNav('nav-models');
   });
+
+  const explainerLink = document.getElementById('explainer-howtoworks-link');
+  if (explainerLink) {
+    explainerLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      showPanel('how-it-works-panel');
+      setActiveNav('nav-how-it-works');
+    });
+  }
 })();
 (function() {
   document.querySelectorAll('.lower-tab')

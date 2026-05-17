@@ -639,6 +639,30 @@ textarea:focus {
   opacity: 1;
 }
 
+.context-explainer {
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  border-left: 3px solid var(--accent);
+}
+
+.context-explainer-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.context-explainer-link:hover {
+  text-decoration: underline;
+}
+
 .policy-guidelines {
   margin: 0;
   padding-left: 18px;
