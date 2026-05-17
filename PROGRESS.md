@@ -6,6 +6,26 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ## 2026-05-18
 
+**feat: add pre-filled template to custom policy textarea**
+
+Changes:
+- Defined CUSTOM_POLICY_TEMPLATE constant in frontend/app.js with three structured sections: ZERO TOLERANCE, DEPRIORITIZE, CONTEXT
+- Modified STATE_MAP platform handler to auto-fill custom_policy_text textarea when "Custom" platform is selected
+- Template only applies if textarea is empty (checked with .value.trim() === ""), preserving any existing user content
+- When users switch away from Custom and back, existing content is preserved and template does not overwrite it
+
+Why:
+- Reduces friction for first-time users by providing a clear policy structure template
+- Helps users understand expected policy format with examples and placeholder text
+- Content preservation ensures users don't lose work when navigating between platforms
+
+Tradeoffs:
+- None; pure UX improvement with full content preservation
+
+---
+
+## 2026-05-18
+
 **feat: redesign insights tab with asymmetric layout and elevated AI summary**
 
 Changes:

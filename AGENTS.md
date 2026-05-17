@@ -206,6 +206,7 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
   - Benchmark placeholder panel with coming soon state and 3 feature preview cards
   - Ambient glow blobs on results panel background
 - Deployed on Hetzner VPS at modeval.bynipun.com — no cold starts
+- Custom policy template: When users select "Custom" platform, textarea auto-fills with structured template (ZERO TOLERANCE, DEPRIORITIZE, CONTEXT sections); template only applies to empty textarea, preserving user edits when switching away and back
 
 ## Known Limitations
 - HuggingFace free tier may rate-limit under high traffic
