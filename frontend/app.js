@@ -596,7 +596,7 @@ function renderBreakdownCard(result) {
             <div class="severity-bar-fill ${sevClass}" style="width:${sevWidth}%;"></div>
           </div>
         </div>
-        <div class="breakdown-confidence">${Number(result.confidence).toFixed(4)}</div>
+        <div class="breakdown-confidence">${Number(result.confidence).toFixed(2)}</div>
       </div>
       <button class="breakdown-action-btn ${actionBtnClass}">${escapeHtml(result.action)}</button>
     </div>
