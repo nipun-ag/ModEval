@@ -85,10 +85,10 @@ Secrets are stored in Doppler under project `modeval`, config `prd`.
 - `OPENAI_API_KEY` — OpenAI moderation model
 - `HF_API_KEY` — HuggingFace inference API (open source models)
 - `HIVE_API_KEY` — The Hive AI text moderation (replaced Perspective API)
+- `ANTHROPIC_API_KEY` — Claude Haiku interpretation layer (alignment assessment + AI summary)
 
 **Not yet configured (models show "Coming Soon"):**
 - `AZURE_CS_KEY` + `AZURE_CS_ENDPOINT`
-- `AWS_ACCESS_KEY_ID` + `AWS_SECRET_ACCESS_KEY` + `AWS_REGION`
 - `GOOGLE_NLP_KEY`
 
 Adding a new secret to Doppler takes effect on the next `systemctl restart modeval` — no server changes needed.
