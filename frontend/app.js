@@ -618,6 +618,7 @@ function renderResults(results) {
         <span>CATEGORY</span>
         <span>SEVERITY</span>
         <span>CONFIDENCE</span>
+        <span>ACTION</span>
       </div>
     </div>`;
 

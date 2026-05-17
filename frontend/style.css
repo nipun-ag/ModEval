@@ -3172,8 +3172,9 @@ tr.tier-header {
   display: flex;
   align-items: center;
   gap: 24px;
-  padding: 0 24px 8px 24px;
-  margin-bottom: 4px;
+  padding: 0 24px 10px 24px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--border-strong);
 }
 
 .breakdown-header-spacer {
@@ -3183,11 +3184,11 @@ tr.tier-header {
 
 .breakdown-header-fields {
   display: grid;
-  grid-template-columns: 110px 150px 120px;
+  grid-template-columns: 110px 150px 120px auto;
   gap: 16px;
   flex: 1;
   font-family: "JetBrains Mono", monospace;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
