@@ -8,8 +8,6 @@ const explainabilityList = document.getElementById("explainability-list");
 const strictestModel = document.getElementById("strictest-model");
 const mostLenientModel = document.getElementById("most-lenient-model");
 const batchSummary = document.getElementById("batch-summary");
-const contextToggle = document.getElementById("context-toggle");
-const contextContent = document.getElementById("context-content");
 const customPolicyField = document.getElementById("custom-policy-field");
 const analyzeButton = document.getElementById("analyze-button");
 const workspace = document.querySelector(".workspace");
@@ -1036,20 +1034,6 @@ if (textInput) {
   textInput.addEventListener("input", updateCounter);
   textInput.addEventListener("animationend", () => textInput.classList.remove("example-loaded"));
 }
-if (contextToggle) {
-  contextToggle.addEventListener("click", () => {
-    const expanded = contextToggle.getAttribute("aria-expanded") === "true";
-    setSectionExpanded(contextToggle, contextContent, !expanded);
-  });
-}
-
-window.addEventListener("resize", () => {
-  [contextContent].forEach((content) => {
-    if (content.classList.contains("expanded")) {
-      content.style.maxHeight = `${content.scrollHeight}px`;
-    }
-  });
-});
 
 updateCounter();
 initializeModalSelects();
@@ -1068,7 +1052,6 @@ updateCustomPolicyVisibility();
       console.warn("Failed to fetch model count:", err);
     });
 })();
-setSectionExpanded(contextToggle, contextContent, false);
 setHeroState("Review", "");
 setPrimaryView("analysis");
 showPanelState("empty");
