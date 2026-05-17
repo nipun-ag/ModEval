@@ -6,7 +6,7 @@ ModEval is a context and policy-aware AI moderation evaluation system. Runs text
 ## Tech Stack
 - **Backend:** Python 3.14, Flask 3.1, Gunicorn
 - **Models:** OpenAI Moderation API + 4 HuggingFace models (Inference API)
-- **AI Summary:** OpenAI GPT-4o-mini
+- **AI Summary:** Claude Haiku (Anthropic)
 - **Frontend:** Plain HTML, CSS, JavaScript (no frameworks)
 - **Deployment:** Hetzner VPS (self-hosted) — see INFRASTRUCTURE.md
 
@@ -52,6 +52,9 @@ docs/ARCHITECTURE.md           Complete technical reference (this file)
 - **Topbar nav IDs** — nav-analysis, nav-benchmark, nav-how-it-works, nav-models
 - **Panel IDs** — benchmark-panel, how-it-works-panel, models-panel
 - **Topbar status pill ID** — models-active-count (updated dynamically by /models fetch on page load)
+- **Platform policy box ID** — platform-policy-box (dynamic policy guidelines below platform selector)
+- **Context explainer link ID** — explainer-howtoworks-link (how it works link above platform selector)
+- **Alignment assessment container ID** — alignment-assessment-container (Insights tab alignment verdicts section)
 All these are referenced in app.js and must not be renamed or removed.
 
 ## Where to Find Things
@@ -170,18 +173,23 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
   - Enterprise APIs tier with 3 vendor models
   - Open Source Models tier with 4 HuggingFace + OpenAI
   - Disabled models show gray rows at 0.4 opacity
-- Unified platform selector (Reddit, Discord, Facebook, Instagram, Custom) combining threshold modifier + policy rules
-- PLATFORM_MAP in config.py maps each platform to threshold_modifier and policy_key
-- Content Type hardcoded to "Original Post" and Strictness hardcoded to "Balanced" in all analyses
-- AI-powered policy alignment using Claude Haiku: single batched call evaluates all model results against platform policy with original content context, returns alignment_score, aligned (bool), and alignment_reason for each model; flags model failures and acknowledges ambiguous content
+- Platform options reduced to 5: Reddit, Discord, Facebook, Instagram, Custom (Gaming Platform, Professional, Community/Forum, VR/Metaverse removed)
+- PLATFORM_MAP in config.py updated to match 5 active platforms
+- Content Type and Strictness dropdowns removed from UI entirely; backend defaults to "Original Post" and "Balanced" if not provided
+- AI-powered policy alignment using Claude Haiku (claude-haiku-4-5-20251001): single batched call evaluates all model results against platform policy with original content context, returns alignment_score, aligned (bool), and alignment_reason for each model; flags model failures and acknowledges ambiguous content
+- Alignment reasons reference actual content being analyzed, not just category labels
 - Fallback to keyword-based alignment logic if Claude call fails, ensuring analysis always completes
-- **Requires ANTHROPIC_API_KEY in Doppler (project: modeval, config: prd) for production**
+- Both interpretation calls (alignment + AI summary) use Anthropic SDK — anthropic package added to requirements.txt
+- **Requires ANTHROPIC_API_KEY in Doppler (project: modeval, config: prd) for production** — already configured
 - Dynamic platform policy guidelines box below platform selector showing accurate sourced rules for each platform (Reddit, Discord, Facebook, Instagram based on official documentation)
+- Context explainer blurb added above Platform selector explaining why platform selection exists, with link to How It Works tab
+- Platform selector simplified to 5 options with modal dropdown showing platform name + description
 - AI analysis with 4 structured analytical fields: disagreement_explanation (what does disagreement reveal?), risk_narrative (direct CLEAR/SAFE/GREY verdict with reasoning), context_sensitivity (human review needed?), contested_category (most disagreed category)
 - Senior T&S analyst persona in AI summary generation using Claude Haiku: flags model failures, explains ambiguity, recommends human review, avoids passive summarization
 - Disagreement detection and banner (scoped to Summary tab only — first child of #lower-panel-summary)
 - Dynamic topbar model count: GET /models endpoint returns active/total from credential-presence check; JS updates #models-active-count pill on page load and does not overwrite it during analysis
-- Batch analysis validates each row independently and excludes error rows from flagged-rate calculations`r`n- 100 pre-loaded test cases across 10 violation categories
+- Batch analysis validates each row independently and excludes error rows from flagged-rate calculations
+- 100 pre-loaded test cases across 10 violation categories
 - Phase 0 UX overhaul complete:
   - Topbar navigation with 4 tabs: ANALYSIS (active), BENCHMARK (locked), HOW IT WORKS, MODELS
   - HOW IT WORKS and MODELS are full-page panels accessed from topbar, not results tabs
@@ -189,8 +197,8 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
   - Consensus hero card leads results with large action word, AI analysis subtitle, donut chart, severity gauge, and action legend
   - Results panel has three lower tabs: Summary, Model Breakdown, Insights — hidden until analysis runs
   - Summary tab: disagreement banner + consensus hero + donut + gauge + legend
-  - Model Breakdown tab: card-per-row layout with section header rows (CATEGORY, SEVERITY, CONFIDENCE, ALIGNMENT); one card per model; each alignment field shows ALIGNED (green) or MISALIGNED (red) badge with plain-English alignment_reason below
-  - Insights tab: bento grid with 6 cards — strictest/lenient, disagreement explanation, risk narrative, context sensitivity, contested category
+  - Model Breakdown tab: card-per-row layout with section header rows (CATEGORY, SEVERITY, CONFIDENCE, ACTION); one card per model; no alignment column
+  - Insights tab: bento grid with 6 cards — strictest/lenient, disagreement explanation, risk narrative, context sensitivity, contested category, plus ALIGNMENT ASSESSMENT section showing all model alignment verdicts and reasons with footer "Alignment assessed by Claude Haiku against [platform] content policy."
   - How It Works panel with 7 sections: Normalization, Context Engine (simplified to platform modifier only), AI-powered Policy Alignment Engine, Disagreement Detection, AI Interpretation Layer, Why These Models, Known Limitations
   - Benchmark placeholder panel with coming soon state and 3 feature preview cards
   - Ambient glow blobs on results panel background

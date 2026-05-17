@@ -55,9 +55,9 @@ modeval/
 ```json
 {
   "text": "string (1-500 characters, required)",
-  "platform": "Reddit | Discord | Facebook | Instagram | Gaming Platform | Professional | Community / Forum | VR / Metaverse | Custom (default: Reddit)",
-  "content_type": "Original Post | Comment/Reply | Username | Bio | UGC (default: Original Post)",
-  "strictness": "Strict | Balanced | Lenient (default: Balanced)",
+  "platform": "Reddit | Discord | Facebook | Instagram | Custom (default: Reddit)",
+  "content_type": "string (optional, defaults to 'Original Post')",
+  "strictness": "string (optional, defaults to 'Balanced')",
   "custom_policy_text": "string (optional, used only when platform='Custom')"
 }
 ```
@@ -65,13 +65,9 @@ modeval/
 **Platform Mapping:**
 Each platform option combines a threshold modifier and policy rules via PLATFORM_MAP:
 - **Reddit**: 0.00 modifier, Reddit policy (zero tolerance: violence, self-harm, sexual/minors, hate)
-- **Discord**: 0.00 modifier, Discord policy (zero tolerance: sexual/minors, harassment/threatening; deprioritized: profanity, insult, toxicity)
-- **Facebook**: 0.00 modifier, Facebook policy (zero tolerance: hate, violence, sexual, self-harm, harassment)
-- **Instagram**: 0.00 modifier, Instagram policy (zero tolerance: hate, violence, sexual, self-harm, harassment)
-- **Gaming Platform**: -0.10 modifier, generic policy (no alignment enforcement)
-- **Professional**: +0.15 modifier, generic policy (no alignment enforcement)
-- **Community / Forum**: -0.05 modifier, generic policy (no alignment enforcement)
-- **VR / Metaverse**: -0.15 modifier, generic policy (no alignment enforcement)
+- **Discord**: +0.05 modifier, Discord policy (zero tolerance: sexual/minors, harassment/threatening; deprioritized: profanity, insult, toxicity)
+- **Facebook**: -0.05 modifier, Facebook policy (zero tolerance: hate, violence, sexual, self-harm, harassment)
+- **Instagram**: -0.10 modifier, Instagram policy (zero tolerance: hate, violence, sexual, self-harm, harassment)
 - **Custom**: 0.00 modifier, custom policy (parsed from custom_policy_text)
 
 **Response Body:**
@@ -86,8 +82,9 @@ Each platform option combines a threshold modifier and policy rules via PLATFORM
       "confidence": "0.0-1.0 float, 4 decimal places",
       "action": "Allow | Review | Remove",
       "flagged": "boolean — true if action != Allow",
-      "alignment_score": "0.0-1.0 float — policy alignment",
-      "aligned": "boolean — true if action matches policy expectation",
+      "alignment_score": "0.0-1.0 float — AI-powered policy alignment",
+      "aligned": "boolean — true if model verdict matches platform policy",
+      "alignment_reason": "string — content-aware explanation from Claude Haiku",
       "explanation": "string — plain English explainer text",
       "error": "string (optional) — only on model failures"
     },
@@ -106,7 +103,7 @@ Each platform option combines a threshold modifier and policy rules via PLATFORM
   "ai_analysis": {
     "disagreement_explanation": "string — why models disagreed (empty if consensus)",
     "risk_narrative": "string — severity and context of content",
-    "context_sensitivity": "string — how platform/content/strictness modifiers affect verdict",
+    "context_sensitivity": "string — how platform modifiers affect verdict",
     "contested_category": "string — most disputed category across models"
   }
 }
@@ -291,8 +288,8 @@ MAX_THRESHOLD = 0.90              # Ceiling — never go above
 ### Threshold Calculation Formula
 
 ```
-adjusted_review_threshold = clamp(BASE_REVIEW_THRESHOLD + platform_mod + content_mod + strictness_mod, 0.10, 0.90)
-adjusted_remove_threshold = clamp(BASE_REMOVE_THRESHOLD + platform_mod + content_mod + strictness_mod, 0.10, 0.90)
+adjusted_review_threshold = clamp(BASE_REVIEW_THRESHOLD + platform_mod, 0.10, 0.90)
+adjusted_remove_threshold = clamp(BASE_REMOVE_THRESHOLD + platform_mod, 0.10, 0.90)
 ```
 
 If `review_threshold >= remove_threshold`, clamp review to `remove_threshold - 0.05` to preserve ordering.
@@ -304,41 +301,28 @@ Reflects real platform risk tolerance and enforcement philosophy.
 
 | Platform | Modifier | Rationale |
 |---|---|---|
-| Neutral | 0.00 | No platform context (default) |
-| Social Media | 0.00 | Baseline platform context |
-| Gaming | +0.10 | Higher tolerance for competitive language and banter |
-| Professional | -0.15 | Lower thresholds for stricter workplace/compliance moderation |
-| Forum / Community | +0.05 | Slightly higher tolerance for debate and discussion |
-| VR / Metaverse | +0.15 | Higher tolerance for emergent norms and in-world banter |
-
-### Content Type Modifiers
-Reflects different moderation intensity by content placement.
-
-| Content Type | Modifier | Rationale |
-|---|---|---|
-| Original Post | 0.00 | Baseline moderation |
-| Comment / Reply | +0.05 | Slightly more lenient, inline context helps interpretation |
-| Username | -0.20 | Very strict — username is permanent, visible, identity |
-| Bio / Profile | -0.15 | Strict — persistent identity signal |
-| UGC (User-Generated Content) | +0.05 | Slightly lenient — bulk volume requires balance |
-
-### Strictness Modifiers
-User-controlled policy strictness slider.
-
-| Strictness | Modifier | Rationale |
-|---|---|---|
-| Strict | -0.15 | Lower thresholds, flag more content |
-| Balanced | 0.00 | Baseline, no adjustment |
-| Lenient | +0.15 | Raise thresholds, only extreme violations |
+| Reddit | 0.00 | Baseline — established moderation standards |
+| Discord | +0.05 | Slightly stricter — real-time chat context |
+| Facebook | -0.05 | Slightly more lenient — diverse content types |
+| Instagram | -0.10 | More lenient — visual-first platform norms |
+| Custom | 0.00 | User-defined policy via custom_policy_text |
 
 ### Example Threshold Calculation
 
-**Context:** Social Media, Comment/Reply, Strict
+**Context:** Reddit (baseline platform)
 
 ```
-platform_mod: 0.00 (Social Media baseline)
-content_mod: +0.05 (Comment/Reply = slightly more lenient)
-strictness_mod: -0.15 (Strict = stricter)
+platform_mod: 0.00 (Reddit baseline)
+total_mod: 0.00
+
+review_threshold = clamp(0.40 + 0.00) = 0.40
+remove_threshold = clamp(0.70 + 0.00) = 0.70
+```
+
+**Context:** Instagram (lenient platform)
+
+```
+platform_mod: -0.10 (Instagram = more lenient)
 total_mod: -0.10
 
 review_threshold = clamp(0.40 - 0.10) = 0.30
@@ -349,7 +333,34 @@ remove_threshold = clamp(0.70 - 0.10) = 0.60
 
 ## Policy Alignment Scoring
 
-### Formula
+### AI-Powered Alignment (Primary)
+`evaluate_alignment_with_ai()` in `policy_engine.py` makes a single batched Claude Haiku (claude-haiku-4-5-20251001) call to assess alignment for all active models simultaneously.
+
+**Input to Claude:**
+- Original text being analyzed (for content-aware assessment)
+- All active model results (model name, action, confidence, top_category, severity)
+- Platform-specific policy instructions (zero-tolerance categories, deprioritized categories)
+
+**Output from Claude (JSON array):**
+```json
+[
+  {
+    "model": "Hive Moderation",
+    "aligned": true,
+    "alignment_score": 0.92,
+    "alignment_reason": "Hive correctly flagged harassment at 0.87 confidence, aligning with Discord's zero-tolerance for harassment/threatening."
+  },
+  ...
+]
+```
+
+**Response handling:**
+- max_tokens: 1200 (increased to accommodate detailed reasons for all models)
+- Robust JSON array extraction handles Claude responses with extra text
+- Fallback to keyword-based `evaluate_policy_alignment()` if Claude call fails
+
+### Keyword-Based Alignment (Fallback)
+Used only when AI-powered alignment fails. Original formula:
 ```
 alignment_score = 1 - abs(model_confidence - policy_expected_threshold)
 ```
@@ -486,10 +497,17 @@ severity = min(10, max(1, round(score * 10)))
 - Set as secret in Doppler (project: modeval, config: prd) or in local `.env`
 
 **OPENAI_API_KEY**
-- OpenAI API key for GPT-4o-mini (AI analysis generation)
+- OpenAI API key for OpenAI Moderation API (model #8 in the pipeline)
 - Get at: platform.openai.ai/api-keys
 - Set as secret in Doppler (project: modeval, config: prd) or in local `.env`
-- Falls back to empty string (AI analysis disabled) if not provided
+- Falls back to empty string (model disabled) if not provided
+
+**ANTHROPIC_API_KEY**
+- Anthropic API key for Claude Haiku (claude-haiku-4-5-20251001)
+- Used for AI-powered policy alignment assessment and AI summary generation
+- Get at: console.anthropic.com
+- Set as secret in Doppler (project: modeval, config: prd) or in local `.env`
+- Required for both `evaluate_alignment_with_ai()` and `generate_ai_analysis()`
 
 ### Local Development Only
 Create `.env` file in project root:
@@ -583,7 +601,8 @@ Hetzner VPS (hetzner.com) — CX23 plan
 - **Inference Latency** — Models run sequentially or in parallel depending on infrastructure. Expect 2-8 seconds per request.
 
 ### System-Level
-- **AI Summary Fallback** — If OpenAI AI analysis generation fails, `ai_analysis` returns an empty object. UI handles gracefully.
+- **AI Summary Fallback** — If Claude Haiku AI analysis generation fails, `ai_analysis` returns an empty object. UI handles gracefully.
+- **Alignment Fallback** — If Claude Haiku alignment call fails, falls back to keyword-based `evaluate_policy_alignment()`.
 - **No Content Storage** — All submissions are ephemeral. No logging, no persistence by design.
 
 ---
@@ -596,7 +615,7 @@ Hetzner VPS (hetzner.com) — CX23 plan
 | WSGI Server | Gunicorn | (latest) | Production HTTP server |
 | Python | Python | 3.14 | Core language |
 | Model Inference | HuggingFace, Enterprise APIs | (live) | 3 Enterprise APIs + 4 HuggingFace + OpenAI |
-| AI Summary | OpenAI API | gpt-4o-mini | Natural language synthesis |
+| AI Summary & Alignment | Anthropic API | claude-haiku-4-5-20251001 | Natural language synthesis + policy alignment |
 | Frontend | Vanilla HTML/CSS/JS | (native) | Single-page app, no frameworks |
 | Fonts | Google Fonts | (live) | DM Serif Display, Inter, JetBrains Mono |
 | Version Control | Git | (local) | Repository management |
@@ -624,7 +643,7 @@ Hetzner VPS (hetzner.com) — CX23 plan
 - Model orchestration via `ThreadPoolExecutor` (up to 8 parallel calls)
 - Per-model error handling (failures don't crash whole response)
 - Calls normalizer, policy engine, comparison engine, explainer
-- Generates structured AI analysis via OpenAI GPT-4o-mini
+- Generates structured AI analysis via Claude Haiku (claude-haiku-4-5-20251001) via Anthropic SDK
 - Returns unified response schema
 
 ### backend/routes/batch.py
@@ -654,8 +673,10 @@ Hetzner VPS (hetzner.com) — CX23 plan
 - Category alias mapping happens here
 
 ### backend/engine/policy_engine.py
-- `get_policy_rules()` — extracts zero-tolerance and deprioritized categories
-- `evaluate_policy_alignment()` — scores alignment, enforces policy rules
+- `get_policy_rules()` — extracts zero-tolerance and deprioritized categories per platform
+- `evaluate_alignment_with_ai()` — AI-powered batched Claude Haiku call assessing alignment for all active models simultaneously; receives original text for content-aware assessment; returns aligned (bool), alignment_score (float), alignment_reason (string) per model; max_tokens=1200 with robust JSON extraction
+- `evaluate_policy_alignment()` — keyword-based fallback alignment scoring if AI call fails
+- `get_platform_policy_summary()` — returns policy rules for 5 active platforms (Reddit, Discord, Facebook, Instagram, Custom)
 - Applies custom policy keyword matching
 - Returns alignment_score and enforced_action
 
@@ -678,9 +699,11 @@ Hetzner VPS (hetzner.com) — CX23 plan
 
 ### frontend/index.html
 - Single-page app shell
-- Defines modal overlays for platform, content type, strictness dropdowns
+- Defines modal overlay for platform dropdown (5 options: Reddit, Discord, Facebook, Instagram, Custom)
+- Platform policy guidelines box (#platform-policy-box) below platform selector
+- Context explainer blurb above platform selector with link to How It Works (#explainer-howtoworks-link)
 - Example pills for 100 pre-loaded test cases
-- Tab navigation: Analysis, How It Works, Models, (Did You Know deferred)
+- Tab navigation: Analysis, How It Works, Models
 - Empty divs for JavaScript to populate
 
 ### frontend/app.js
@@ -719,18 +742,18 @@ run_models() (parallel ThreadPoolExecutor)
     |- hf_roberta_offensive.analyze()
     |- hf_hate_speech.analyze()
     \- hf_bias.analyze()
-    └─→ hf_bias.analyze()
     ↓
 normalize_result() x 8
     ├─→ normalize_scores() (category aliasing)
     ├─→ score_to_severity() (1-10 scaling)
     └─→ determine_action() (Allow/Review/Remove)
     ↓
-evaluate_policy_alignment() × 5
-    ├─→ get_policy_rules()
-    └─→ alignment_score, enforced_action
+evaluate_alignment_with_ai() — single batched Claude Haiku call
+    ├─→ receives: original text + all active model results + platform policy
+    ├─→ returns: aligned, alignment_score, alignment_reason per model
+    └─→ fallback: evaluate_policy_alignment() if Claude call fails
     ↓
-explain_result() × 5
+explain_result() x active models
     └─→ human-readable explanation text
     ↓
 detect_disagreements()
@@ -741,16 +764,17 @@ build_insights()
     ├─→ most_lenient_model
     └─→ consensus_recommendation
     ↓
-generate_ai_analysis()
-    └─→ OpenAI GPT-4o-mini (async)
+generate_ai_analysis() — Claude Haiku (claude-haiku-4-5-20251001)
+    └─→ disagreement_explanation, risk_narrative, context_sensitivity, contested_category
     ↓
 JSON Response
     ↓
 frontend/app.js
     ├─→ render decision matrix
-    ├─→ render insight cards
+    ├─→ render insight cards (bento grid)
     ├─→ render disagreement banner
     ├─→ render AI summary
+    ├─→ render alignment assessment (Insights tab)
     └─→ display to user
 ```
 
@@ -795,14 +819,14 @@ in frontend/app.js.
 All panels are direct children of .app-shell:
 - .workspace -- the main analysis grid (default visible)
 - #benchmark-panel -- coming soon placeholder
-- #how-it-works-panel -- methodology content with 8 sections:
+- #how-it-works-panel -- methodology content with 7 sections:
   - Section 1: Hero area ("STAGE 01") + Architecture Flow (icon circles with connectors showing Input → Normalize → Score → Align → Decide)
   - Section 2: Unified Output Normalization (two-col text + code-window with macOS chrome)
-  - Section 3: Context Engine (two-col with equation block showing threshold formula)
-  - Section 4: Policy Alignment (two-col with pull quote about disagreements)
-  - Section 5-6: Decision Logic, Integrity Checks (methodology-card wrapper)
-  - Section 7: Points to Models tab (one-liner)
-  - Section 8: (deferred or removed)
+  - Section 3: Context Engine (simplified to platform modifier only; equation block showing threshold formula)
+  - Section 4: AI-powered Policy Alignment Engine (explains Claude Haiku batched alignment call)
+  - Section 5: Disagreement Detection
+  - Section 6: AI Interpretation Layer
+  - Section 7: Why These Models + Known Limitations
 - #models-panel -- model cards content (5 enterprise + 4 HuggingFace + OpenAI)
 
 ### Results Panel Lower Tabs
@@ -815,13 +839,14 @@ After analysis runs, three lower tabs appear inside
   gauge + legend (default active tab)
 - lower-panel-breakdown: card-per-row breakdown layout, one card per model,
   section header rows with column labels (CATEGORY, SEVERITY, CONFIDENCE, ACTION)
-- lower-panel-insights: bento grid with 6 insight cards:
+- lower-panel-insights: bento grid with 6 insight cards + ALIGNMENT ASSESSMENT section:
   - Strictest Model (6 cols)
   - Most Lenient Model (6 cols)
   - Why Models Disagreed (4 cols)
   - Risk Narrative (8 cols wide)
   - Context Sensitivity (8 cols wide)
   - Most Contested Category (4 cols with accent)
+  - ALIGNMENT ASSESSMENT (full-width, all model verdicts with footer "Alignment assessed by Claude Haiku against [platform] content policy.")
 
 Tab switching handled by click handlers on 
 .lower-tab elements in frontend/app.js.
@@ -868,6 +893,9 @@ These IDs must never be renamed:
 - gauge-fill-path, gauge-number (severity gauge)
 - hero-action, hero-subtitle (consensus hero)
 - models-active-count (topbar status pill — updated dynamically by /models fetch)
+- platform-policy-box (dynamic policy guidelines below platform selector)
+- explainer-howtoworks-link (how it works link above platform selector)
+- alignment-assessment-container (Insights tab alignment verdicts section)
 
 
 

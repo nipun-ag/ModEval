@@ -4,6 +4,44 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-05-17 (Part 5)
+
+**docs: finalize platform reduction, Claude Haiku alignment, UI component documentation**
+
+Changes:
+- Platform options finalized to 5: Reddit, Discord, Facebook, Instagram, Custom (Gaming Platform, Professional, Community/Forum, VR/Metaverse fully removed)
+- PLATFORM_MAP in config.py cleaned to match 5 active platforms only
+- Content Type and Strictness dropdowns removed from UI entirely; backend defaults to "Original Post" and "Balanced" if not provided
+- evaluate_alignment_with_ai() in policy_engine.py now makes single batched Claude Haiku call (claude-haiku-4-5-20251001) to assess alignment for all active models simultaneously
+- Each alignment result includes: aligned (bool), alignment_score (float), alignment_reason (string referencing actual content)
+- Original text passed to alignment call so reasons reference actual content being analyzed, not just category labels
+- max_tokens increased from 600 to 1200 for alignment call; robust JSON array extraction added to handle Claude responses with extra text
+- Fallback to keyword-based evaluate_policy_alignment() if Claude call fails
+- generate_ai_analysis() in analyze.py switched from gpt-4o-mini to claude-haiku-4-5-20251001 via Anthropic SDK
+- Both interpretation calls now use Anthropic SDK — anthropic package added to requirements.txt
+- ANTHROPIC_API_KEY required in Doppler (project: modeval, config: prd) — already configured
+- get_platform_policy_summary() cleaned up — removed 4 stale platform entries, kept only 5 active platforms
+- ALIGNMENT ASSESSMENT section added to Insights tab showing all model alignment verdicts and reasons with footer "Alignment assessed by Claude Haiku against [platform] content policy."
+- Alignment column removed from Model Breakdown tab — breakdown cards now show CATEGORY, SEVERITY, CONFIDENCE, ACTION only
+- Context explainer blurb added above Platform selector with link to How It Works tab
+- Platform policy guidelines box added below Platform selector showing actual policy rules for selected platform, updates dynamically
+- Platform selector simplified to 5 options with modal dropdown showing platform name + description
+- Alignment footer corrected to "Claude Haiku" from "GPT-4o-mini"
+
+Why:
+- Reducing to 5 platforms focuses the tool on real, widely-used platforms with documented policies
+- Claude Haiku provides sufficient T&S capability at lower cost for both alignment and summary generation
+- Passing original text to alignment enables content-aware policy assessment rather than generic category matching
+- Single batched call is more efficient than per-model evaluation
+- Removing alignment column from Model Breakdown simplifies the card layout; alignment is now consolidated in Insights tab
+- Platform policy box and context explainer improve UX by making platform selection purpose clear
+
+Tradeoffs:
+- Removed 4 platform options reduces flexibility but eliminates speculative enforcement profiles
+- Alignment reasons now reference actual content which is more useful but depends on Claude's text understanding quality
+
+---
+
 ## 2026-05-17
 
 **feat: switch interpretation layer to Claude Haiku, pass text context to alignment**
