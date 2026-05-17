@@ -570,7 +570,28 @@
         <p class="methodology-copy">
           Zero tolerance categories set the expected threshold to <span class="mono">0.10</span> — the model should be highly confident. Deprioritized categories push the threshold to <span class="mono">0.90</span>. Everything else uses the platform's adjusted remove threshold. A model shows Good Fit if its alignment score is <span class="mono">0.70</span> or above.
         </p>
-        <div class="formula-hero">Alignment score = 1 - difference between model confidence and expected threshold</div>
+        <div class="equation-block">
+          <p class="equation-label">THE ALIGNMENT EQUATION</p>
+          <div class="equation-display">
+            <span class="equation-score">Score</span>
+            <span class="equation-op">=</span>
+            <span class="equation-op">1 - |</span>
+            <div class="equation-var">
+              <span>C<sub>model</sub></span>
+            </div>
+            <span class="equation-op">-</span>
+            <div class="equation-var">
+              <span>T<sub>expected</sub></span>
+            </div>
+            <span class="equation-op">|</span>
+          </div>
+          <p class="equation-description">
+            The Alignment Score represents the inverse delta between model
+            confidence and the platform-specific expected threshold.
+            A score of <span class="mono">1.0</span> means perfect alignment.
+          </p>
+          <div class="equation-sigma">Σ</div>
+        </div>
         <p class="methodology-copy">
           A score of <span class="mono">1.0</span> means perfect alignment. The closer to <span class="mono">1.0</span>, the better the model matches what this category would expect.
         </p>

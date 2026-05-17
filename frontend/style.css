@@ -1490,6 +1490,81 @@ tbody td {
   color: var(--text);
 }
 
+.equation-block {
+  position: relative;
+  margin: 32px 0 0;
+  padding: 40px;
+  background: var(--surface2);
+  border: 1px solid var(--border-strong);
+  border-radius: 16px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.equation-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 24px;
+}
+
+.equation-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.equation-score {
+  font-family: 'DM Serif Display', serif;
+  font-size: 48px;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+}
+
+.equation-op {
+  font-family: 'DM Serif Display', serif;
+  font-size: 36px;
+  color: var(--text-secondary);
+}
+
+.equation-var {
+  font-family: 'DM Serif Display', serif;
+  font-size: 36px;
+  color: var(--text);
+}
+
+.equation-var sub {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.equation-description {
+  font-size: 13px;
+  color: var(--text-secondary);
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.equation-sigma {
+  position: absolute;
+  top: 50%;
+  right: 40px;
+  transform: translateY(-50%);
+  font-family: 'DM Serif Display', serif;
+  font-size: 100px;
+  color: var(--text);
+  opacity: 0.06;
+  pointer-events: none;
+  line-height: 1;
+}
+
 .methodology-table {
   width: 100%;
   border-collapse: collapse;
