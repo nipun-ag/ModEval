@@ -327,29 +327,11 @@ const PLATFORM_POLICIES = {
   }
 };
 
-const CUSTOM_POLICY_TEMPLATE = `ZERO TOLERANCE:
-- [category or rule that should always result in removal]
-- [add more lines as needed]
-
-DEPRIORITIZE:
-- [category or rule to be lenient on]
-- [add more lines as needed]
-
-CONTEXT:
-- [any additional platform context or rules]
-- [e.g. "this is a gaming platform for ages 13+"]`;
-
 const STATE_MAP = {
   platform: (value) => {
     selectedPlatform = value;
     updateCustomPolicyVisibility();
     updatePlatformPolicyBox(value);
-    if (value === "Custom") {
-      const textarea = document.getElementById("custom_policy_text");
-      if (textarea && textarea.value.trim() === "") {
-        textarea.value = CUSTOM_POLICY_TEMPLATE;
-      }
-    }
   },
 };
 
