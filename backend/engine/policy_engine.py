@@ -33,11 +33,19 @@ def summarize_custom_policy(policy_text: str) -> dict:
     }
 
 
-def get_policy_rules(policy_name: str, custom_policy_text: str = "") -> dict:
+def get_policy_rules(policy_key: str, custom_policy_text: str = "") -> dict:
     """Return policy rules for a predefined or custom policy selection."""
-    if policy_name == "Custom":
+    if policy_key == "custom":
         return summarize_custom_policy(custom_policy_text)
 
+    if policy_key == "generic":
+        return {
+            "zero_tolerance": set(),
+            "deprioritized": set(),
+            "summary": "Generic policy (no alignment enforcement).",
+        }
+
+    policy_name = policy_key.capitalize()
     policy = PREDEFINED_POLICIES.get(policy_name, PREDEFINED_POLICIES.get("Reddit", {}))
     return {
         "zero_tolerance": set(policy.get("zero_tolerance", set())),

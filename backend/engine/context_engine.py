@@ -8,7 +8,7 @@ from backend.config import (
     CONTENT_TYPE_MODIFIERS,
     MAX_THRESHOLD,
     MIN_THRESHOLD,
-    PLATFORM_MODIFIERS,
+    PLATFORM_MAP,
     STRICTNESS_MODIFIERS,
 )
 
@@ -19,10 +19,11 @@ def clamp(value: float, minimum: float = MIN_THRESHOLD, maximum: float = MAX_THR
 
 
 def calculate_context_adjustment(
-    platform_context: str, content_type: str, strictness: str
+    platform: str, content_type: str, strictness: str
 ) -> dict:
     """Return threshold modifiers and final thresholds for the selected context."""
-    platform_modifier = PLATFORM_MODIFIERS.get(platform_context, 0.0)
+    platform_config = PLATFORM_MAP.get(platform, {})
+    platform_modifier = platform_config.get("threshold_modifier", 0.0)
     content_modifier = CONTENT_TYPE_MODIFIERS.get(content_type, 0.0)
     strictness_modifier = STRICTNESS_MODIFIERS.get(strictness, 0.0)
     total_modifier = platform_modifier + content_modifier + strictness_modifier

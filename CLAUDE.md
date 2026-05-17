@@ -170,8 +170,9 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
   - Enterprise APIs tier with 3 vendor models
   - Open Source Models tier with 4 HuggingFace + OpenAI
   - Disabled models show gray rows at 0.4 opacity
-- Context Engine with platform (including Neutral default), content type, strictness modifiers
-- Policy alignment scoring for Reddit, Discord, Facebook, Instagram, and Custom keyword policies
+- Context Engine with unified platform selector (Reddit, Discord, Facebook, Instagram, Gaming Platform, Professional, Community / Forum, VR / Metaverse, Custom) that combines threshold modifier + policy rules
+- Policy alignment scoring for Reddit, Discord, Facebook, Instagram (named platforms) and generic policy for others
+- PLATFORM_MAP in config.py maps each platform to threshold_modifier and policy_key (policy_key can be "reddit", "discord", "facebook", "instagram", "generic", or "custom")
 - AI analysis with 4 structured fields: disagreement_explanation, risk_narrative, context_sensitivity, contested_category
 - Disagreement detection and banner (scoped to Summary tab only — first child of #lower-panel-summary)
 - Dynamic topbar model count: GET /models endpoint returns active/total from credential-presence check; JS updates #models-active-count pill on page load and does not overwrite it during analysis

@@ -55,13 +55,24 @@ modeval/
 ```json
 {
   "text": "string (1-500 characters, required)",
-  "platform_context": "Neutral | Social Media | Gaming | Professional | Forum | VR/Metaverse (default: Neutral)",
+  "platform": "Reddit | Discord | Facebook | Instagram | Gaming Platform | Professional | Community / Forum | VR / Metaverse | Custom (default: Reddit)",
   "content_type": "Original Post | Comment/Reply | Username | Bio | UGC (default: Original Post)",
   "strictness": "Strict | Balanced | Lenient (default: Balanced)",
-  "policy": "Reddit | Discord | Facebook | Instagram | Custom (default: Reddit)",
-  "custom_policy_text": "string (optional, used only when policy='Custom')"
+  "custom_policy_text": "string (optional, used only when platform='Custom')"
 }
 ```
+
+**Platform Mapping:**
+Each platform option combines a threshold modifier and policy rules via PLATFORM_MAP:
+- **Reddit**: 0.00 modifier, Reddit policy (zero tolerance: violence, self-harm, sexual/minors, hate)
+- **Discord**: 0.00 modifier, Discord policy (zero tolerance: sexual/minors, harassment/threatening; deprioritized: profanity, insult, toxicity)
+- **Facebook**: 0.00 modifier, Facebook policy (zero tolerance: hate, violence, sexual, self-harm, harassment)
+- **Instagram**: 0.00 modifier, Instagram policy (zero tolerance: hate, violence, sexual, self-harm, harassment)
+- **Gaming Platform**: -0.10 modifier, generic policy (no alignment enforcement)
+- **Professional**: +0.15 modifier, generic policy (no alignment enforcement)
+- **Community / Forum**: -0.05 modifier, generic policy (no alignment enforcement)
+- **VR / Metaverse**: -0.15 modifier, generic policy (no alignment enforcement)
+- **Custom**: 0.00 modifier, custom policy (parsed from custom_policy_text)
 
 **Response Body:**
 ```json
@@ -115,10 +126,10 @@ modeval/
 ```json
 {
   "texts": ["string", "string", ...],
-  "platform_context": "string",
+  "platform": "string (same options as /analyze)",
   "content_type": "string",
   "strictness": "string",
-  "policy": "string"
+  "custom_policy_text": "string (optional, used only when platform='Custom')"
 }
 ```
 
@@ -525,10 +536,9 @@ curl -X POST http://127.0.0.1:5000/analyze \
   -H "Content-Type: application/json" \
   -d '{
     "text": "I hate this",
-    "platform_context": "Social Media",
+    "platform": "Reddit",
     "content_type": "Original Post",
-    "strictness": "Balanced",
-    "policy": "Reddit"
+    "strictness": "Balanced"
   }'
 ```
 

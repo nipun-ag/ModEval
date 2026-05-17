@@ -259,11 +259,11 @@ const EXAMPLE_LIBRARY = {
 };
 
 const lastExampleByCategory = {};
-let selectedPolicy = "Reddit";
+let selectedPlatform = "Reddit";
 
 const STATE_MAP = {
-  policy: (value) => {
-    selectedPolicy = value;
+  platform: (value) => {
+    selectedPlatform = value;
     updateCustomPolicyVisibility();
   },
 };
@@ -302,7 +302,7 @@ function updateCustomPolicyVisibility() {
   if (!customPolicyField) {
     return;
   }
-  customPolicyField.classList.toggle("hidden", selectedPolicy !== "Custom");
+  customPolicyField.classList.toggle("hidden", selectedPlatform !== "Custom");
 }
 
 function initializeModalSelects() {

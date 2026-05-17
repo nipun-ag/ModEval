@@ -81,6 +81,19 @@ PREDEFINED_POLICIES = {
 }
 
 
+PLATFORM_MAP = {
+    "Reddit": {"threshold_modifier": 0.00, "policy_key": "reddit"},
+    "Discord": {"threshold_modifier": 0.00, "policy_key": "discord"},
+    "Facebook": {"threshold_modifier": 0.00, "policy_key": "facebook"},
+    "Instagram": {"threshold_modifier": 0.00, "policy_key": "instagram"},
+    "Gaming Platform": {"threshold_modifier": -0.10, "policy_key": "generic"},
+    "Professional": {"threshold_modifier": 0.15, "policy_key": "generic"},
+    "Community / Forum": {"threshold_modifier": -0.05, "policy_key": "generic"},
+    "VR / Metaverse": {"threshold_modifier": -0.15, "policy_key": "generic"},
+    "Custom": {"threshold_modifier": 0.00, "policy_key": "custom"},
+}
+
+
 CUSTOM_POLICY_KEYWORDS = {
     "self-harm": {"self-harm", "suicide", "kill myself"},
     "violence": {"violence", "violent", "attack", "murder"},

@@ -8,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from flask import Blueprint, jsonify, request
 
-from backend.config import MAX_INPUT_LENGTH
+from backend.config import MAX_INPUT_LENGTH, PLATFORM_MAP
 from backend.engine.comparison import build_insights, detect_disagreements
 from backend.engine.context_engine import calculate_context_adjustment
 from backend.engine.explainer import explain_result
@@ -86,7 +86,7 @@ def generate_ai_analysis(results: list[dict], context: dict) -> dict:
                 )
 
         models_text = "\n".join(model_lines)
-        platform = context.get("platform_context", "Neutral")
+        platform = context.get("platform", "Reddit")
         content_type = context.get("content_type", "Original Post")
         strictness = context.get("strictness", "Balanced")
 
@@ -137,13 +137,17 @@ Return ONLY the JSON object. No preamble, no markdown, no explanation."""
 
 def build_response(payload: dict) -> dict:
     """Build the full API response for one text input."""
+    platform = payload.get("platform", "Reddit")
+    platform_config = PLATFORM_MAP.get(platform, PLATFORM_MAP.get("Reddit", {}))
+    policy_key = platform_config.get("policy_key", "reddit")
+
     thresholds = calculate_context_adjustment(
-        payload.get("platform_context", "Neutral"),
+        platform,
         payload.get("content_type", "Original Post"),
         payload.get("strictness", "Balanced"),
     )
     policy_rules = get_policy_rules(
-        payload.get("policy", "Reddit"),
+        policy_key,
         payload.get("custom_policy_text", ""),
     )
 
@@ -153,7 +157,7 @@ def build_response(payload: dict) -> dict:
             result = build_error_result(raw_result["model"], raw_result["error"])
             result["explanation"] = explain_result(
                 result,
-                payload.get("platform_context", "Neutral"),
+                platform,
                 payload.get("content_type", "Original Post"),
                 payload.get("strictness", "Balanced"),
                 thresholds,
@@ -177,7 +181,7 @@ def build_response(payload: dict) -> dict:
         result["aligned"] = policy_data["aligned"]
         result["explanation"] = explain_result(
             result,
-            payload.get("platform_context", "Neutral"),
+            platform,
             payload.get("content_type", "Original Post"),
             payload.get("strictness", "Balanced"),
             thresholds,
@@ -189,7 +193,11 @@ def build_response(payload: dict) -> dict:
         result for result in normalized_results
         if not result.get("disabled") and not result.get("error")
     ]
-    ai_analysis = generate_ai_analysis(active_results, payload)
+    ai_analysis = generate_ai_analysis(active_results, {
+        "platform": platform,
+        "content_type": payload.get("content_type", "Original Post"),
+        "strictness": payload.get("strictness", "Balanced"),
+    })
 
     return {
         "results": normalized_results,

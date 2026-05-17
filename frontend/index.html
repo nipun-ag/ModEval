@@ -73,43 +73,57 @@
               <div id="context-content" class="section-content" aria-hidden="true">
                 <div class="context-grid">
                   <div class="field-block">
-                    <label for="platform_context">Platform Context</label>
+                    <label for="platform">Platform</label>
                     <div class="custom-select">
-                      <input type="hidden" name="platform_context" value="Neutral">
+                      <input type="hidden" name="platform" value="Reddit">
                       <button type="button" class="custom-select-trigger" aria-expanded="false" aria-haspopup="listbox">
-                        <span class="custom-select-trigger-label">Neutral</span>
+                        <span class="custom-select-trigger-label">Reddit</span>
                         <span class="chevron">⌄</span>
                       </button>
                       <div class="custom-select-panel hidden" role="listbox">
-                        <button type="button" class="custom-select-option selected" data-value="Neutral">
-                          <span class="custom-select-name">Neutral</span>
+                        <button type="button" class="custom-select-option selected" data-value="Reddit">
+                          <span class="custom-select-name">Reddit</span>
                           <span class="modifier-badge">0.00</span>
-                          <span class="custom-select-description">No platform bias applied — pure model outputs with default thresholds</span>
+                          <span class="custom-select-description">Zero tolerance for violence, self-harm, sexual/minors, and hate</span>
                         </button>
-                        <button type="button" class="custom-select-option" data-value="Social Media">
-                          <span class="custom-select-name">Social Media</span>
+                        <button type="button" class="custom-select-option" data-value="Discord">
+                          <span class="custom-select-name">Discord</span>
                           <span class="modifier-badge">0.00</span>
-                          <span class="custom-select-description">Public feeds, posts and comments (e.g., Facebook, Instagram, X)</span>
+                          <span class="custom-select-description">Stricter on threatening harassment, more lenient on profanity and toxicity</span>
                         </button>
-                        <button type="button" class="custom-select-option" data-value="Gaming">
-                          <span class="custom-select-name">Gaming</span>
-                          <span class="modifier-badge">+0.10</span>
-                          <span class="custom-select-description">In-game chat, voice and player profiles (e.g., Roblox, Discord, Twitch)</span>
+                        <button type="button" class="custom-select-option" data-value="Facebook">
+                          <span class="custom-select-name">Facebook</span>
+                          <span class="modifier-badge">0.00</span>
+                          <span class="custom-select-description">Broad zero tolerance across hate, violence, sexual content, self-harm, and harassment</span>
+                        </button>
+                        <button type="button" class="custom-select-option" data-value="Instagram">
+                          <span class="custom-select-name">Instagram</span>
+                          <span class="modifier-badge">0.00</span>
+                          <span class="custom-select-description">Broad zero tolerance across hate, violence, sexual content, self-harm, and harassment</span>
+                        </button>
+                        <button type="button" class="custom-select-option" data-value="Gaming Platform">
+                          <span class="custom-select-name">Gaming Platform</span>
+                          <span class="modifier-badge">-0.10</span>
+                          <span class="custom-select-description">In-game chat and player interaction (e.g., Roblox, Twitch)</span>
                         </button>
                         <button type="button" class="custom-select-option" data-value="Professional">
                           <span class="custom-select-name">Professional</span>
-                          <span class="modifier-badge">-0.15</span>
+                          <span class="modifier-badge">+0.15</span>
                           <span class="custom-select-description">Workplace tools and business networks (e.g., LinkedIn, Slack)</span>
                         </button>
-                        <button type="button" class="custom-select-option" data-value="Forum">
+                        <button type="button" class="custom-select-option" data-value="Community / Forum">
                           <span class="custom-select-name">Community / Forum</span>
-                          <span class="modifier-badge">+0.05</span>
-                          <span class="custom-select-description">Interest groups and discussion boards (e.g., Reddit, Quora)</span>
+                          <span class="modifier-badge">-0.05</span>
+                          <span class="custom-select-description">Interest groups and discussion boards (e.g., Quora, Stack Exchange)</span>
                         </button>
-                        <button type="button" class="custom-select-option" data-value="VR/Metaverse">
+                        <button type="button" class="custom-select-option" data-value="VR / Metaverse">
                           <span class="custom-select-name">VR / Metaverse</span>
-                          <span class="modifier-badge">+0.15</span>
+                          <span class="modifier-badge">-0.15</span>
                           <span class="custom-select-description">Immersive environments and spatial audio (e.g., VRChat, Horizon)</span>
+                        </button>
+                        <button type="button" class="custom-select-option" data-value="Custom">
+                          <span class="custom-select-name">Custom</span>
+                          <span class="custom-select-description">Write your own policy rules and thresholds</span>
                         </button>
                       </div>
                     </div>
@@ -176,38 +190,6 @@
                     </div>
                   </div>
 
-                  <div class="field-block">
-                    <label for="policy">Policy Alignment</label>
-                    <div class="custom-select">
-                      <input type="hidden" name="policy" value="Reddit">
-                      <button type="button" class="custom-select-trigger" aria-expanded="false" aria-haspopup="listbox">
-                        <span class="custom-select-trigger-label">Reddit</span>
-                        <span class="chevron">âŒ„</span>
-                      </button>
-                      <div class="custom-select-panel hidden" role="listbox">
-                        <button type="button" class="custom-select-option selected" data-value="Reddit">
-                          <span class="custom-select-name">Reddit</span>
-                          <span class="custom-select-description">Zero tolerance for violence, self-harm, sexual/minors, and hate</span>
-                        </button>
-                        <button type="button" class="custom-select-option" data-value="Discord">
-                          <span class="custom-select-name">Discord</span>
-                          <span class="custom-select-description">Stricter on threatening harassment, more lenient on profanity and toxicity</span>
-                        </button>
-                        <button type="button" class="custom-select-option" data-value="Facebook">
-                          <span class="custom-select-name">Facebook</span>
-                          <span class="custom-select-description">Broad zero tolerance across hate, violence, sexual content, self-harm, and harassment</span>
-                        </button>
-                        <button type="button" class="custom-select-option" data-value="Instagram">
-                          <span class="custom-select-name">Instagram</span>
-                          <span class="custom-select-description">Broad zero tolerance across hate, violence, sexual content, self-harm, and harassment</span>
-                        </button>
-                        <button type="button" class="custom-select-option" data-value="Custom">
-                          <span class="custom-select-name">Custom</span>
-                          <span class="custom-select-description">Write your own zero-tolerance or deprioritized policy guidance</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
                 </div>
 
                 <div class="field-block hidden" id="custom-policy-field">

@@ -6,6 +6,26 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ## 2026-05-17
 
+**feat: merge platform context and policy into single platform selector**
+
+Changes:
+- Added PLATFORM_MAP to config.py mapping each platform option (Reddit, Discord, Facebook, Instagram, Gaming Platform, Professional, Community / Forum, VR / Metaverse, Custom) to both a threshold modifier and policy key
+- Updated context_engine.py to accept single "platform" parameter and look up modifier from PLATFORM_MAP instead of separate platform_context
+- Updated policy_engine.py to accept policy_key from map, handle "generic" policy (no alignment enforcement), and support "custom" policy with user-provided text
+- Refactored analyze.py to accept single "platform" field in request payload, look up both threshold_modifier and policy_key from PLATFORM_MAP, and pass correct values to context and policy engines
+- Replaced Platform Context and Policy dropdowns in frontend with single Platform dropdown containing all 9 options
+- Updated frontend JavaScript to use selectedPlatform variable, STATE_MAP for platform selection, and send single "platform" field in payload
+- Custom policy text area now shows only when "Custom" platform is selected
+
+Why:
+- Reduces UI complexity by eliminating redundant field selection (users previously selected both a platform context and a policy separately)
+- Platform and policy are semantically linked (Reddit/Discord/Facebook/Instagram map to specific policies; Gaming/Professional/Forum/VR use generic policy with threshold adjustments), so merging simplifies UX and prevents mismatched combinations
+- Generic platforms (Gaming, Professional, Forum, VR) now correctly apply threshold modifiers without enforcing any specific policy rules, addressing a gap in the previous implementation
+
+---
+
+## 2026-05-17
+
 **fix: full audit remediation -- bugs, dead code, inconsistencies, warnings**
 
 Changes:
