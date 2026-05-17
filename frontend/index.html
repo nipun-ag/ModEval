@@ -71,21 +71,22 @@
               </button>
             </div>
 
-            <div class="context-explainer-wrapper">
-              <span class="context-info-icon" id="context-info-icon">ⓘ</span>
-              <div class="context-explainer" id="context-explainer-popup">
-                The platform you select determines how our AI interpretation layer
-                assesses each model's output. The moderation models themselves are
-                frozen — they always return the same scores regardless of platform.
-                What changes is how those scores are evaluated against each
-                platform's specific content policies.
-                <a class="context-explainer-link" id="explainer-howtoworks-link"
-                   href="#">See How It Works →</a>
-              </div>
-            </div>
-
             <div class="field-block">
-              <label for="platform">PLATFORM</label>
+              <div class="platform-label-row">
+                <span class="platform-label-text">PLATFORM</span>
+                <div class="context-explainer-wrapper">
+                  <span class="context-info-icon" id="context-info-icon">ⓘ</span>
+                  <div class="context-explainer" id="context-explainer-popup">
+                    The platform you select determines how our AI interpretation layer
+                    assesses each model's output. The moderation models themselves are
+                    frozen — they always return the same scores regardless of platform.
+                    What changes is how those scores are evaluated against each
+                    platform's specific content policies.
+                    <a class="context-explainer-link" id="explainer-howtoworks-link"
+                       href="#">See How It Works →</a>
+                  </div>
+                </div>
+              </div>
               <div class="custom-select">
                 <input type="hidden" name="platform" value="Reddit">
                 <button type="button" class="custom-select-trigger" aria-expanded="false" aria-haspopup="listbox">
