@@ -1015,20 +1015,6 @@ function renderInsights(insights, results, platform, alignmentMap, data) {
 
   // Clear old content and insert new structure
   insightsContainer.innerHTML = gridHTML;
-
-  // Add AI analysis section below
-  const aiSection = document.createElement("section");
-  aiSection.className = "explainability-section";
-  aiSection.innerHTML = `
-    <div class="section-heading stacked">
-      <div>
-        <p class="section-label mono-label">Interpretation Layer</p>
-        <h3>AI Summary</h3>
-      </div>
-    </div>
-    <div id="explainability-list" class="explainability-grid"></div>
-  `;
-  insightsContainer.appendChild(aiSection);
 }
 
 function renderAiAnalysis(aiAnalysis) {
