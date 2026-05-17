@@ -678,12 +678,6 @@ function renderBreakdownCard(result) {
   const sevColorVar = sevClass === "low" ? "var(--green)" : sevClass === "mid" ? "var(--amber)" : "var(--red)";
   const sevWidth = Math.round((severity / 10) * 100);
 
-  const alignmentBadgeClass = result.aligned ? "badge-aligned" : "badge-misaligned";
-  const alignmentLabel = result.aligned ? "ALIGNED" : "MISALIGNED";
-  const alignmentReasonHtml = result.alignment_reason
-    ? `<div class="alignment-reason">${escapeHtml(result.alignment_reason)}</div>`
-    : "";
-
   return `
     <div class="breakdown-card ${borderClass}">
       <div class="breakdown-model-info">
@@ -700,10 +694,6 @@ function renderBreakdownCard(result) {
           </div>
         </div>
         <div class="breakdown-confidence">${Number(result.confidence).toFixed(2)}</div>
-        <div>
-          <span class="badge ${alignmentBadgeClass}">${alignmentLabel}</span>
-          ${alignmentReasonHtml}
-        </div>
       </div>
       <button class="breakdown-action-btn ${actionBtnClass}">${escapeHtml(result.action)}</button>
     </div>
@@ -725,7 +715,6 @@ function renderResults(results) {
         <span>CATEGORY</span>
         <span>SEVERITY</span>
         <span>CONFIDENCE</span>
-        <span>ALIGNMENT</span>
       </div>
     </div>`;
 
@@ -818,7 +807,44 @@ function renderDisagreements(disagreements) {
   requestAnimationFrame(() => disagreementBanner.classList.add("visible"));
 }
 
-function renderInsights(insights, results) {
+function renderAlignmentAssessment(results, platform) {
+  const container = document.getElementById("alignment-assessment-container");
+  if (!container) return;
+
+  const activeResults = results.filter((r) => !r.disabled && !r.error && r.alignment_reason);
+  if (activeResults.length === 0) {
+    container.innerHTML = "";
+    return;
+  }
+
+  const listItems = activeResults
+    .map((result) => {
+      const badgeClass = result.aligned ? "badge-aligned" : "badge-misaligned";
+      const badgeLabel = result.aligned ? "ALIGNED" : "MISALIGNED";
+      return `
+        <li class="alignment-assessment-item">
+          <span class="alignment-model-name">${escapeHtml(result.model)}</span>
+          <span class="badge ${badgeClass}">${badgeLabel}</span>
+          <span class="alignment-reason-text">${escapeHtml(result.alignment_reason)}</span>
+        </li>
+      `;
+    })
+    .join("");
+
+  container.innerHTML = `
+    <section class="alignment-assessment-section">
+      <p class="alignment-assessment-label">ALIGNMENT ASSESSMENT</p>
+      <ul class="alignment-assessment-list">
+        ${listItems}
+      </ul>
+      <p class="alignment-assessment-footer">
+        Alignment assessed by GPT-4o-mini against ${escapeHtml(platform)} content policy.
+      </p>
+    </section>
+  `;
+}
+
+function renderInsights(insights, results, platform) {
   const strictest = insights?.strictest_model;
   const lenient = insights?.most_lenient_model;
 
@@ -830,6 +856,8 @@ function renderInsights(insights, results) {
 
   strictestCard.dataset.tone = actionTone(strictest?.action || strictestResult?.action || "review");
   lenientCard.dataset.tone = actionTone(lenient?.action || lenientResult?.action || "allow");
+
+  renderAlignmentAssessment(results, platform);
 }
 
 function renderAiAnalysis(aiAnalysis) {
@@ -1006,7 +1034,7 @@ form.addEventListener("submit", async (event) => {
     const data = await postJson("/analyze", payload);
     renderResults(data.results || []);
     renderDisagreements(data.disagreements || {});
-    renderInsights(data.insights || {}, data.results || []);
+    renderInsights(data.insights || {}, data.results || [], selectedPlatform);
     renderExplainability(
       data.results || [],
       data.insights || {},

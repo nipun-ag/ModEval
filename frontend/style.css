@@ -2845,7 +2845,7 @@ tbody td {
 
 .breakdown-fields {
   display: grid;
-  grid-template-columns: 110px 150px 110px 160px;
+  grid-template-columns: 110px 150px 120px;
   gap: 16px;
   flex: 1;
   min-width: 0;
@@ -2902,10 +2902,64 @@ tbody td {
   color: var(--text-secondary);
 }
 
-.alignment-reason {
+.alignment-assessment-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.alignment-assessment-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.alignment-assessment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px 0;
+}
+
+.alignment-assessment-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.alignment-assessment-item:last-child {
+  border-bottom: none;
+}
+
+.alignment-model-name {
+  font-family: "Inter", -apple-system, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  min-width: 160px;
+  flex-shrink: 0;
+}
+
+.alignment-reason-text {
+  font-family: "Inter", -apple-system, sans-serif;
+  font-size: 11px;
+  font-style: italic;
+  color: var(--muted);
+  line-height: 1.5;
+  flex: 1;
+}
+
+.alignment-assessment-footer {
+  font-family: "Inter", -apple-system, sans-serif;
   font-size: 10px;
   font-style: italic;
   color: var(--muted);
+  margin-top: 8px;
 }
 
 .breakdown-action-btn {
@@ -2964,7 +3018,7 @@ tbody td {
 
 .breakdown-header-fields {
   display: grid;
-  grid-template-columns: 110px 150px 110px 160px;
+  grid-template-columns: 110px 150px 120px;
   gap: 16px;
   flex: 1;
   font-family: "JetBrains Mono", monospace;
