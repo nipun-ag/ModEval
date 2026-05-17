@@ -242,33 +242,6 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Explainer: 11px italic `--muted`
 - Value: DM Serif Display or Inter 600 depending on content
 
-### Insights Bento Grid (.insights-bento)
-- CSS Grid layout with 12 columns and 16px gap
-- Houses both strictest/lenient insight cards and AI analysis insight cards
-- Responsive: collapses to 1 column on mobile (max-width: 900px) with 12px gap
-- Margin-bottom: 32px
-
-### Insight Card New (.insight-card-new)
-- Grid: spans 6 columns in bento layout
-- `--surface2` background (rgba(17,17,20,0.88)), blur(8px) backdrop-filter
-- Border: 1px `--border`, border-radius 10px, 24px padding
-- Used for: Strictest Model and Most Lenient Model cards
-- Animations: fade-up 200ms with staggered 50ms delay
-- Hover: border-color becomes `--border-strong`, transforms -2px Y, box-shadow increases
-
-### AI Insight Card New (.ai-insight-card-new)
-- Grid: spans 4 columns by default in bento layout
-- `--surface2` background, `--border` border, border-radius 10px, 20px padding
-- Used for: Why Models Disagreed, Risk Narrative, Context Sensitivity, Most Contested Category cards
-- Animations: fade-up 200ms with staggered 50-100ms+ delay
-- Hover: border-color becomes `--border-strong`
-- Variants:
-  - `.ai-insight-card-new--wide`: spans 8 columns (Context Sensitivity card)
-  - `.ai-insight-card-new--accent`: spans 4 columns with `--accent-light` background and `--accent` border (Most Contested Category card)
-- Category text: DM Serif Display 32px bold `--text` (updated from JetBrains Mono 18px)
-- Label text: JetBrains Mono 10px uppercase `--accent`
-- Body text: 13px `--text-secondary`, line-height 1.6
-
 ### Model Breakdown Card Layout (.breakdown-card)
 - Rendered as two sections (ENTERPRISE APIS, OPEN SOURCE MODELS), each with a shared column header row
 - Section header row (`.breakdown-header-row`): flex row, `padding: 0 24px 10px 24px`, `margin-bottom: 8px`, `border-bottom: 1px var(--border-strong)`
@@ -357,12 +330,12 @@ Never use for general reading text. Monospace signals "this is technical data."
 - For Custom platform: shows placeholder text explaining user should provide policy text
 - Sourced from official platform guidelines (Reddit, Discord, Facebook, Instagram)
 
-### Context Explainer (.context-explainer)
-- Lives above the Platform selector dropdown in the input panel
-- 12px `--text-secondary`, line-height 1.6, muted tone
-- Explains why platform selection exists and how it affects analysis thresholds
-- Contains a link (`.explainer-howtoworks-link`) styled as `--accent` color, 12px, pointing to How It Works tab
-- Link text: "See how it works"
+### Context Explainer (.context-explainer, .context-explainer-wrapper, .context-info-icon)
+- Hover tooltip triggered by an SVG info icon (ⓘ) positioned next to the PLATFORM label
+- `.context-explainer-wrapper`: relative-positioned container holding both the icon and the tooltip
+- `.context-info-icon`: 16px SVG circle-i icon, color `--muted` by default, transitions to `--accent` on hover, cursor pointer
+- `.context-explainer`: absolute-positioned tooltip, `display:none` by default, revealed on `.context-explainer-wrapper:hover`; 12px `--text-secondary`, line-height 1.6, backdrop blur, appears above the icon
+- Content: plain text explaining why platform selection exists and how it affects the interpretation layer; no clickable link inside
 
 ### Alignment Assessment Section (.alignment-assessment-container)
 - Lives in the Insights tab as part of the bento grid layout
@@ -488,49 +461,40 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Inside: normalized output schema or code snippet rendered as monospace text
 - Used in How It Works Section 2 to display unified output format
 
-### Insights Bento Grid (.insights-bento)
-- CSS Grid layout: 12 columns, 16px gap
-- Max-width inherited from parent panel
-- Responsive: collapses to 1 column on mobile (max-width: 900px) with 12px gap
-- Margin-bottom: 32px
-- Houses both model insight cards and AI analysis insight cards
+### Insights Tab Redesign Components
 
-### Insight Card New (.insight-card-new)
-- Grid: spans 6 columns in bento layout (3 columns on mobile)
-- `--surface2` background (rgba(17,17,20,0.88)), blur(8px) backdrop-filter
-- Border: 1px `--border`, border-radius 10px, 24px padding
-- Used for: Strictest Model and Most Lenient Model cards
-- Animations: fade-up 200ms with staggered 50ms delay
-- Hover: border-color becomes `--border-strong`, transform -2px Y, box-shadow increases
-- Left border: 3px colored by action (red/amber/green)
+#### Insights Top Grid (.insights-grid)
+- CSS Grid: `1fr 2fr` (left tall card + right cluster), gap 20px, margin-bottom 28px
+- Left column: Strictest Model tall card (`.insights-card-tall`)
+- Right column: `.insights-grid-right` — 2-column grid containing Most Lenient (full width via `.insights-card-wide`), Disagreement Vector, Risk Narrative
 
-### Insight Card New Label (.insight-card-new-label)
-- JetBrains Mono 10px uppercase `--accent`
-- Eyebrow above value
-- Margin-bottom: 8px
+#### Insights Card (.insights-card, .insights-card-tall, .insights-card-wide)
+- Base: `var(--surface2)` background, `var(--border)` border, border-radius 12px, padding 28px
+- Hover: border-color `var(--border-strong)`, `translateY(-2px)`
+- `.insights-card-tall`: min-height 320px, flex column, `justify-content: space-between`
+- `.insights-card-wide`: `grid-column: 1 / -1` (spans full right column)
+- Eyebrow (`.insights-card-eyebrow`): JetBrains Mono 9px uppercase; color variants: default `--accent`, `.lenient` green, `.disagreement` `--text-secondary`, `.risk` red
+- Body text (`.insights-card-body`): Inter 13px, line-height 1.7
+- Inline colored words (`.insights-card-body-highlight`): `.allow` green, `.review` amber, `.remove` red, `.violation` red
 
-### Insight Card New Value (.insight-card-new-value, .insight-card-new-desc)
-- `.insight-card-new-value`: DM Serif Display 32px bold `--text` for model name or value
-- `.insight-card-new-desc`: 13px `--text-secondary` for description text, line-height 1.6
+#### Insights Alignment Matrix (.insights-matrix)
+- Container: `var(--surface)` background, `var(--border)` border, border-radius 12px, overflow hidden
+- Header row (`.insights-matrix-header`): 3-column grid (`2fr 1fr 4fr`), JetBrains Mono 9px uppercase `--muted`
+- Rows (`.insights-matrix-row`): 3-column grid, `20px 24px` padding; hover: `var(--surface2)` background
+- `.misaligned-row`: subtle red tint background
+- Model name (`.insights-matrix-model`): Inter 14px 600
+- Reason (`.insights-matrix-reason`): Inter 12px italic `--text-secondary`, padding-left 16px, `border-left: var(--border)`
+- Footer (`.insights-matrix-footer`): JetBrains Mono 10px italic `--muted`, centered
 
-### AI Insight Card New (.ai-insight-card-new, .ai-insight-card-new--wide, .ai-insight-card-new--accent)
-- Grid: spans 4 columns by default in bento layout
-- `--surface2` background, `--border` border, border-radius 10px, 20px padding
-- Used for: Why Models Disagreed, Risk Narrative, Context Sensitivity, Most Contested Category cards
-- Animations: fade-up 200ms with staggered 50-100ms+ delay
-- Hover: border-color becomes `--border-strong`
-- Variants:
-  - `.ai-insight-card-new--wide`: spans 8 columns (Context Sensitivity card)
-  - `.ai-insight-card-new--accent`: spans 4 columns with `--accent-light` background and `--accent` border (Most Contested Category card)
-- Category text: DM Serif Display 32px bold `--text`
-- Label text: JetBrains Mono 10px uppercase `--accent`
-- Body text: 13px `--text-secondary`, line-height 1.6
-
-### AI Insight Card Header (.ai-insight-card-new-header, .ai-insight-icon)
-- `.ai-insight-card-new-header`: flex row with icon and title
-- `.ai-insight-icon`: 24px icon element, margin-right 12px
-- Title: JetBrains Mono 10px uppercase `--accent`
-- Margin-bottom: 16px
+#### Insights AI Executive Summary (.insights-ai-section)
+- Gradient border via `::before` pseudo-element (`linear-gradient` teal to red tint)
+- Background: `var(--surface2)`, border-radius 16px, padding 40px
+- Header (`.insights-ai-header`): flex, space-between
+  - Left: 🧠 icon in accent-tinted box + label + title
+  - Right: consensus badge colored by action
+- Body (`.insights-ai-body`): `2fr 1fr` grid
+  - Finding card (`.insights-ai-finding`): dark background, absolute tag (Critical Finding / Safe / Grey Area), left border colored by violation type
+  - Signal card (`.insights-ai-signal`): confidence bar with gradient fill (amber to red)
 
 ### Editorial Quote
 - DM Serif Display, larger font

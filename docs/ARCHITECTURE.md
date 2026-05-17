@@ -63,12 +63,12 @@ modeval/
 ```
 
 **Platform Mapping:**
-Each platform option combines a threshold modifier and policy rules via PLATFORM_MAP:
-- **Reddit**: 0.00 modifier, Reddit policy (zero tolerance: violence, self-harm, sexual/minors, hate)
-- **Discord**: +0.05 modifier, Discord policy (zero tolerance: sexual/minors, harassment/threatening; deprioritized: profanity, insult, toxicity)
-- **Facebook**: -0.05 modifier, Facebook policy (zero tolerance: hate, violence, sexual, self-harm, harassment)
-- **Instagram**: -0.10 modifier, Instagram policy (zero tolerance: hate, violence, sexual, self-harm, harassment)
-- **Custom**: 0.00 modifier, custom policy (parsed from custom_policy_text)
+All platforms use identical fixed base thresholds (review=0.40, remove=0.70). Platform selection only determines which policy rules Claude Haiku uses for alignment assessment:
+- **Reddit**: Reddit content policy
+- **Discord**: Discord community guidelines
+- **Facebook**: Facebook community standards
+- **Instagram**: Instagram community standards (unified Nov 2024)
+- **Custom**: user-provided policy text
 
 **Response Body:**
 ```json
@@ -285,49 +285,16 @@ MIN_THRESHOLD = 0.10              # Floor — never go below
 MAX_THRESHOLD = 0.90              # Ceiling — never go above
 ```
 
-### Threshold Calculation Formula
+### Threshold Calculation
+
+All platforms use fixed base thresholds. No modifiers are applied.
 
 ```
-adjusted_review_threshold = clamp(BASE_REVIEW_THRESHOLD + platform_mod, 0.10, 0.90)
-adjusted_remove_threshold = clamp(BASE_REMOVE_THRESHOLD + platform_mod, 0.10, 0.90)
+review_threshold = BASE_REVIEW_THRESHOLD (0.40)
+remove_threshold = BASE_REMOVE_THRESHOLD (0.70)
 ```
 
-If `review_threshold >= remove_threshold`, clamp review to `remove_threshold - 0.05` to preserve ordering.
-
-All thresholds are rounded to 2 decimal places.
-
-### Platform Modifiers
-Reflects real platform risk tolerance and enforcement philosophy.
-
-| Platform | Modifier | Rationale |
-|---|---|---|
-| Reddit | 0.00 | Baseline — established moderation standards |
-| Discord | +0.05 | Slightly stricter — real-time chat context |
-| Facebook | -0.05 | Slightly more lenient — diverse content types |
-| Instagram | -0.10 | More lenient — visual-first platform norms |
-| Custom | 0.00 | User-defined policy via custom_policy_text |
-
-### Example Threshold Calculation
-
-**Context:** Reddit (baseline platform)
-
-```
-platform_mod: 0.00 (Reddit baseline)
-total_mod: 0.00
-
-review_threshold = clamp(0.40 + 0.00) = 0.40
-remove_threshold = clamp(0.70 + 0.00) = 0.70
-```
-
-**Context:** Instagram (lenient platform)
-
-```
-platform_mod: -0.10 (Instagram = more lenient)
-total_mod: -0.10
-
-review_threshold = clamp(0.40 - 0.10) = 0.30
-remove_threshold = clamp(0.70 - 0.10) = 0.60
-```
+`calculate_context_adjustment()` always returns these fixed values regardless of platform, content_type, or strictness inputs.
 
 ---
 
@@ -660,9 +627,8 @@ Hetzner VPS (hetzner.com) — CX23 plan
 - Returns `{"active_count": N, "total_count": 8}`
 
 ### backend/engine/context_engine.py
-- `calculate_context_adjustment()` — computes final thresholds
+- `calculate_context_adjustment()` — returns fixed base thresholds (review=0.40, remove=0.70) regardless of input; platform modifiers removed in favour of Claude Haiku policy judgment
 - `determine_action()` — maps confidence to Allow/Review/Remove
-- `clamp()` — enforces 0.10-0.90 threshold bounds
 - No side effects, purely functional
 
 ### backend/engine/normalizer.py
@@ -839,14 +805,11 @@ After analysis runs, three lower tabs appear inside
   gauge + legend (default active tab)
 - lower-panel-breakdown: card-per-row breakdown layout, one card per model,
   section header rows with column labels (CATEGORY, SEVERITY, CONFIDENCE, ACTION)
-- lower-panel-insights: bento grid with 6 insight cards + ALIGNMENT ASSESSMENT section:
-  - Strictest Model (6 cols)
-  - Most Lenient Model (6 cols)
-  - Why Models Disagreed (4 cols)
-  - Risk Narrative (8 cols wide)
-  - Context Sensitivity (8 cols wide)
-  - Most Contested Category (4 cols with accent)
-  - ALIGNMENT ASSESSMENT (full-width, all model verdicts with footer "Alignment assessed by Claude Haiku against [platform] content policy.")
+- lower-panel-insights: three-section asymmetric layout:
+  - Top grid (1fr 2fr): Strictest Model tall card (left) + right cluster with Most Lenient (full width), Disagreement Vector, Risk Narrative
+  - Alignment matrix: all 8 model alignment verdicts with ALIGNED/MISALIGNED badges and reasons; footer shows "Alignment assessed by Claude Haiku against [platform] content policy."
+  - AI Executive Summary: gradient border card with consensus badge, finding tag (CLEAR VIOLATION/CLEAR SAFE/GENUINE GREY AREA), AI narrative, per-model confidence bars
+  Note: Context Sensitivity and Most Contested Category cards removed from Insights tab
 
 Tab switching handled by click handlers on 
 .lower-tab elements in frontend/app.js.
