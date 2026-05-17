@@ -13,7 +13,7 @@ from backend.engine.comparison import build_insights, detect_disagreements
 from backend.engine.context_engine import calculate_context_adjustment
 from backend.engine.explainer import explain_result
 from backend.engine.normalizer import build_error_result, normalize_result
-from backend.engine.policy_engine import evaluate_policy_alignment, get_policy_rules
+from backend.engine.policy_engine import evaluate_alignment_with_ai, evaluate_policy_alignment, get_policy_rules
 from backend.models import (
     hf_bias,
     hf_hate_speech,
@@ -174,18 +174,13 @@ def build_response(payload: dict) -> dict:
             normalized_results.append(result)
             continue
 
-        policy_data = evaluate_policy_alignment(result, policy_rules, thresholds)
-        result["action"] = policy_data["enforced_action"]
-        result["flagged"] = result["action"] != "Allow"
-        result["alignment_score"] = policy_data["alignment_score"]
-        result["aligned"] = policy_data["aligned"]
         result["explanation"] = explain_result(
             result,
             platform,
             payload.get("content_type", "Original Post"),
             payload.get("strictness", "Balanced"),
             thresholds,
-            policy_data["policy_note"],
+            "Alignment evaluation pending.",
         )
         normalized_results.append(result)
 
@@ -193,6 +188,31 @@ def build_response(payload: dict) -> dict:
         result for result in normalized_results
         if not result.get("disabled") and not result.get("error")
     ]
+
+    ai_alignment_map = evaluate_alignment_with_ai(
+        active_results,
+        platform,
+        payload.get("custom_policy_text", ""),
+    )
+
+    if ai_alignment_map:
+        for result in active_results:
+            model_name = result.get("model", "")
+            if model_name in ai_alignment_map:
+                alignment_data = ai_alignment_map[model_name]
+                result["alignment_score"] = alignment_data.get("alignment_score", 0.0)
+                result["aligned"] = alignment_data.get("aligned", False)
+                result["alignment_reason"] = alignment_data.get("alignment_reason", "")
+    else:
+        for result in active_results:
+            policy_data = evaluate_policy_alignment(result, policy_rules, thresholds)
+            result["alignment_score"] = policy_data["alignment_score"]
+            result["aligned"] = policy_data["aligned"]
+            result["alignment_reason"] = policy_data.get("policy_note", "")
+
+    for result in normalized_results:
+        result["flagged"] = result.get("action", "Allow") != "Allow"
+
     ai_analysis = generate_ai_analysis(active_results, {
         "platform": platform,
         "content_type": payload.get("content_type", "Original Post"),

@@ -6,6 +6,30 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ## 2026-05-17
 
+**feat: remove content type and strictness, add AI-powered policy alignment**
+
+Changes:
+- Removed Content Type and Strictness dropdowns from Analysis Context UI
+- Content Type now hardcoded to "Original Post" and Strictness to "Balanced" throughout the application
+- Content Type and Strictness still accepted in direct API calls for backwards compatibility, defaulting to above values if not provided
+- Replaced keyword-based policy alignment scoring with GPT-4o-mini AI evaluation
+- New function `evaluate_alignment_with_ai()` in policy_engine.py makes a single batched GPT call with all model results
+- Platform-specific policy instructions provided to GPT including Reddit, Discord, Facebook, Instagram, Gaming, Professional, Forum, VR, and Custom policies
+- Each model result now includes `alignment_reason` field (one-sentence plain English explanation of alignment)
+- Fallback to existing hardcoded alignment logic if GPT call fails, ensuring analysis completes
+- Frontend breakdown cards now display alignment_reason below the model metadata in italic gray text
+
+Why:
+- Content Type and Strictness were rarely used and added UI complexity without proportional benefit
+- Hardcoding to "Original Post" and "Balanced" covers the majority of use cases
+- AI-powered alignment scoring is more nuanced and readable than keyword-based logic, providing human-understandable explanations
+- Single batched GPT call is more efficient than per-model evaluation
+- Alignment reasons help users understand why a model is or isn't aligned with a platform's policy
+
+---
+
+## 2026-05-17
+
 **feat: merge platform context and policy into single platform selector**
 
 Changes:

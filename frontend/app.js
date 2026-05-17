@@ -603,12 +603,17 @@ function renderBreakdownCard(result) {
   const sevColorVar = sevClass === "low" ? "var(--green)" : sevClass === "mid" ? "var(--amber)" : "var(--red)";
   const sevWidth = Math.round((severity / 10) * 100);
 
+  const alignmentReasonHtml = result.alignment_reason
+    ? `<div style="font-size:11px;font-style:italic;color:var(--muted);margin-top:6px;">${escapeHtml(result.alignment_reason)}</div>`
+    : "";
+
   return `
     <div class="breakdown-card ${borderClass}">
       <div class="breakdown-model-info">
         <div class="breakdown-model-name">${escapeHtml(display.name)}</div>
         <div class="breakdown-model-meta">${escapeHtml(display.subtitle)} • ${result.error ? "Model unavailable" : "Live inference"}</div>
         <span class="breakdown-arch-chip">${escapeHtml(display.chip)}</span>
+        ${alignmentReasonHtml}
       </div>
       <div class="breakdown-fields">
         <div class="breakdown-field-value">${escapeHtml(result.top_category)}</div>
