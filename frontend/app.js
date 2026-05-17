@@ -838,7 +838,7 @@ function renderAlignmentAssessment(results, platform) {
         ${listItems}
       </ul>
       <p class="alignment-assessment-footer">
-        Alignment assessed by GPT-4o-mini against ${escapeHtml(platform)} content policy.
+        Alignment assessed by Claude Haiku against ${escapeHtml(platform)} content policy.
       </p>
     </section>
   `;

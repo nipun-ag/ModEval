@@ -94,16 +94,12 @@ def evaluate_policy_alignment(result: dict, policy_rules: dict, thresholds: dict
 
 
 def get_platform_policy_summary(platform: str, custom_policy_text: str = "") -> str:
-    """Return the policy summary for GPT-4o-mini alignment evaluation."""
+    """Return the policy summary for Claude Haiku alignment evaluation."""
     platform_policies = {
         "Reddit": "Zero tolerance for violence, self-harm, content sexualizing minors, and hate speech. Harassment and threatening content are also banned.",
         "Discord": "Zero tolerance for content sexualizing minors and direct threatening harassment. More lenient on profanity, general toxicity, and insults which are not bannable offenses.",
         "Facebook": "Zero tolerance for hate speech, violence, sexual content, self-harm, and harassment across all forms.",
         "Instagram": "Zero tolerance for hate speech, violence, sexual content, self-harm, and harassment across all forms.",
-        "Gaming Platform": "Use general best-practice content moderation standards.",
-        "Professional": "Use general best-practice content moderation standards.",
-        "Community / Forum": "Use general best-practice content moderation standards.",
-        "VR / Metaverse": "Use general best-practice content moderation standards.",
         "Custom": f"User-defined policy: {custom_policy_text}" if custom_policy_text else "Generic best-practice standards.",
     }
     return platform_policies.get(platform, "Use general best-practice content moderation standards.")
