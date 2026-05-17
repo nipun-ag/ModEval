@@ -2211,6 +2211,25 @@ tbody td {
   gap: 16px;
 }
 
+/* Architecture Title Block */
+.arch-title-block {
+  text-align: center;
+  margin: 0 0 20px 0;
+}
+
+.arch-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.arch-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
 /* Architecture Flow Visualization */
 .arch-flow-strip {
   margin: 0 0 40px 0;
