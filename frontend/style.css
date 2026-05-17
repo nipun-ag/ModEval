@@ -2792,7 +2792,7 @@ tbody td {
 
 .breakdown-fields {
   display: grid;
-  grid-template-columns: 110px 150px 120px;
+  grid-template-columns: 110px 150px 110px 160px;
   gap: 16px;
   flex: 1;
   min-width: 0;
@@ -2847,6 +2847,12 @@ tbody td {
   font-family: "JetBrains Mono", monospace;
   font-size: 13px;
   color: var(--text-secondary);
+}
+
+.alignment-reason {
+  font-size: 10px;
+  font-style: italic;
+  color: var(--muted);
 }
 
 .breakdown-action-btn {
@@ -2905,7 +2911,7 @@ tbody td {
 
 .breakdown-header-fields {
   display: grid;
-  grid-template-columns: 110px 150px 120px auto;
+  grid-template-columns: 110px 150px 110px 160px;
   gap: 16px;
   flex: 1;
   font-family: "JetBrains Mono", monospace;

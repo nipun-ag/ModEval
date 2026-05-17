@@ -6,6 +6,30 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ## 2026-05-17
 
+**feat: restore alignment column with AI reasons, update How It Works**
+
+Changes:
+- Added ALIGNMENT as 4th column in Model Breakdown card grid (110px 150px 110px 160px)
+- Each alignment field displays a badge (green ALIGNED / red MISALIGNED) followed by alignment_reason text in italic gray
+- Updated breakdown-header-fields grid to match 4-column layout
+- Added .alignment-reason CSS class for 10px italic muted styling
+- How It Works hero subtitle updated to: "8 independent models analyze every submission simultaneously. Outputs are normalized, scored against platform-specific AI policy alignment, and resolved into a single verdict."
+- Context Engine formula simplified to: "Final threshold = Base threshold + Platform adjustment"
+- Removed Content Type Modifiers and Strictness Modifiers tables from Context Engine section
+- Updated Platform Modifiers table with 9 new entries (Reddit baseline, Discord +0.05, Facebook -0.05, Instagram -0.10, Gaming +0.10, Professional -0.15, Community/Forum +0.05, VR/Metaverse +0.15, Custom user-defined)
+- Completely rewrote Policy Alignment Engine section to explain AI-powered batched GPT-4o-mini evaluation with alignment_score, aligned bool, and alignment_reason outputs
+- Updated AI Interpretation Layer section to include "AI alignment assessments per model" in the input table
+
+Why:
+- Alignment is now a first-class UI component visible alongside category/severity/confidence for each model
+- Users can see at a glance which models align with platform policy and why, improving interpretability
+- How It Works documentation accurately reflects the simplified Context Engine (platform modifier only) and new AI-powered alignment approach
+- Removed documentation of Content Type/Strictness modifiers that no longer apply to analysis
+
+---
+
+## 2026-05-17
+
 **feat: remove content type and strictness, add AI-powered policy alignment**
 
 Changes:

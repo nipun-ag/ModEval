@@ -601,8 +601,10 @@ function renderBreakdownCard(result) {
   const sevColorVar = sevClass === "low" ? "var(--green)" : sevClass === "mid" ? "var(--amber)" : "var(--red)";
   const sevWidth = Math.round((severity / 10) * 100);
 
+  const alignmentBadgeClass = result.aligned ? "badge-aligned" : "badge-misaligned";
+  const alignmentLabel = result.aligned ? "ALIGNED" : "MISALIGNED";
   const alignmentReasonHtml = result.alignment_reason
-    ? `<div style="font-size:11px;font-style:italic;color:var(--muted);margin-top:6px;">${escapeHtml(result.alignment_reason)}</div>`
+    ? `<div class="alignment-reason">${escapeHtml(result.alignment_reason)}</div>`
     : "";
 
   return `
@@ -611,7 +613,6 @@ function renderBreakdownCard(result) {
         <div class="breakdown-model-name">${escapeHtml(display.name)}</div>
         <div class="breakdown-model-meta">${escapeHtml(display.subtitle)} • ${result.error ? "Model unavailable" : "Live inference"}</div>
         <span class="breakdown-arch-chip">${escapeHtml(display.chip)}</span>
-        ${alignmentReasonHtml}
       </div>
       <div class="breakdown-fields">
         <div class="breakdown-field-value">${escapeHtml(result.top_category)}</div>
@@ -622,6 +623,10 @@ function renderBreakdownCard(result) {
           </div>
         </div>
         <div class="breakdown-confidence">${Number(result.confidence).toFixed(2)}</div>
+        <div>
+          <span class="badge ${alignmentBadgeClass}">${alignmentLabel}</span>
+          ${alignmentReasonHtml}
+        </div>
       </div>
       <button class="breakdown-action-btn ${actionBtnClass}">${escapeHtml(result.action)}</button>
     </div>
@@ -643,7 +648,7 @@ function renderResults(results) {
         <span>CATEGORY</span>
         <span>SEVERITY</span>
         <span>CONFIDENCE</span>
-        <span>ACTION</span>
+        <span>ALIGNMENT</span>
       </div>
     </div>`;
 

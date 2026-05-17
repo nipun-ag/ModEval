@@ -186,9 +186,9 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
   - Consensus hero card leads results with large action word, AI analysis subtitle, donut chart, severity gauge, and action legend
   - Results panel has three lower tabs: Summary, Model Breakdown, Insights — hidden until analysis runs
   - Summary tab: disagreement banner + consensus hero + donut + gauge + legend
-  - Model Breakdown tab: card-per-row layout with section header rows (CATEGORY, SEVERITY, CONFIDENCE, ACTION); one card per model; no ALIGNMENT column
+  - Model Breakdown tab: card-per-row layout with section header rows (CATEGORY, SEVERITY, CONFIDENCE, ALIGNMENT); one card per model; each alignment field shows ALIGNED (green) or MISALIGNED (red) badge with plain-English alignment_reason below
   - Insights tab: bento grid with 6 cards — strictest/lenient, disagreement explanation, risk narrative, context sensitivity, contested category
-  - How It Works panel redesigned with architecture flow, pull quote, equation block, code-window components
+  - How It Works panel with 7 sections: Normalization, Context Engine (simplified to platform modifier only), AI-powered Policy Alignment Engine, Disagreement Detection, AI Interpretation Layer, Why These Models, Known Limitations
   - Benchmark placeholder panel with coming soon state and 3 feature preview cards
   - Ambient glow blobs on results panel background
 - Deployed on Hetzner VPS at modeval.bynipun.com — no cold starts

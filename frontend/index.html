@@ -387,9 +387,7 @@
         <p class="section-label" style="color: var(--accent); letter-spacing: 0.2em;">METHODOLOGY & FRAMEWORK</p>
         <h2>How It Works</h2>
         <p class="methodology-intro">
-          8 independent models analyze every submission simultaneously.
-          Outputs are normalized, weighted against the type of social
-          platform, and resolved into a single verdict.
+          8 independent models analyze every submission simultaneously. Outputs are normalized, scored against platform-specific AI policy alignment, and resolved into a single verdict.
         </p>
       </section>
 
@@ -476,7 +474,7 @@
         <p class="methodology-copy">
           The models themselves are frozen -- thresholds adjust, not models. This mirrors how real Trust &amp; Safety pipelines work. A high-confidence toxicity score on a gaming platform may result in Review. The same score on a professional platform results in Remove. The model's output is identical -- the interpretation changes based on context.
         </p>
-        <div class="formula-hero">Final threshold = Starting point + Platform adjustment + Content type adjustment + Strictness adjustment</div>
+        <div class="formula-hero">Final threshold = Base threshold + Platform adjustment</div>
         <div class="methodology-grid">
           <div class="methodology-subcard">
             <p class="section-label mono-label">Default Action Thresholds</p>
@@ -492,33 +490,15 @@
             <p class="section-label mono-label">Platform Modifiers</p>
             <table class="methodology-table">
               <tbody>
-                <tr><td>Gaming</td><td class="modifier-positive">+0.10</td><td>Higher tolerance for competitive language</td></tr>
-                <tr><td>Social Media</td><td>0.00</td><td>Baseline</td></tr>
-                <tr><td>Professional</td><td class="modifier-negative">-0.15</td><td>Lower tolerance, reputational risk</td></tr>
-                <tr><td>Forum</td><td class="modifier-positive">+0.05</td><td>Slightly higher tolerance for debate</td></tr>
-                <tr><td>VR/Metaverse</td><td class="modifier-positive">+0.15</td><td>Evolving norms, higher tolerance</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="methodology-subcard">
-            <p class="section-label mono-label">Content Type Modifiers</p>
-            <table class="methodology-table">
-              <tbody>
-                <tr><td>Original Post</td><td>0.00</td><td>Baseline</td></tr>
-                <tr><td>Comment/Reply</td><td class="modifier-positive">+0.05</td><td>Reactive content, slight tolerance</td></tr>
-                <tr><td>Username</td><td class="modifier-negative">-0.20</td><td>Permanent identity-linked content</td></tr>
-                <tr><td>Bio</td><td class="modifier-negative">-0.15</td><td>Persistent public-facing content</td></tr>
-                <tr><td>UGC</td><td class="modifier-positive">+0.05</td><td>Creative content, some leeway</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="methodology-subcard">
-            <p class="section-label mono-label">Strictness Modifiers</p>
-            <table class="methodology-table">
-              <tbody>
-                <tr><td>Strict</td><td class="modifier-negative">-0.15</td></tr>
-                <tr><td>Balanced</td><td>0.00</td></tr>
-                <tr><td>Lenient</td><td class="modifier-positive">+0.15</td></tr>
+                <tr><td>Reddit</td><td>0.00</td><td>Baseline</td></tr>
+                <tr><td>Discord</td><td class="modifier-positive">+0.05</td><td>Community-moderated norms</td></tr>
+                <tr><td>Facebook</td><td class="modifier-negative">-0.05</td><td>Broader audience, mainstream enforcement</td></tr>
+                <tr><td>Instagram</td><td class="modifier-negative">-0.10</td><td>Visual context, stricter on harassment</td></tr>
+                <tr><td>Gaming Platform</td><td class="modifier-positive">+0.10</td><td>Competitive context, higher tolerance</td></tr>
+                <tr><td>Professional</td><td class="modifier-negative">-0.15</td><td>Reputational risk, strictest</td></tr>
+                <tr><td>Community/Forum</td><td class="modifier-positive">+0.05</td><td>Niche culture, higher tolerance for debate</td></tr>
+                <tr><td>VR/Metaverse</td><td class="modifier-positive">+0.15</td><td>Emerging norms, experimental enforcement</td></tr>
+                <tr><td>Custom</td><td>user-defined</td><td>User policy controls threshold</td></tr>
               </tbody>
             </table>
           </div>
@@ -536,67 +516,22 @@
           </div>
         </div>
         <p class="methodology-copy">
-          Each platform has a distinct enforcement profile. ModEval scores how closely each model's confidence matches what that platform's policy would expect — not just whether content is flagged.
+          After all eight models return normalized results, ModEval evaluates how each model aligns with the selected platform's content policy. Instead of simple keyword matching, a batched AI call to GPT-4o-mini assesses each model's output in context of platform-specific rules.
         </p>
-        <p class="section-label mono-label">Platform Policy Profiles</p>
-        <table class="methodology-table">
-          <thead>
-            <tr>
-              <th>Platform</th>
-              <th>Zero Tolerance</th>
-              <th>Deprioritized</th>
-              <th>Notes</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Social Media</td>
-              <td style="background: var(--red-light)"><span class="mono">violence</span>, <span class="mono">self-harm</span>, <span class="mono">sexual/minors</span>, <span class="mono">hate</span></td>
-              <td style="background: var(--green-light)"><span class="mono">profanity</span>, <span class="mono">insult</span></td>
-              <td>High visibility, broad enforcement</td>
-            </tr>
-            <tr>
-              <td>Gaming</td>
-              <td style="background: var(--red-light)"><span class="mono">sexual/minors</span>, <span class="mono">harassment/threatening</span></td>
-              <td style="background: var(--green-light)"><span class="mono">profanity</span>, <span class="mono">insult</span>, <span class="mono">toxicity</span></td>
-              <td>Competitive context, tolerance for trash talk</td>
-            </tr>
-            <tr>
-              <td>Professional</td>
-              <td style="background: var(--red-light)"><span class="mono">hate</span>, <span class="mono">violence</span>, <span class="mono">sexual</span>, <span class="mono">self-harm</span>, <span class="mono">harassment</span></td>
-              <td style="background: var(--green-light)">none</td>
-              <td>Reputational risk, strictest profile</td>
-            </tr>
-            <tr>
-              <td>Forum</td>
-              <td style="background: var(--red-light)"><span class="mono">violence</span>, <span class="mono">self-harm</span>, <span class="mono">sexual/minors</span></td>
-              <td style="background: var(--green-light)"><span class="mono">profanity</span>, <span class="mono">insult</span>, <span class="mono">bias</span></td>
-              <td>Open debate culture, moderate tolerance</td>
-            </tr>
-          </tbody>
-        </table>
         <p class="methodology-copy">
-          Zero tolerance categories set the expected threshold to <span class="mono">0.10</span> — the model should be highly confident. Deprioritized categories push the threshold to <span class="mono">0.90</span>. Everything else uses the platform's adjusted remove threshold. A model shows Good Fit if its alignment score is <span class="mono">0.70</span> or above.
+          The platform context determines which categories are zero-tolerance, which are deprioritized, and what the expected enforcement rigor is. Each model's category prediction and confidence score are evaluated against these expectations. The AI returns three values per model:
         </p>
-        <div class="equation-block">
-          <p class="equation-label">THE ALIGNMENT EQUATION</p>
-          <div class="equation-display">
-            <span class="equation-score">Score</span>
-            <span class="equation-op">=</span>
-            <span class="equation-op">1 -</span>
-            <span class="equation-op">(</span>
-            <span class="equation-var">confidence</span>
-            <span class="equation-op">-</span>
-            <span class="equation-var">threshold</span>
-            <span class="equation-op">)</span>
-          </div>
-          <p class="equation-description">
-            When a model's confidence perfectly matches the expected
-            threshold, the difference is zero and the score becomes 1.0.
-            The further apart they are, the lower the score drops.
-          </p>
-          <div class="equation-sigma">Σ</div>
-        </div>
+        <ul class="integrity-card-list">
+          <li><span class="mono">alignment_score</span>: A floating point value (0.0-1.0) measuring fit with platform policy</li>
+          <li><span class="mono">aligned</span>: A boolean indicating whether the model's output matches platform expectations (score ≥ 0.70)</li>
+          <li><span class="mono">alignment_reason</span>: A plain-English explanation of why the model is or isn't aligned</li>
+        </ul>
+        <p class="methodology-copy">
+          This approach captures nuance that keyword rules cannot. A high-confidence hate speech detection on Reddit aligns perfectly. The same detection on a gaming platform may not align as strongly due to different enforcement norms. The AI understands context; the numbers follow.
+        </p>
+        <p class="methodology-copy">
+          If the GPT call fails, ModEval falls back to keyword-based alignment rules, ensuring the analysis always completes.
+        </p>
       </section>
 
       <section class="methodology-section methodology-card">
@@ -629,7 +564,7 @@
       <section class="methodology-section methodology-card">
         <p class="section-label mono-label" style="color: var(--accent); letter-spacing: 0.2em;">SECTION 5</p>
         <h3>AI Interpretation Layer</h3>
-        <p class="methodology-copy">After all eight models have returned results and disagreements have been detected, ModEval passes the full output to a language model for synthesis. GPT-4o-mini receives each model's action, confidence score, and top category, along with the detected disagreement type, and generates a 2-3 sentence plain English interpretation.</p>
+        <p class="methodology-copy">After all eight models have returned results and disagreements have been detected, ModEval passes the full output to a language model for synthesis. GPT-4o-mini receives each model's action, confidence score, and top category, along with AI alignment assessments per model and the detected disagreement type, and generates a 2-3 sentence plain English interpretation.</p>
         <p class="methodology-copy">This layer exists because structured data alone does not always communicate risk clearly. A Trust & Safety reviewer scanning hundreds of results needs to understand not just what the models said, but what the disagreement means in context. The AI interpretation translates model outputs into an actionable summary.</p>
         <p class="methodology-copy">If the GPT call fails or times out, ModEval falls back to a rule-based consensus summary generated from the same structured data — ensuring the Explainability section always renders.</p>
         <table class="methodology-table">
@@ -641,7 +576,7 @@
           </thead>
           <tbody>
             <tr>
-              <td>8 model results (action, confidence, top category)</td>
+              <td>8 model results (action, confidence, top category, alignment assessment)</td>
               <td>Plain English 2-3 sentence interpretation</td>
             </tr>
             <tr>
