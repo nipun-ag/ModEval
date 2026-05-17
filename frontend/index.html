@@ -575,20 +575,17 @@
           <div class="equation-display">
             <span class="equation-score">Score</span>
             <span class="equation-op">=</span>
-            <span class="equation-op">1 - |</span>
-            <div class="equation-var">
-              <span>C<sub>model</sub></span>
-            </div>
+            <span class="equation-op">1 -</span>
+            <span class="equation-op">(</span>
+            <span class="equation-var">confidence</span>
             <span class="equation-op">-</span>
-            <div class="equation-var">
-              <span>T<sub>expected</sub></span>
-            </div>
-            <span class="equation-op">|</span>
+            <span class="equation-var">threshold</span>
+            <span class="equation-op">)</span>
           </div>
           <p class="equation-description">
-            The Alignment Score represents the inverse delta between model
-            confidence and the platform-specific expected threshold.
-            A score of <span class="mono">1.0</span> means perfect alignment.
+            When a model's confidence perfectly matches the expected
+            threshold, the difference is zero and the score becomes 1.0.
+            The further apart they are, the lower the score drops.
           </p>
           <div class="equation-sigma">Σ</div>
         </div>
