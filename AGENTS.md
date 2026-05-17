@@ -173,11 +173,12 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
 - Unified platform selector (Reddit, Discord, Facebook, Instagram, Custom) combining threshold modifier + policy rules
 - PLATFORM_MAP in config.py maps each platform to threshold_modifier and policy_key
 - Content Type hardcoded to "Original Post" and Strictness hardcoded to "Balanced" in all analyses
-- AI-powered policy alignment using GPT-4o-mini: single batched call evaluates all model results against platform policy, returns alignment_score, aligned (bool), and alignment_reason for each model
-- Fallback to keyword-based alignment logic if GPT call fails, ensuring analysis always completes
+- AI-powered policy alignment using Claude Haiku: single batched call evaluates all model results against platform policy with original content context, returns alignment_score, aligned (bool), and alignment_reason for each model; flags model failures and acknowledges ambiguous content
+- Fallback to keyword-based alignment logic if Claude call fails, ensuring analysis always completes
+- **Requires ANTHROPIC_API_KEY in Doppler (project: modeval, config: prd) for production**
 - Dynamic platform policy guidelines box below platform selector showing accurate sourced rules for each platform (Reddit, Discord, Facebook, Instagram based on official documentation)
 - AI analysis with 4 structured analytical fields: disagreement_explanation (what does disagreement reveal?), risk_narrative (direct CLEAR/SAFE/GREY verdict with reasoning), context_sensitivity (human review needed?), contested_category (most disagreed category)
-- Senior T&S analyst persona in AI summary generation: flags model failures, explains ambiguity, recommends human review, avoids passive summarization
+- Senior T&S analyst persona in AI summary generation using Claude Haiku: flags model failures, explains ambiguity, recommends human review, avoids passive summarization
 - Disagreement detection and banner (scoped to Summary tab only — first child of #lower-panel-summary)
 - Dynamic topbar model count: GET /models endpoint returns active/total from credential-presence check; JS updates #models-active-count pill on page load and does not overwrite it during analysis
 - Batch analysis validates each row independently and excludes error rows from flagged-rate calculations`r`n- 100 pre-loaded test cases across 10 violation categories

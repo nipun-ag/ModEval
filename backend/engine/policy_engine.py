@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import os
-import openai
+import anthropic
 
 from backend.config import CUSTOM_POLICY_KEYWORDS, PREDEFINED_POLICIES, PLATFORM_MAP
 
@@ -109,10 +109,13 @@ def get_platform_policy_summary(platform: str, custom_policy_text: str = "") -> 
     return platform_policies.get(platform, "Use general best-practice content moderation standards.")
 
 
-def evaluate_alignment_with_ai(results: list[dict], platform: str, custom_policy_text: str = "") -> dict:
-    """Evaluate model alignment with platform policy using GPT-4o-mini in a single batched call."""
+def evaluate_alignment_with_ai(results: list[dict], platform: str, text: str = "", custom_policy_text: str = "") -> dict:
+    """Evaluate model alignment with platform policy using Claude Haiku in a single batched call.
+
+    Note: ANTHROPIC_API_KEY must be added to Doppler (project: modeval, config: prd) for production.
+    """
     try:
-        client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
         model_results_json = []
         for r in results:
@@ -129,36 +132,46 @@ def evaluate_alignment_with_ai(results: list[dict], platform: str, custom_policy
 
         policy_summary = get_platform_policy_summary(platform, custom_policy_text)
 
-        system_prompt = f"""You are a Trust & Safety policy expert. You will be given moderation results from multiple AI models analyzing a piece of content. For each model result, assess whether the recommended action aligns with the platform's content policy.
+        system_prompt = f"""You are a Trust & Safety policy expert with deep knowledge of platform content policies. You will be given a piece of content and moderation results from multiple AI models.
+
+Your job is to assess whether each model's recommended action aligns with the platform's actual content policy — not just whether the category name sounds bad, but whether THIS SPECIFIC CONTENT would actually violate the policy as written.
+
+Platform: {platform}
 
 Platform Policy:
 {policy_summary}
 
-For each model, return ONLY a JSON array in this exact format:
+Content being evaluated:
+"{text}"
+
+For each model result, consider:
+- Does the model's action (ALLOW/REVIEW/REMOVE) match what this platform's policy would actually require for this specific content?
+- Is the model's confidence appropriate given the content?
+- If the model gave 0.00 confidence on clearly harmful content, flag it as a likely model failure in the reason.
+- If the content is ambiguous, acknowledge that in the reason.
+
+Return ONLY a JSON array in this exact format:
 [
   {{
     "model": "<model name>",
     "aligned": true/false,
     "alignment_score": <float 0.0-1.0>,
-    "alignment_reason": "<one sentence>"
+    "alignment_reason": "<one specific sentence referencing the actual content and why the model's decision does or does not match platform policy>"
   }},
   ...
 ]
 Return only the JSON array. No other text."""
 
-        user_message = f"Model results to evaluate:\n{json.dumps(model_results_json, indent=2)}"
+        user_message = f"Evaluate alignment for the model results above:\n{json.dumps(model_results_json, indent=2)}"
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_message},
-            ],
-            max_tokens=500,
-            temperature=0.3,
+        response = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=600,
+            system=system_prompt,
+            messages=[{"role": "user", "content": user_message}],
         )
 
-        raw = response.choices[0].message.content.strip()
+        raw = response.content[0].text.strip()
         if raw.startswith("```"):
             raw = raw.split("```")[1]
             if raw.startswith("json"):

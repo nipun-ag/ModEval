@@ -6,6 +6,30 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ## 2026-05-17
 
+**feat: switch interpretation layer to Claude Haiku, pass text context to alignment**
+
+Changes:
+- Updated evaluate_alignment_with_ai() signature to accept text parameter for context-aware assessment
+- Updated alignment system prompt to reference actual content being evaluated, not just categories
+- Alignment reasons now explicitly flag model failures (e.g., 0.00 confidence on harmful content) and acknowledge ambiguous content
+- Switched alignment assessment from GPT-4o-mini to Claude Haiku (claude-haiku-4-5-20251001) for efficiency
+- Updated alignment API call to use Anthropic client.messages.create() instead of OpenAI chat.completions.create()
+- Switched AI summary/analysis generation from GPT-4o-mini to Claude Haiku (claude-haiku-4-5-20251001)
+- Updated AI analysis API call to use Anthropic client with system role
+- Added anthropic>=0.28.0 to requirements.txt
+- Added inline comments noting ANTHROPIC_API_KEY requirement in Doppler (project: modeval, config: prd)
+- OpenAI still used for 8 moderation model API calls (openai_moderation.py) — unchanged
+
+Why:
+- Passing original text to alignment assessment enables more accurate policy matching against actual content rather than just category labels
+- Claude Haiku provides sufficient capability for Trust & Safety interpretation at lower cost and faster inference than GPT-4o-mini
+- Context-aware alignment flags model failures and ambiguity explicitly, improving interpretability
+- Both interpretation calls (alignment + analysis) now use Anthropic's unified family for consistency
+
+---
+
+## 2026-05-17
+
 **feat: upgrade AI summary to senior T&S analyst interpretation**
 
 Changes:

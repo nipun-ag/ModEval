@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-import openai
+import anthropic
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from flask import Blueprint, jsonify, request
@@ -71,9 +71,12 @@ def run_models(text: str) -> list[dict]:
 
 
 def generate_ai_analysis(results: list[dict], context: dict) -> dict:
-    """Generate structured AI analysis of model results using GPT-4o-mini."""
+    """Generate structured AI analysis of model results using Claude Haiku.
+
+    Note: ANTHROPIC_API_KEY must be added to Doppler (project: modeval, config: prd) for production.
+    """
     try:
-        client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
         platform = context.get("platform", "Reddit")
         text = context.get("text", "")
@@ -129,17 +132,14 @@ Provide your analytical interpretation in this JSON format:
 
 Return ONLY the JSON object. No preamble, no markdown, no explanation."""
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_message}
-            ],
-            max_tokens=400,
-            temperature=0.3,
+        response = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=500,
+            system=system_prompt,
+            messages=[{"role": "user", "content": user_message}],
         )
 
-        raw = response.choices[0].message.content.strip()
+        raw = response.content[0].text.strip()
         # Strip markdown fences if present
         if raw.startswith("```"):
             raw = raw.split("```")[1]
@@ -214,7 +214,8 @@ def build_response(payload: dict) -> dict:
     ai_alignment_map = evaluate_alignment_with_ai(
         active_results,
         platform,
-        payload.get("custom_policy_text", ""),
+        text=payload.get("text", ""),
+        custom_policy_text=payload.get("custom_policy_text", ""),
     )
 
     if ai_alignment_map:
