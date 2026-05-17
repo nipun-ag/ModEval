@@ -70,39 +70,69 @@ def run_models(text: str) -> list[dict]:
     return sorted(results, key=lambda item: order.index(item["model"]))
 
 
-def generate_ai_summary(results: list[dict], context: dict) -> str:
-    """Generate a plain English summary of model results using GPT-4o-mini."""
+def generate_ai_analysis(results: list[dict], context: dict) -> dict:
+    """Generate structured AI analysis of model results using GPT-4o-mini."""
     try:
         client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
         model_lines = []
         for r in results:
-            if not r.get("error"):
+            if not r.get("error") and not r.get("disabled"):
                 model_lines.append(
                     f"- {r['model']}: action={r.get('action','?')}, "
                     f"top_category={r.get('top_category','?')}, "
-                    f"confidence={r.get('confidence','?')}"
+                    f"confidence={r.get('confidence','?')}, "
+                    f"severity={r.get('severity','?')}"
                 )
 
         models_text = "\n".join(model_lines)
         platform = context.get("platform_context", "Social Media")
+        content_type = context.get("content_type", "Original Post")
+        strictness = context.get("strictness", "Balanced")
 
-        prompt = f"""You are a Trust & Safety analyst. Given these 5 AI moderation model results for a piece of content on {platform}, write a 2-3 sentence plain English interpretation. Focus on what the models agree on, what they disagree on, and what it means for content safety. Be concise and direct. Do not use bullet points.
+        prompt = f"""You are a Trust & Safety analyst reviewing AI moderation results.
+
+Platform: {platform}
+Content type: {content_type}
+Strictness: {strictness}
 
 Model results:
-{models_text}"""
+{models_text}
+
+Return ONLY a valid JSON object with exactly these 4 fields:
+
+{{
+  "disagreement_explanation": "1-2 sentences explaining WHY the models disagreed in plain English. Focus on what caused the split -- different training data, category interpretation, confidence levels. If models agreed, say so briefly.",
+  "risk_narrative": "1 sentence summarizing the overall safety picture for this content on this platform.",
+  "context_sensitivity": "1 sentence on how the platform type or strictness setting meaningfully affected the outcome. Be specific.",
+  "contested_category": "The single violation category most models disagreed about (e.g. harassment, toxicity, hate). Just the category name, no explanation."
+}}
+
+Return ONLY the JSON object. No preamble, no markdown, no explanation."""
 
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=150,
+            max_tokens=300,
             temperature=0.3,
         )
-        print(f"AI Summary generated: {response.choices[0].message.content[:100]}")
-        return response.choices[0].message.content.strip()
+
+        raw = response.choices[0].message.content.strip()
+        # Strip markdown fences if present
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+        raw = raw.strip()
+
+        import json
+        parsed = json.loads(raw)
+        print(f"AI Analysis generated successfully")
+        return parsed
+
     except Exception as e:
-        print(f"AI Summary failed: {e}")
-        return ""
+        print(f"AI Analysis failed: {e}")
+        return {}
 
 
 def build_response(payload: dict) -> dict:
@@ -156,13 +186,13 @@ def build_response(payload: dict) -> dict:
         normalized_results.append(result)
 
     active_results = [r for r in normalized_results if not r.get("disabled")]
-    ai_summary = generate_ai_summary(active_results, payload)
+    ai_analysis = generate_ai_analysis(active_results, payload)
 
     return {
         "results": normalized_results,
         "disagreements": detect_disagreements(active_results),
         "insights": build_insights(active_results),
-        "ai_summary": ai_summary,
+        "ai_analysis": ai_analysis,
     }
 
 

@@ -1060,6 +1060,57 @@ textarea:focus {
   --card-color: var(--red);
 }
 
+.ai-insights-strip {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.ai-insight-card {
+  padding: 20px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 150ms ease;
+}
+
+.ai-insight-card:hover {
+  border-color: var(--border-strong);
+}
+
+.ai-insight-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+
+.ai-insight-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.ai-insight-category {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  color: var(--text);
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+@media (max-width: 900px) {
+  .ai-insights-strip {
+    grid-template-columns: 1fr;
+  }
+}
+
 .matrix-section {
   display: grid;
   gap: 12px;

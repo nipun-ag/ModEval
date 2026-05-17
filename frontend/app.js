@@ -15,6 +15,10 @@ const contextContent = document.getElementById("context-content");
 const analyzeButton = document.getElementById("analyze-button");
 const workspace = document.querySelector(".workspace");
 const benchmarkPanel = document.getElementById("benchmark-panel");
+const aiDisagreementText = document.getElementById("ai-disagreement-text");
+const aiRiskText = document.getElementById("ai-risk-text");
+const aiContextText = document.getElementById("ai-context-text");
+const aiCategoryText = document.getElementById("ai-category-text");
 
 analyzeButton.addEventListener("mousedown", () => {
   analyzeButton.classList.add("loading");
@@ -766,6 +770,20 @@ function renderInsights(insights, results) {
   lenientCard.dataset.tone = actionTone(lenientResult?.action || "allow");
 }
 
+function renderAiAnalysis(aiAnalysis) {
+  if (!aiAnalysis || Object.keys(aiAnalysis).length === 0) {
+    if (aiDisagreementText) aiDisagreementText.textContent = "Analysis unavailable.";
+    if (aiRiskText) aiRiskText.textContent = "Analysis unavailable.";
+    if (aiContextText) aiContextText.textContent = "Analysis unavailable.";
+    if (aiCategoryText) aiCategoryText.textContent = "-";
+    return;
+  }
+  if (aiDisagreementText) aiDisagreementText.textContent = aiAnalysis.disagreement_explanation || "-";
+  if (aiRiskText) aiRiskText.textContent = aiAnalysis.risk_narrative || "-";
+  if (aiContextText) aiContextText.textContent = aiAnalysis.context_sensitivity || "-";
+  if (aiCategoryText) aiCategoryText.textContent = aiAnalysis.contested_category || "-";
+}
+
 function generateInsight(action, confidence, flagged) {
   const tone = actionTone(action);
   const conf = parseFloat(confidence);
@@ -969,9 +987,10 @@ form.addEventListener("submit", async (event) => {
     renderDisagreements(data.disagreements || []);
     renderInsights(data.insights || {}, data.results || []);
     renderExplainability(data.results || [], data.insights || {}, data.disagreements || [], data.ai_summary || "");
+    renderAiAnalysis(data.ai_analysis || {});
     setHeroState(
       data.insights?.consensus_recommendation || data.insights?.consensus_action || "Review",
-      data.ai_summary || generateConsensusSummary(data.results || [], data.insights || {}, data.disagreements || [])
+      data.ai_analysis?.risk_narrative || generateConsensusSummary(data.results || [], data.insights || {}, data.disagreements || [])
     );
     // --- Donut Chart ---
     const activeResults = data.results.filter(r => !r.disabled);
