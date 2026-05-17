@@ -2399,8 +2399,8 @@ tbody td {
 }
 .pull-quote-text {
   font-family: 'DM Serif Display', serif;
-  font-size: 22px;
-  line-height: 1.6;
+  font-size: 32px;
+  line-height: 1.5;
   color: var(--text);
   font-style: italic;
   max-width: 700px;
