@@ -938,45 +938,85 @@ function renderInsights(insights, results, platform, alignmentMap, data) {
   const insightsContainer = document.getElementById("lower-panel-insights");
   if (!insightsContainer) return;
 
+  // Build disagreement text with inline colored action words
+  const disagreementText = data?.ai_analysis?.disagreement_explanation || "No disagreement data available.";
+  const escapedDisagreement = escapeHtml(disagreementText);
+  const highlightedDisagreement = escapedDisagreement.replace(
+    /\b(ALLOW|REVIEW|REMOVE)\b/g,
+    (match) => {
+      const cls = match === "REMOVE" ? "remove" : match === "REVIEW" ? "review" : "allow";
+      return `<span class="insights-card-body-highlight ${cls}">${match}</span>`;
+    }
+  );
+
+  // Build risk text with inline colored violation/safe/grey area
+  const riskText = data?.ai_analysis?.risk_narrative || "No risk assessment available.";
+  const escapedRisk = escapeHtml(riskText);
+  const highlightedRisk = escapedRisk
+    .replace(/CLEAR VIOLATION/g, '<span class="insights-card-body-highlight violation">CLEAR VIOLATION</span>')
+    .replace(/CLEAR SAFE/g, '<span class="insights-card-body-highlight allow">CLEAR SAFE</span>')
+    .replace(/GENUINE GREY AREA/g, '<span class="insights-card-body-highlight review">GENUINE GREY AREA</span>');
+
+  const strictestDisplayName = MODEL_DISPLAY[strictest?.model]?.name || strictest?.model || "N/A";
+  const strictestDisplaySubtitle = MODEL_DISPLAY[strictest?.model]?.subtitle || "";
+  const lenientDisplayName = MODEL_DISPLAY[lenient?.model]?.name || lenient?.model || "N/A";
+  const lenientDisplaySubtitle = MODEL_DISPLAY[lenient?.model]?.subtitle || "";
+
   const gridHTML = `
     <div class="insights-grid">
-      <!-- Strictest vs Lenient Models -->
-      <div class="insights-grid-item">
-        <h4>Strictest Model</h4>
-        <div class="comparison-label">${escapeHtml(strictest?.model || "N/A")}</div>
-        <div class="model-comparison">
-          <span class="comparison-label">Action:</span>
-          <span class="comparison-value">${escapeHtml(strictest?.action || "—")}</span>
+      <!-- Strictest Model (tall left) -->
+      <div class="insights-card insights-card-tall">
+        <div class="insights-card-top">
+          <span class="insights-card-eyebrow">◈ STRICTEST MODEL</span>
+          <span style="color:var(--accent);font-size:16px">◈</span>
         </div>
-        <div class="model-comparison">
-          <span class="comparison-label">Confidence:</span>
-          <span class="comparison-value">${(strictest?.confidence || 0).toFixed(2)}</span>
-        </div>
-      </div>
-
-      <div class="insights-grid-item">
-        <h4>Most Lenient Model</h4>
-        <div class="comparison-label">${escapeHtml(lenient?.model || "N/A")}</div>
-        <div class="model-comparison">
-          <span class="comparison-label">Action:</span>
-          <span class="comparison-value">${escapeHtml(lenient?.action || "—")}</span>
-        </div>
-        <div class="model-comparison">
-          <span class="comparison-label">Confidence:</span>
-          <span class="comparison-value">${(lenient?.confidence || 0).toFixed(2)}</span>
+        <p class="insights-card-description">
+          The model that flagged this content most aggressively across all signals.
+        </p>
+        <div class="insights-card-bottom">
+          <div class="insights-card-title">${escapeHtml(strictestDisplayName)}</div>
+          <div class="insights-card-subtitle">${escapeHtml(strictestDisplaySubtitle)}</div>
         </div>
       </div>
 
-      <!-- Disagreement Explanation -->
-      <div class="insights-grid-item">
-        <h4>Disagreement Explained</h4>
-        <p>${escapeHtml(data?.ai_analysis?.disagreement_explanation || "No disagreement data available.")}</p>
-      </div>
+      <!-- Right column (2/3 width) -->
+      <div class="insights-grid-right">
+        <!-- Most Lenient (wide top) -->
+        <div class="insights-card insights-card-wide">
+          <div class="insights-card-top">
+            <span class="insights-card-eyebrow lenient">⬡ MOST LENIENT</span>
+            <span style="color:var(--green);font-size:16px">⬡</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:12px">
+            <div>
+              <p class="insights-card-description" style="margin-bottom:8px">
+                The model most likely to allow this content through.
+              </p>
+              <div class="insights-card-title">${escapeHtml(lenientDisplayName)}</div>
+            </div>
+            <div class="insights-card-subtitle">${escapeHtml(lenientDisplaySubtitle)}</div>
+          </div>
+        </div>
 
-      <!-- Risk Narrative -->
-      <div class="insights-grid-item">
-        <h4>Risk Assessment</h4>
-        <p>${escapeHtml(data?.ai_analysis?.risk_narrative || "No risk assessment available.")}</p>
+        <!-- Disagreement Vector -->
+        <div class="insights-card">
+          <div class="insights-card-top">
+            <span class="insights-card-eyebrow disagreement">⇄ DISAGREEMENT VECTOR</span>
+          </div>
+          <p class="insights-card-body" style="margin-top:12px">
+            ${highlightedDisagreement}
+          </p>
+        </div>
+
+        <!-- Risk Narrative -->
+        <div class="insights-card">
+          <div class="insights-card-top">
+            <span class="insights-card-eyebrow risk">◉ RISK NARRATIVE</span>
+          </div>
+          <p class="insights-card-body" style="margin-top:12px">
+            ${highlightedRisk}
+          </p>
+        </div>
       </div>
     </div>
 
