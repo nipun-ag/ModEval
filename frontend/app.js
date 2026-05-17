@@ -258,6 +258,7 @@ const EXAMPLE_LIBRARY = {
 
 const lastExampleByCategory = {};
 let selectedPlatform = "Reddit";
+let lastAnalyzedText = "";
 
 const PLATFORM_POLICIES = {
   "Reddit": {
@@ -844,7 +845,76 @@ function renderAlignmentAssessment(results, platform) {
   `;
 }
 
-function renderInsights(insights, results, platform) {
+function renderFindingTag(insights, data) {
+  const action = data.action || "Review";
+  let tagClass = "grey";
+  let tagText = "AMBIGUOUS";
+
+  if (action === "Remove") {
+    tagClass = "violation";
+    tagText = "Clear Violation";
+  } else if (action === "Allow") {
+    tagClass = "safe";
+    tagText = "Safe Content";
+  }
+
+  return `<span class="insights-finding-tag ${tagClass}">${tagText}</span>`;
+}
+
+function renderConfidenceBars(results) {
+  if (!results || results.length === 0) return "";
+
+  const activeResults = results.filter(r => !r.disabled && !r.error);
+
+  return activeResults.map(result => {
+    const confidence = parseFloat(result.confidence || 0);
+    const confidencePercent = Math.round(confidence * 100);
+
+    return `
+      <div class="insights-confidence-item">
+        <div class="insights-confidence-label">${escapeHtml(result.model || "")}</div>
+        <div class="insights-confidence-bar-wrapper">
+          <div class="insights-confidence-bar-fill" style="width: ${confidencePercent}%"></div>
+        </div>
+        <div class="insights-confidence-value">${confidence.toFixed(2)}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderInsightsMatrix(alignmentMap, results) {
+  if (!alignmentMap || Object.keys(alignmentMap).length === 0) {
+    return '<div style="padding: 16px; text-align: center; color: var(--text-tertiary); font-size: 13px;">No alignment data available.</div>';
+  }
+
+  let html = '';
+  const activeResults = results.filter(r => !r.disabled && !r.error);
+
+  for (const result of activeResults) {
+    const modelName = result.model || "Unknown";
+    const alignmentInfo = alignmentMap[modelName];
+
+    if (!alignmentInfo) continue;
+
+    const isAligned = alignmentInfo.aligned;
+    const badgeClass = isAligned ? 'aligned' : 'misaligned';
+    const badgeText = isAligned ? 'ALIGNED' : 'MISALIGNED';
+
+    html += `
+      <div class="insights-matrix-row">
+        <div class="insights-matrix-model">${escapeHtml(modelName)}</div>
+        <div class="insights-matrix-alignment">
+          <span class="insights-alignment-badge ${badgeClass}">${badgeText}</span>
+          <div class="insights-alignment-reason">${escapeHtml(alignmentInfo.alignment_reason || "")}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  return html;
+}
+
+function renderInsights(insights, results, platform, alignmentMap, data, aiAnalysis) {
   const strictest = insights?.strictest_model;
   const lenient = insights?.most_lenient_model;
 
@@ -857,7 +927,101 @@ function renderInsights(insights, results, platform) {
   strictestCard.dataset.tone = actionTone(strictest?.action || strictestResult?.action || "review");
   lenientCard.dataset.tone = actionTone(lenient?.action || lenientResult?.action || "allow");
 
-  renderAlignmentAssessment(results, platform);
+  // Build insights grid
+  const insightsContainer = document.getElementById("lower-panel-insights");
+  if (!insightsContainer) return;
+
+  const gridHTML = `
+    <div class="insights-grid">
+      <!-- Strictest vs Lenient Models -->
+      <div class="insights-grid-item">
+        <h4>Strictest Model</h4>
+        <div class="comparison-label">${escapeHtml(strictest?.model || "N/A")}</div>
+        <div class="model-comparison">
+          <span class="comparison-label">Action:</span>
+          <span class="comparison-value">${escapeHtml(strictest?.action || "—")}</span>
+        </div>
+        <div class="model-comparison">
+          <span class="comparison-label">Confidence:</span>
+          <span class="comparison-value">${(strictest?.confidence || 0).toFixed(2)}</span>
+        </div>
+      </div>
+
+      <div class="insights-grid-item">
+        <h4>Most Lenient Model</h4>
+        <div class="comparison-label">${escapeHtml(lenient?.model || "N/A")}</div>
+        <div class="model-comparison">
+          <span class="comparison-label">Action:</span>
+          <span class="comparison-value">${escapeHtml(lenient?.action || "—")}</span>
+        </div>
+        <div class="model-comparison">
+          <span class="comparison-label">Confidence:</span>
+          <span class="comparison-value">${(lenient?.confidence || 0).toFixed(2)}</span>
+        </div>
+      </div>
+
+      <!-- Disagreement Explanation -->
+      <div class="insights-grid-item">
+        <h4>Disagreement Explained</h4>
+        <p>${escapeHtml(insights?.disagreement_explanation || "Models aligned on action.")}</p>
+      </div>
+
+      <!-- Risk Narrative -->
+      <div class="insights-grid-item">
+        <h4>Risk Assessment</h4>
+        <p>${escapeHtml(insights?.risk_narrative || "No immediate risk identified.")}</p>
+      </div>
+    </div>
+
+    <!-- Alignment Assessment Matrix -->
+    <div class="insights-alignment-section">
+      <h4 class="insights-alignment-header">Policy Alignment</h4>
+      <div class="insights-matrix">
+        ${renderInsightsMatrix(alignmentMap, results)}
+      </div>
+      <div class="insights-matrix-footer">
+        Alignment assessed by Claude Haiku against ${escapeHtml(platform)} content policy.
+      </div>
+    </div>
+
+    <!-- AI Executive Summary -->
+    <div class="insights-ai-section">
+      <div class="insights-ai-header">
+        <span class="insights-ai-label">Executive Summary</span>
+        <span class="insights-consensus-badge">
+          <span class="dot">●</span>
+          Consensus: <strong>${escapeHtml(data?.action || "—")}</strong>
+        </span>
+      </div>
+
+      ${renderFindingTag(insights, data)}
+
+      <div class="insights-ai-summary">
+        ${escapeHtml(aiAnalysis || "Analysis complete. Review results above for detailed findings.")}
+      </div>
+
+      <div class="insights-confidence-bars">
+        ${renderConfidenceBars(results)}
+      </div>
+    </div>
+  `;
+
+  // Clear old content and insert new structure
+  insightsContainer.innerHTML = gridHTML;
+
+  // Add AI analysis section below
+  const aiSection = document.createElement("section");
+  aiSection.className = "explainability-section";
+  aiSection.innerHTML = `
+    <div class="section-heading stacked">
+      <div>
+        <p class="section-label mono-label">Interpretation Layer</p>
+        <h3>AI Summary</h3>
+      </div>
+    </div>
+    <div id="explainability-list" class="explainability-grid"></div>
+  `;
+  insightsContainer.appendChild(aiSection);
 }
 
 function renderAiAnalysis(aiAnalysis) {
@@ -1029,12 +1193,20 @@ form.addEventListener("submit", async (event) => {
   }
 
   const payload = Object.fromEntries(new FormData(form).entries());
+  lastAnalyzedText = payload.text || "";
 
   try {
     const data = await postJson("/analyze", payload);
     renderResults(data.results || []);
     renderDisagreements(data.disagreements || {});
-    renderInsights(data.insights || {}, data.results || [], selectedPlatform);
+    renderInsights(
+      data.insights || {},
+      data.results || [],
+      selectedPlatform,
+      data.alignment_map || {},
+      data,
+      data.ai_analysis?.risk_narrative || ""
+    );
     renderExplainability(
       data.results || [],
       data.insights || {},

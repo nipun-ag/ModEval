@@ -198,7 +198,10 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
   - Results panel has three lower tabs: Summary, Model Breakdown, Insights — hidden until analysis runs
   - Summary tab: disagreement banner + consensus hero + donut + gauge + legend
   - Model Breakdown tab: card-per-row layout with section header rows (CATEGORY, SEVERITY, CONFIDENCE, ACTION); one card per model; no alignment column
-  - Insights tab: bento grid with 6 cards — strictest/lenient, disagreement explanation, risk narrative, context sensitivity, contested category, plus ALIGNMENT ASSESSMENT section showing all model alignment verdicts and reasons with footer "Alignment assessed by Claude Haiku against [platform] content policy."
+  - Insights tab: three-section asymmetric layout:
+    - Top grid (4 cards): Strictest Model + Most Lenient Model + Disagreement Explained + Risk Assessment
+    - Alignment matrix: All model alignment verdicts with ALIGNED/MISALIGNED badges and reasons, footer "Alignment assessed by Claude Haiku against [platform] content policy."
+    - Elevated AI executive summary card: Gradient teal/purple border with glow, consensus badge, auto-classified finding tag (CLEAR VIOLATION/SAFE CONTENT/AMBIGUOUS), AI narrative, per-model confidence bars with gradient fill
   - How It Works panel with 7 sections: Normalization, Context Engine (simplified to platform modifier only), AI-powered Policy Alignment Engine, Disagreement Detection, AI Interpretation Layer, Why These Models, Known Limitations
   - Benchmark placeholder panel with coming soon state and 3 feature preview cards
   - Ambient glow blobs on results panel background

@@ -4,6 +4,42 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-05-18
+
+**feat: redesign insights tab with asymmetric layout and elevated AI summary**
+
+Changes:
+- Insights tab completely redesigned with three-section asymmetric layout:
+  - Top grid: Strictest/Most Lenient model comparisons (2 cards) + Disagreement Explanation (1 card) + Risk Assessment (1 card)
+  - Alignment assessment matrix: Restyled policy alignment assessment with ALIGNED/MISALIGNED badges, model names, and alignment reasons
+  - Elevated AI executive summary card: Gradient teal/purple border with radial glow effect, consensus badge showing consensus action, auto-classified finding tag, AI narrative, and per-model confidence bars
+- Finding tags auto-classify content based on consensus action: CLEAR VIOLATION (red) for Remove, SAFE CONTENT (green) for Allow, AMBIGUOUS (grey) for Review
+- Confidence bars visualize each active model's conviction level with smooth teal-to-purple gradient fill
+- New CSS classes added for three-section layout: insights-grid, insights-grid-item, insights-alignment-section, insights-matrix, insights-ai-section, insights-finding-tag, insights-confidence-bars, etc.
+- renderInsights() function completely rewritten to build new three-section layout instead of old bento grid
+- Added renderFindingTag() helper to auto-classify violations based on consensus action
+- Added renderConfidenceBars() helper to render per-model confidence visualization
+- Added renderInsightsMatrix() helper to wrap alignment assessment with new styles
+- Insights AI section uses existing CSS variables (teal #5eeac4, purple #8b5cf6) for consistent branding
+- Context Sensitivity and Most Contested Category cards removed from display (old bento cards no longer rendered)
+- AI analysis section moved inside Insights panel structure with proper hierarchy
+- lastAnalyzedText tracking added to capture submitted content for context-aware rendering
+
+Why:
+- Three-section layout provides clear information hierarchy: model comparisons → alignment → AI interpretation
+- Elevated AI summary card emphasizes the Claude-powered analysis as the executive endpoint
+- Confidence bars provide quick visual comparison of model certainty across all models
+- Finding tags reduce cognitive load by auto-labeling severity (violation/safe/ambiguous) instantly
+- Gradient border and glow effect on AI section visually distinguishes it as elevated/authoritative
+- Simplified card layout removes redundant severity/context cards, focusing on actionable insights
+
+Tradeoffs:
+- Removed Context Sensitivity and Most Contested Category cards (was redundant with AI summary narrative)
+- Alignment matrix now integrated into Insights rather than separate section (more compact but fewer scrolls)
+- Finding tags are automated rather than manually tagged (sacrifices flexibility for consistency)
+
+---
+
 ## 2026-05-17 (Part 5)
 
 **docs: finalize platform reduction, Claude Haiku alignment, UI component documentation**
