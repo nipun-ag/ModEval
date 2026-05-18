@@ -6,6 +6,33 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ## 2026-05-18
 
+**feat: collapsible platform policy box, update footer copy**
+
+Changes:
+- Modified `updatePlatformPolicyBox()` in app.js to render platform policy guidelines in a collapsible structure
+- Added `.platform-policy-header` button element with label and chevron icon
+- Wrapped policy rules in `.platform-policy-content` div that collapses with smooth CSS transition
+- Added event listener to header button that toggles `aria-expanded` attribute and `collapsed` class
+- Chevron icon rotates 180° when expanded (CSS: `.platform-policy-header[aria-expanded="true"] .platform-policy-chevron`)
+- Default state on page load: collapsed (aria-expanded="false", max-height: 0)
+- Updated footer text from "These rules are used by the AI interpretation model to assess alignment of moderation results." to "Guidelines sourced from official platform documentation. Last verified May 2026."
+- Added CSS for collapsible behavior with smooth 0.2s max-height transition
+- #platform-policy-box ID preserved — app.js continues to update content within this element when platform changes
+
+Why:
+- Reduces visual clutter in the input panel by hiding policy rules by default
+- Users can expand rules on-demand to review platform-specific guidelines
+- New footer text reflects the sourced nature of the guidelines without claiming direct AI use in policy logic
+- Chevron rotation provides clear visual feedback for collapse/expand state
+
+Tradeoffs:
+- Policy rules now hidden by default; users must click to see them (vs. always visible)
+- Smooth transition adds slight delay when toggling (0.2s), but improves visual polish
+
+---
+
+## 2026-05-18
+
 **refactor: remove platform threshold modifiers, use fixed base thresholds**
 
 Changes:

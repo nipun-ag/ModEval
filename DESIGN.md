@@ -323,12 +323,22 @@ Never use for general reading text. Monospace signals "this is technical data."
 
 ### Platform Policy Box (.platform-policy-box)
 - Lives below the Platform selector dropdown in the input panel
-- `--surface2` background, `--border` border, border-radius 8px, 16px padding
-- Header: JetBrains Mono 10px uppercase `--muted` — "PLATFORM POLICY: [PLATFORM NAME]"
-- Body: 12px `--text-secondary`, line-height 1.6, lists sourced policy rules for selected platform
-- Updates dynamically when platform selection changes
-- For Custom platform: shows placeholder text explaining user should provide policy text
+- `--surface2` background, `--border` border, border-radius 6px
+- **Collapsible header (.platform-policy-header)**:
+  - Button element with `display: flex`, `justify-content: space-between`, full width
+  - Clickable with hover state: background changes to `--surface3` on hover
+  - Left side: JetBrains Mono 9px uppercase `--muted` — "PLATFORM POLICY GUIDELINES"
+  - Right side: Chevron icon (⌄) that rotates 180° when expanded
+  - `aria-expanded` attribute toggles true/false with each click
+- **Content area (.platform-policy-content)**:
+  - Default state: collapsed (max-height: 0, padding: 0 14px)
+  - Expanded state: max-height 1500px, padding 0 14px 12px 14px
+  - Smooth transition: `max-height 0.2s ease, padding 0.2s ease`
+  - Contains unordered list of policy rules (12px `--text-secondary`, bullet points)
+  - Footer text: italic 10px `--muted` — "Guidelines sourced from official platform documentation. Last verified May 2026."
+- Updates dynamically when platform selection changes; always resets to collapsed state
 - Sourced from official platform guidelines (Reddit, Discord, Facebook, Instagram)
+- For Custom platform: shows placeholder text explaining user should provide policy text
 
 ### Context Explainer (.context-explainer, .context-explainer-wrapper, .context-info-icon)
 - Hover tooltip triggered by an SVG info icon (ⓘ) positioned next to the PLATFORM label
