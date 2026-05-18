@@ -48,8 +48,8 @@ docs/ARCHITECTURE.md           Complete technical reference (this file)
 - **Donut chart SVG IDs** — donut-remove, donut-review, donut-allow, donut-fraction, donut-action-label
 - **Lower tabs IDs** — results-lower-tabs, lower-tab-summary, lower-tab-breakdown, lower-tab-insights
 - **Lower panel IDs** — lower-panel-summary, lower-panel-breakdown, lower-panel-insights
-- **Topbar nav IDs** — nav-analysis, nav-benchmark, nav-how-it-works, nav-models
-- **Panel IDs** — benchmark-panel, how-it-works-panel, models-panel
+- **Topbar nav IDs** — nav-analysis, nav-how-it-works, nav-models
+- **Panel IDs** — how-it-works-panel, models-panel
 - **Topbar status pill ID** — models-active-count (updated dynamically by /models fetch on page load)
 - **Platform policy box ID** — platform-policy-box (dynamic policy guidelines below platform selector)
 - **Context explainer link ID** — explainer-howtoworks-link (how it works link above platform selector)
@@ -191,7 +191,7 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
 - Batch analysis validates each row independently and excludes error rows from flagged-rate calculations
 - 100 pre-loaded test cases across 10 violation categories
 - Phase 0 UX overhaul complete:
-  - Topbar navigation with 4 tabs: ANALYSIS (active), BENCHMARK (locked), HOW IT WORKS, MODELS
+  - Topbar navigation with 3 tabs: ANALYSIS (active), HOW IT WORKS, MODELS
   - HOW IT WORKS and MODELS are full-page panels accessed from topbar, not results tabs
   - Panel padding increased to 48px
   - Consensus hero card leads results with large action word, AI analysis subtitle, donut chart, and action legend
@@ -203,7 +203,6 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
     - Alignment matrix: All model alignment verdicts with ALIGNED/MISALIGNED badges and reasons, footer "Alignment assessed by Claude Haiku against [platform] content policy."
     - Elevated AI executive summary card: Gradient teal/purple border with glow, consensus badge, auto-classified finding tag (CLEAR VIOLATION/SAFE CONTENT/AMBIGUOUS), AI narrative, MODEL CONFIDENCE header above per-model confidence bars with gradient fill
   - How It Works panel with 7 sections: Normalization, Context Engine (simplified to platform modifier only), AI-powered Policy Alignment Engine, Disagreement Detection, AI Interpretation Layer, Why These Models, Known Limitations
-  - Benchmark placeholder panel with coming soon state and 3 feature preview cards
   - Ambient glow blobs on results panel background
 - Deployed on Hetzner VPS at modeval.bynipun.com — no cold starts
 - Fixed threshold model: All platforms use identical base thresholds (review=0.40, remove=0.70) — platform-specific policy judgment delegated entirely to Claude Haiku alignment assessment

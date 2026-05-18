@@ -132,13 +132,11 @@ Never use for general reading text. Monospace signals "this is technical data."
 .app-shell (max-width: 1280px, centered)
 ├── .topbar (fixed height, --surface background)
 │   ├── .brand-wordmark (left)
-│   ├── .topbar-nav (center) — ANALYSIS, BENCHMARK, 
-│   │   HOW IT WORKS, MODELS
+│   ├── .topbar-nav (center) — ANALYSIS, HOW IT WORKS, MODELS
 │   └── .topbar-status (right)
 ├── .workspace (CSS Grid: 38% / 62%) — Analysis mode
 │   ├── .input-panel (left)
 │   └── .results-panel (right)
-├── #benchmark-panel — Benchmark mode (hidden by default)
 ├── #how-it-works-panel — How It Works (hidden by default)
 └── #models-panel — Models (hidden by default)
 ```
@@ -165,7 +163,7 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Backdrop blur: `blur(12px)`
 - No box-shadow
 - Brand wordmark: "Mod" in `--text`, "Eval" in `--accent`
-- Includes .topbar-nav with four items: ANALYSIS (active state), BENCHMARK (locked), HOW IT WORKS, MODELS -- clicking each shows its respective panel and hides all others
+- Includes .topbar-nav with three items: ANALYSIS (active state), HOW IT WORKS, MODELS -- clicking each shows its respective panel and hides all others
 
 ### Status Pill (.topbar-status)
 - Font: JetBrains Mono 11px
@@ -196,7 +194,7 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Loading state: shimmer animation overlay + "Analyzing..." text
 
 ### Topbar Navigation (.topbar-nav)
-- Four items: ANALYSIS, BENCHMARK [locked], HOW IT WORKS, MODELS
+- Three items: ANALYSIS, HOW IT WORKS, MODELS
 - Font: JetBrains Mono 11px uppercase
 - Active item: var(--text) color, 1.5px var(--accent) bottom border
 - Locked item: var(--muted), opacity 0.5, cursor default
@@ -292,11 +290,6 @@ Never use for general reading text. Monospace signals "this is technical data."
 - REMOVE (red dot), REVIEW (amber dot), ALLOW (green dot)
 - Font: JetBrains Mono 10px uppercase var(--muted)
 - Dot: 8px circle colored by action
-
-### Benchmark Placeholder
-- Lives outside `.workspace` and is toggled from the topbar nav
-- Uses a blurred skeleton leaderboard with a locked overlay card to signal work-in-progress status
-- Includes three low-emphasis preview cards for planned v2 capabilities
 
 ### Model Cards (.model-detail-card)
 - 2-column grid, last card centered if odd

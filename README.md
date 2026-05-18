@@ -141,7 +141,7 @@ After alignment assessment, a second Claude Haiku call generates an analytical i
 ## UI Features
 
 - **Premium dark theme** — enterprise-grade UI inspired by Vercel, Stripe, and OpenAI
-- **Four tabs** — Analysis, How It Works, Models, Benchmark (coming)
+- **Three tabs** — Analysis, How It Works, Models
 - **Single Platform selector** — Reddit, Discord, Facebook, Instagram, Custom with live policy guidelines shown below
 - **Execute Analysis button** — runs all 8 models in parallel
 - **Summary tab** — consensus verdict (ALLOW/REVIEW/REMOVE), donut chart showing model vote distribution
@@ -151,7 +151,6 @@ After alignment assessment, a second Claude Haiku call generates an analytical i
 - **Skeleton shimmer loading** — premium loading state while models run
 - **Model Cards** — detailed cards for all 8 models with architecture, training data, strengths, and limitations
 - **Dynamic Models Active indicator** — reflects count of configured models in topbar
-- **Benchmark Placeholder** — preview of upcoming benchmark features
 
 ---
 

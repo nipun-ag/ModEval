@@ -760,9 +760,8 @@ frontend/app.js
 ## Phase 0 Frontend Components
 
 ### Navigation Structure
-The topbar (.topbar-nav) has four items:
+The topbar (.topbar-nav) has three items:
 - ANALYSIS -- shows .workspace (38/62 split panels)
-- BENCHMARK [locked] -- shows #benchmark-panel
 - HOW IT WORKS -- shows #how-it-works-panel
 - MODELS -- shows #models-panel
 
@@ -773,7 +772,6 @@ in frontend/app.js.
 ### Full-Page Panels
 All panels are direct children of .app-shell:
 - .workspace -- the main analysis grid (default visible)
-- #benchmark-panel -- coming soon placeholder
 - #how-it-works-panel -- methodology content with 7 sections:
   - Section 1: Hero area ("STAGE 01") + Architecture Flow (icon circles with connectors showing Input → Normalize → Score → Align → Decide)
   - Section 2: Unified Output Normalization (two-col text + code-window with macOS chrome)
@@ -818,19 +816,10 @@ Two-column grid inside .consensus-hero:
   donut-allow, donut-fraction, donut-action-label.
   Uses stroke-dasharray/dashoffset technique.
 
-### Benchmark Placeholder (#benchmark-panel)
-- Heading and description of v2 benchmark feature
-- Blurred skeleton leaderboard table behind lock overlay
-- Three feature preview cards: Leaderboard, 
-  Failure Analysis, Recommendation Engine
-- All labeled "COMING IN V2"
-
 ### Component IDs Referenced in app.js
 These IDs must never be renamed:
-- nav-analysis, nav-benchmark, nav-how-it-works, 
-  nav-models (topbar nav items)
-- benchmark-panel, how-it-works-panel, models-panel 
-  (full-page panels)
+- nav-analysis, nav-how-it-works, nav-models (topbar nav items)
+- how-it-works-panel, models-panel (full-page panels)
 - results-lower-tabs, lower-tab-summary, 
   lower-tab-breakdown, lower-tab-insights (lower tabs)
 - lower-panel-summary, lower-panel-breakdown, 
