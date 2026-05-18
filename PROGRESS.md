@@ -6,6 +6,29 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ## 2026-05-18
 
+**style: polish AI Interpretation disclaimer -- SVG icon, improved legibility**
+
+Changes:
+- Replaced ⓘ text character with inline SVG info icon (circle with line, stroke-based, inherits opacity 0.6)
+- Simplified disclaimer text: removed model version string "(claude-haiku-4-5-20251001)" and rephrased for clarity
+- Updated .ai-interpretation-disclaimer CSS: font-size 11px → 12px, color --text-secondary → --text
+- Added subtle left border accent: border-left: 2px solid var(--border-strong)
+- Removed now-unused .disclaimer-icon CSS class
+
+Why:
+- SVG icon renders cleanly and scales with current color (respects opacity)
+- Removing model version simplifies the UI without losing clarity
+- Larger, brighter text improves readability
+- Left border accent draws attention without being alarming
+
+Tradeoffs:
+- Inline SVG adds slight HTML volume to generated content (minimal)
+- Text is now slightly more prominent (intentional improvement)
+
+---
+
+## 2026-05-18
+
 **fix: inject disclaimer via JS in renderInsights to survive innerHTML overwrite**
 
 Changes:

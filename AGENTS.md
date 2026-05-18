@@ -182,7 +182,7 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
 - Both interpretation calls (alignment + AI summary) use Anthropic SDK — anthropic package added to requirements.txt
 - **Requires ANTHROPIC_API_KEY in Doppler (project: modeval, config: prd) for production** — already configured
 - Dynamic platform policy guidelines box below platform selector showing accurate sourced rules for each platform (Reddit, Discord, Facebook, Instagram based on official documentation) — collapsible by default, expands on header click with smooth max-height transition and rotating chevron icon
-- AI Interpretation disclaimer banner at top of Insights tab (now renamed to AI INTERPRETATION) explaining Claude Haiku's output is probabilistic and intended to assist, not replace, human review — dynamically injected in renderInsights() to survive innerHTML overwrites, neutral styling with info icon
+- AI Interpretation disclaimer banner at top of Insights tab (now renamed to AI INTERPRETATION) explaining Claude Haiku's output is probabilistic and intended to assist, not replace, human review — dynamically injected in renderInsights() to survive innerHTML overwrites, SVG info icon, 12px bright text with subtle left border accent for legibility
 - Context explainer blurb added above Platform selector explaining why platform selection exists, with link to How It Works tab
 - Platform selector simplified to 5 options with modal dropdown showing platform name + description
 - AI analysis with 4 structured analytical fields: disagreement_explanation (what does disagreement reveal?), risk_narrative (direct CLEAR/SAFE/GREY verdict with reasoning), context_sensitivity (human review needed?), contested_category (most disagreed category)

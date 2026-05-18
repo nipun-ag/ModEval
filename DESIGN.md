@@ -508,14 +508,13 @@ Never use for general reading text. Monospace signals "this is technical data."
 
 ### AI Interpretation Disclaimer (.ai-interpretation-disclaimer)
 - Appears at the top of the AI Interpretation tab (lower-panel-insights)
-- `--surface2` background, `--border` border, border-radius 6px
+- `--surface2` background, `--border` border, `border-left: 2px solid var(--border-strong)` for accent, border-radius 6px
 - Padding: 10px 14px
-- Displays as flex row with icon and text
-- Icon (`.disclaimer-icon`): ⓘ symbol, 12px, color `--muted`, flex-shrink 0
-- Text: Inter 11px italic `--text-secondary`, line-height 1.5
-- Gap between icon and text: 10px
+- Displays as flex row with SVG icon and text, gap 10px
+- Icon: Inline SVG (14×14, stroke-based circle + lines, opacity 0.6, flex-shrink 0)
+- Text: Inter 12px italic `--text`, line-height 1.5
 - Purpose: Establishes transparent expectations about Claude Haiku's interpretive output
-- Non-alarming neutral styling — informational note, not a warning
+- Subtle left border draws attention without being alarming — informational accent, not a warning
 
 ### Editorial Quote
 - DM Serif Display, larger font
