@@ -78,7 +78,6 @@ All platforms use identical fixed base thresholds (review=0.40, remove=0.70). Pl
       "model": "string — model display name",
       "raw_scores": {"category": score, ...},
       "top_category": "string — highest-confidence violation category",
-      "severity": "1-10 integer",
       "confidence": "0.0-1.0 float, 4 decimal places",
       "action": "Allow | Review | Remove",
       "flagged": "boolean — true if action != Allow",
@@ -92,8 +91,7 @@ All platforms use identical fixed base thresholds (review=0.40, remove=0.70). Pl
   ],
   "disagreements": {
     "action_mismatch": ["list of model names"],
-    "category_mismatch": ["list of model names"],
-    "severity_gap": ["list of model names"]
+    "category_mismatch": ["list of model names"]
   },
   "insights": {
     "strictest_model": {"model": "string", "action": "string", "reason": "string"},
@@ -102,8 +100,8 @@ All platforms use identical fixed base thresholds (review=0.40, remove=0.70). Pl
   },
   "ai_analysis": {
     "disagreement_explanation": "string — why models disagreed (empty if consensus)",
-    "risk_narrative": "string — severity and context of content",
-    "context_sensitivity": "string — how platform modifiers affect verdict",
+    "risk_narrative": "string — CLEAR VIOLATION/SAFE/AMBIGUOUS verdict with reasoning",
+    "context_sensitivity": "string — whether human review is needed",
     "contested_category": "string — most disputed category across models"
   }
 }
@@ -208,10 +206,10 @@ These are third-party cloud APIs that require credentials. If credentials are mi
 - **API:** Microsoft Azure Content Safety API
 - **Architecture:** Proprietary neural classifier
 - **Training Data:** Microsoft proprietary enterprise dataset
-- **Safety Dimensions:** Hate, Violence, Sexual, Self-Harm (severity 0-6)
-- **Output Schema:** 4 categories with severity normalized to 0-1
+- **Safety Dimensions:** Hate, Violence, Sexual, Self-Harm (severity scores 0-6)
+- **Output Schema:** 4 categories with severity normalized to 0-1 confidence
 - **Strengths:** Enterprise SLA, SOC2 compliant, designed for T&S pipelines
-- **Limitations:** Only 4 categories, severity normalization required, paid service
+- **Limitations:** Only 4 categories, paid service
 - **Credentials:** `AZURE_CS_KEY` and `AZURE_CS_ENDPOINT` environment variables
 
 #### 3. Google NLP (Google Cloud)
@@ -305,7 +303,7 @@ remove_threshold = BASE_REMOVE_THRESHOLD (0.70)
 
 **Input to Claude:**
 - Original text being analyzed (for content-aware assessment)
-- All active model results (model name, action, confidence, top_category, severity)
+- All active model results (model name, action, confidence, top_category, alignment_score)
 - Platform-specific policy instructions (zero-tolerance categories, deprioritized categories)
 
 **Output from Claude (JSON array):**
@@ -379,7 +377,6 @@ Disagreements are flagged when models conflict on safety decisions. Three types 
 |---|---|---|
 | **Action Mismatch** | Models recommend different actions | 2+ different action values across results |
 | **Category Mismatch** | Models flag different top violation categories | 2+ different top_category values across results |
-| **Severity Gap** | Severity scores differ significantly | Max severity - Min severity >= 3 (on 1-10 scale) |
 
 ### Disagreement Banner
 Displayed when any disagreement is detected. Shows icon, count, and brief explanation. Scoped to the Summary tab only — lives as the first child of `#lower-panel-summary`. Designed to draw attention to edge cases that warrant human review.
@@ -399,7 +396,6 @@ All raw model outputs are normalized into a unified schema (normalizer.py):
         ...
     },                                    # Provider-specific scores
     "top_category": "toxicity",           # Highest-confidence category
-    "severity": 9,                        # 1-10 integer
     "confidence": 0.95,                   # 0.0-1.0 float
     "action": "Remove",                   # Allow | Review | Remove
     "flagged": true                       # action != Allow
@@ -421,12 +417,6 @@ Raw provider categories are mapped to a canonical namespace via `CATEGORY_ALIASE
 - `self-harm` → `self-harm`
 - `violence` → `violence`
 - `label_0`, `nothate`, `normal`, `neutral`, `ham` → Treated as non-violations (filtered)
-
-### Severity Mapping
-Raw confidence (0.0-1.0) is scaled to 1-10 integer:
-```python
-severity = min(10, max(1, round(score * 10)))
-```
 
 ---
 
@@ -634,7 +624,6 @@ Hetzner VPS (hetzner.com) — CX23 plan
 ### backend/engine/normalizer.py
 - `normalize_scores()` — maps provider-specific categories to canonical names
 - `normalize_result()` — converts raw model output to unified schema
-- `score_to_severity()` — scales 0-1 confidence to 1-10 severity
 - `build_error_result()` — creates safe placeholder for failed models
 - Category alias mapping happens here
 
@@ -647,7 +636,7 @@ Hetzner VPS (hetzner.com) — CX23 plan
 - Returns alignment_score and enforced_action
 
 ### backend/engine/comparison.py
-- `detect_disagreements()` — identifies action/category/severity conflicts
+- `detect_disagreements()` — identifies action/category conflicts
 - `build_insights()` — finds strictest model, most lenient model, consensus recommendation
 - Used to highlight edge cases
 
@@ -711,7 +700,6 @@ run_models() (parallel ThreadPoolExecutor)
     ↓
 normalize_result() x 8
     ├─→ normalize_scores() (category aliasing)
-    ├─→ score_to_severity() (1-10 scaling)
     └─→ determine_action() (Allow/Review/Remove)
     ↓
 evaluate_alignment_with_ai() — single batched Claude Haiku call
@@ -723,7 +711,7 @@ explain_result() x active models
     └─→ human-readable explanation text
     ↓
 detect_disagreements()
-    └─→ action_mismatch, category_mismatch, severity_gap
+    └─→ action_mismatch, category_mismatch
     ↓
 build_insights()
     ├─→ strictest_model
@@ -802,9 +790,9 @@ After analysis runs, three lower tabs appear inside
 - results-lower-tabs: hidden until results load, 
   shown by JS after showPanelState("results")
 - lower-panel-summary: disagreement banner (first child) + consensus hero + donut +
-  gauge + legend (default active tab)
+  legend (default active tab)
 - lower-panel-breakdown: card-per-row breakdown layout, one card per model,
-  section header rows with column labels (CATEGORY, SEVERITY, CONFIDENCE, ACTION)
+  section header rows with column labels (CATEGORY, CONFIDENCE, ACTION)
 - lower-panel-insights: three-section asymmetric layout:
   - Top grid (1fr 2fr): Strictest Model tall card (left) + right cluster with Most Lenient (full width), Disagreement Vector, Risk Narrative
   - Alignment matrix: all 8 model alignment verdicts with ALIGNED/MISALIGNED badges and reasons; footer shows "Alignment assessed by Claude Haiku against [platform] content policy."
@@ -820,7 +808,7 @@ Populated by JS after results load:
 - Large action word: ALLOW/REVIEW/REMOVE in 
   DM Serif Display 64px, colored by action
 - AI summary subtitle (first 2 sentences)
-- Verdict visuals row (donut + gauge)
+- Verdict visuals row (donut chart showing model votes)
 - Border-left colored by action (green/amber/red)
 
 ### Verdict Visuals Row (.verdict-visuals-row)
@@ -829,10 +817,6 @@ Two-column grid inside .consensus-hero:
   distribution. IDs: donut-remove, donut-review, 
   donut-allow, donut-fraction, donut-action-label.
   Uses stroke-dasharray/dashoffset technique.
-- Severity gauge: SVG semicircle arc 140x80px.
-  IDs: gauge-fill-path, gauge-number.
-  Arc fills proportionally, colored green/amber/red 
-  by severity range (1-3 green, 4-7 amber, 8-10 red).
 
 ### Benchmark Placeholder (#benchmark-panel)
 - Heading and description of v2 benchmark feature
@@ -853,7 +837,6 @@ These IDs must never be renamed:
   lower-panel-insights (lower panels)
 - donut-remove, donut-review, donut-allow, 
   donut-fraction, donut-action-label (donut chart)
-- gauge-fill-path, gauge-number (severity gauge)
 - hero-action, hero-subtitle (consensus hero)
 - models-active-count (topbar status pill — updated dynamically by /models fetch)
 - platform-policy-box (dynamic policy guidelines below platform selector)

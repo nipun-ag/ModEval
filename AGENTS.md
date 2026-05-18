@@ -46,7 +46,6 @@ docs/ARCHITECTURE.md           Complete technical reference (this file)
 - **CSS variable names** in `style.css` — JS references some
 - **Font imports** — DM Serif Display, Inter, JetBrains Mono (branding)
 - **Donut chart SVG IDs** — donut-remove, donut-review, donut-allow, donut-fraction, donut-action-label
-- **Gauge SVG IDs** — gauge-fill-path, gauge-number
 - **Lower tabs IDs** — results-lower-tabs, lower-tab-summary, lower-tab-breakdown, lower-tab-insights
 - **Lower panel IDs** — lower-panel-summary, lower-panel-breakdown, lower-panel-insights
 - **Topbar nav IDs** — nav-analysis, nav-benchmark, nav-how-it-works, nav-models
@@ -195,10 +194,10 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
   - Topbar navigation with 4 tabs: ANALYSIS (active), BENCHMARK (locked), HOW IT WORKS, MODELS
   - HOW IT WORKS and MODELS are full-page panels accessed from topbar, not results tabs
   - Panel padding increased to 48px
-  - Consensus hero card leads results with large action word, AI analysis subtitle, donut chart, severity gauge, and action legend
+  - Consensus hero card leads results with large action word, AI analysis subtitle, donut chart, and action legend
   - Results panel has three lower tabs: Summary, Model Breakdown, AI Interpretation — hidden until analysis runs
-  - Summary tab: disagreement banner + consensus hero + donut + gauge + legend
-  - Model Breakdown tab: card-per-row layout with section header rows (CATEGORY, SEVERITY, CONFIDENCE, ACTION); one card per model; no alignment column
+  - Summary tab: disagreement banner + consensus hero + donut + legend
+  - Model Breakdown tab: card-per-row layout with section header rows (CATEGORY, CONFIDENCE, ACTION); one card per model; no alignment column
   - AI Interpretation tab: three-section layout:
     - Top grid (3 cards): Disagreement Vector left tall card + Most Lenient Model (top right) + Strictest Model (bottom right); Risk Narrative card removed
     - Alignment matrix: All model alignment verdicts with ALIGNED/MISALIGNED badges and reasons, footer "Alignment assessed by Claude Haiku against [platform] content policy."
@@ -210,6 +209,13 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
 - Fixed threshold model: All platforms use identical base thresholds (review=0.40, remove=0.70) — platform-specific policy judgment delegated entirely to Claude Haiku alignment assessment
 - Platform threshold modifiers completely removed — prior approach (Discord +0.05, Facebook -0.05, Instagram -0.10, etc.) was discarded as it distorted raw model signal before Claude evaluation
 - Content Type and Strictness modifiers removed — these inputs accepted but not used (v1 convenience, non-essential)
+- Severity field completely removed from entire codebase — was a 1-10 scaling of confidence that added little value; decision-making now based purely on action (Allow/Review/Remove) and policy alignment
+  - Removed score_to_severity() function and all severity calculations from normalizer.py
+  - Removed severity_gap detection from comparison.py
+  - Removed gauge visualization from verdict-visuals-card in index.html, skeleton state now shows single circle
+  - Removed all gauge-related CSS classes and severity bar column from breakdown cards
+  - Backend API responses no longer contain severity field
+  - Focused on action-based consensus (donut chart) instead of severity-based visualization
 
 ## Known Limitations
 - HuggingFace free tier may rate-limit under high traffic
