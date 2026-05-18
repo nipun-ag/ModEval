@@ -1087,7 +1087,12 @@ function renderInsights(insights, results, platform, alignmentMap, data) {
   `;
 
   // Clear old content and insert new structure
-  insightsContainer.innerHTML = gridHTML;
+  const disclaimerHTML = `
+    <div class="ai-interpretation-disclaimer">
+      <span class="disclaimer-icon">ⓘ</span>
+      <span>Interpreted by Claude Haiku (claude-haiku-4-5-20251001). AI interpretation is probabilistic and may contain errors — it is intended to assist human review, not replace it.</span>
+    </div>`;
+  insightsContainer.innerHTML = disclaimerHTML + gridHTML;
 }
 
 function renderAiAnalysis(aiAnalysis) {
