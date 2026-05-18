@@ -86,10 +86,9 @@ Secrets are stored in Doppler under project `modeval`, config `prd`.
 - `HF_API_KEY` — HuggingFace inference API (open source models)
 - `HIVE_API_KEY` — The Hive AI text moderation (replaced Perspective API)
 - `ANTHROPIC_API_KEY` — Claude Haiku interpretation layer (alignment assessment + AI summary)
-
-**Not yet configured (models show "Coming Soon"):**
-- `AZURE_CS_KEY` + `AZURE_CS_ENDPOINT`
-- `GOOGLE_NLP_KEY`
+- `AZURE_CS_KEY` — Microsoft Azure Content Safety API key
+- `AZURE_CS_ENDPOINT` — Microsoft Azure Content Safety API endpoint URL
+- `GOOGLE_NLP_KEY` — Google Cloud Natural Language API key
 
 Adding a new secret to Doppler takes effect on the next `systemctl restart modeval` — no server changes needed.
 
