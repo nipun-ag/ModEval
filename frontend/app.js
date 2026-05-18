@@ -5,16 +5,10 @@ const statusPill = document.getElementById("status-pill");
 const resultsBody = document.getElementById("results-body");
 const disagreementBanner = document.getElementById("disagreement-banner");
 const explainabilityList = document.getElementById("explainability-list");
-const strictestModel = document.getElementById("strictest-model");
-const mostLenientModel = document.getElementById("most-lenient-model");
 const batchSummary = document.getElementById("batch-summary");
 const customPolicyField = document.getElementById("custom-policy-field");
 const analyzeButton = document.getElementById("analyze-button");
 const workspace = document.querySelector(".workspace");
-const aiDisagreementText = document.getElementById("ai-disagreement-text");
-const aiRiskText = document.getElementById("ai-risk-text");
-const aiContextText = document.getElementById("ai-context-text");
-const aiCategoryText = document.getElementById("ai-category-text");
 
 analyzeButton.addEventListener("mousedown", () => {
   analyzeButton.classList.add("loading");
@@ -23,8 +17,6 @@ analyzeButton.addEventListener("mousedown", () => {
 const resultsEmpty = document.getElementById("results-empty");
 const skeletonState = document.getElementById("skeleton-state");
 const resultsContent = document.getElementById("results-content");
-const strictestCard = document.getElementById("strictest-card");
-const lenientCard = document.getElementById("lenient-card");
 const consensusHero = document.getElementById("consensus-hero");
 const heroAction = document.getElementById("hero-action");
 const heroSubtitle = document.getElementById("hero-subtitle");
@@ -601,17 +593,6 @@ function setPrimaryView(view) {
   if (workspace) workspace.style.display = "grid";
 }
 
-function setSectionExpanded(toggle, content, expanded) {
-  toggle.setAttribute("aria-expanded", String(expanded));
-  content.setAttribute("aria-hidden", String(!expanded));
-  content.classList.toggle("expanded", expanded);
-  if (expanded) {
-    content.style.maxHeight = `${content.scrollHeight}px`;
-  } else {
-    content.style.maxHeight = "0px";
-  }
-}
-
 function applyExample(category, button) {
   const examples = EXAMPLE_LIBRARY[category] || [];
   if (!examples.length) {
@@ -776,14 +757,13 @@ function renderDisagreements(disagreements) {
     return;
   }
 
-  const priorityOrder = ["Action Mismatch", "Severity Gap", "Category Mismatch"];
+  const priorityOrder = ["Action Mismatch", "Category Mismatch"];
   const mostCritical = [...items].sort(
     (left, right) => priorityOrder.indexOf(left.type) - priorityOrder.indexOf(right.type)
   )[0];
 
   const messages = {
     "Action Mismatch": "Action conflict detected - models disagree on final recommendation",
-    "Severity Gap": "Severity gap detected - models disagree on how serious this content is",
     "Category Mismatch": "Category mismatch detected - models flagged different primary risks",
   };
 
@@ -793,43 +773,6 @@ function renderDisagreements(disagreements) {
   `;
   disagreementBanner.classList.remove("hidden");
   requestAnimationFrame(() => disagreementBanner.classList.add("visible"));
-}
-
-function renderAlignmentAssessment(results, platform) {
-  const container = document.getElementById("alignment-assessment-container");
-  if (!container) return;
-
-  const activeResults = results.filter((r) => !r.disabled && !r.error && r.alignment_reason);
-  if (activeResults.length === 0) {
-    container.innerHTML = "";
-    return;
-  }
-
-  const listItems = activeResults
-    .map((result) => {
-      const badgeClass = result.aligned ? "badge-aligned" : "badge-misaligned";
-      const badgeLabel = result.aligned ? "ALIGNED" : "MISALIGNED";
-      return `
-        <li class="alignment-assessment-item">
-          <span class="alignment-model-name">${escapeHtml(result.model)}</span>
-          <span class="badge ${badgeClass}">${badgeLabel}</span>
-          <span class="alignment-reason-text">${escapeHtml(result.alignment_reason)}</span>
-        </li>
-      `;
-    })
-    .join("");
-
-  container.innerHTML = `
-    <section class="alignment-assessment-section">
-      <p class="alignment-assessment-label">ALIGNMENT ASSESSMENT</p>
-      <ul class="alignment-assessment-list">
-        ${listItems}
-      </ul>
-      <p class="alignment-assessment-footer">
-        Alignment assessed by Claude Haiku against ${escapeHtml(platform)} content policy.
-      </p>
-    </section>
-  `;
 }
 
 function renderFindingTag(insights, data) {
@@ -912,14 +855,8 @@ function renderInsights(insights, results, platform, alignmentMap, data) {
   const strictest = insights?.strictest_model;
   const lenient = insights?.most_lenient_model;
 
-  strictestModel.innerHTML = strictest?.model ? renderModelDisplay(strictest.model) : "-";
-  mostLenientModel.innerHTML = lenient?.model ? renderModelDisplay(lenient.model) : "-";
-
   const strictestResult = results.find((result) => result.model === strictest?.model);
   const lenientResult = results.find((result) => result.model === lenient?.model);
-
-  strictestCard.dataset.tone = actionTone(strictest?.action || strictestResult?.action || "review");
-  lenientCard.dataset.tone = actionTone(lenient?.action || lenientResult?.action || "allow");
 
   // Build insights grid
   const insightsContainer = document.getElementById("lower-panel-insights");
@@ -1044,21 +981,6 @@ function renderInsights(insights, results, platform, alignmentMap, data) {
     </div>`;
   insightsContainer.innerHTML = disclaimerHTML + gridHTML;
 }
-
-function renderAiAnalysis(aiAnalysis) {
-  if (!aiAnalysis || Object.keys(aiAnalysis).length === 0) {
-    if (aiDisagreementText) aiDisagreementText.textContent = "Analysis unavailable.";
-    if (aiRiskText) aiRiskText.textContent = "Analysis unavailable.";
-    if (aiContextText) aiContextText.textContent = "Analysis unavailable.";
-    if (aiCategoryText) aiCategoryText.textContent = "-";
-    return;
-  }
-  if (aiDisagreementText) aiDisagreementText.textContent = aiAnalysis.disagreement_explanation || "-";
-  if (aiRiskText) aiRiskText.textContent = aiAnalysis.risk_narrative || "-";
-  if (aiContextText) aiContextText.textContent = aiAnalysis.context_sensitivity || "-";
-  if (aiCategoryText) aiCategoryText.textContent = aiAnalysis.contested_category || "-";
-}
-
 
 function generateConsensusSummary(results, insights, disagreements) {
   if (!results || results.length === 0) return "";
