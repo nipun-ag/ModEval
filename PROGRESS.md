@@ -4,6 +4,39 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-05-19 (Late Evening)
+
+**feat: remove Benchmark tab and all associated code**
+
+Changes:
+- Removed `nav-benchmark` link from topbar navigation (frontend/index.html)
+- Deleted entire `#benchmark-panel` div and all child elements (coming-soon state, skeleton table, lock overlay, feature preview cards)
+- Removed `benchmarkPanel` variable declaration from app.js
+- Removed `setPrimaryView()` function logic that handled benchmark tab switching
+- Removed `navBenchmark` variable and event listener for nav-benchmark clicks
+- Removed 'benchmark-panel' from showPanel() panels array
+- Deleted all benchmark-related CSS rules from style.css:
+  - `#benchmark-panel`, `.benchmark-heading`, `.benchmark-subheading`
+  - `.benchmark-preview-container`, `.benchmark-skeleton-table`, `.benchmark-skeleton-head`
+  - `.benchmark-lock-overlay`, `.benchmark-lock-card`, `.benchmark-lock-icon`, `.benchmark-lock-title`, `.benchmark-lock-body`
+  - `.benchmark-preview-grid`, `.benchmark-preview-card`, `.benchmark-preview-eyebrow`, `.benchmark-preview-title`, `.benchmark-preview-body`
+  - Removed responsive CSS rules for #benchmark-panel and .benchmark-lock-card in 900px media query
+  - Removed `.benchmark-preview-grid` reference from responsive grid selector
+
+Why:
+- Benchmark feature is deferred indefinitely; removing all dead code
+- Cleaner UI with 3-tab topbar (ANALYSIS, HOW IT WORKS, MODELS) vs 4-tab
+- Zero references to benchmark-panel in DOM, JavaScript, or CSS
+- Reduces bundle size and cognitive load
+
+Verification:
+- `grep -i "benchmark" frontend/` returns 0 results for feature-related code
+- Topbar shows exactly 3 nav items, no BENCHMARK item
+- No JavaScript errors on page load
+- Navigation to remaining 3 tabs works correctly
+
+---
+
 ## 2026-05-19 (Evening)
 
 **style: fix AI Interpretation grid equal-height alignment**
