@@ -1067,7 +1067,12 @@ function renderInsights(insights, results, platform, alignmentMap, data) {
       ${renderFindingTag(insights, data)}
 
       <div class="insights-ai-summary">
-        ${escapeHtml(data?.ai_analysis?.risk_narrative || "Analysis complete.")}
+        ${escapeHtml(
+          (data?.ai_analysis?.risk_narrative || "Analysis complete.")
+            .replace(/^CLEAR VIOLATION[.\s]*/i, "")
+            .replace(/^GENUINE GREY AREA[.\s]*/i, "")
+            .replace(/^CLEAR SAFE[.\s]*/i, "")
+        )}
       </div>
 
       <div class="insights-bars-header">MODEL CONFIDENCE</div>
