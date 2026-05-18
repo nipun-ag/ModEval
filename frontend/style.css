@@ -2972,10 +2972,10 @@ tbody td {
 }
 
 .breakdown-fields {
-  display: flex;
-  gap: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
   flex: 1;
-  justify-content: space-around;
   align-items: center;
 }
 
@@ -3105,10 +3105,10 @@ tbody td {
 }
 
 .breakdown-header-fields {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
   flex: 1;
-  justify-content: space-around;
-  align-items: center;
   font-family: "JetBrains Mono", monospace;
   font-size: 10px;
   font-weight: 600;
