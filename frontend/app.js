@@ -135,22 +135,22 @@ const MODEL_DISPLAY = {
     chip: "Proprietary",
   },
   "HuggingFace toxic-bert": {
-    name: "General Toxicity",
+    name: "toxic-bert",
     subtitle: "unitary/toxic-bert",
     chip: "BERT",
   },
   "HuggingFace RoBERTa offensive": {
-    name: "Social Media Offensive",
+    name: "RoBERTa Offensive",
     subtitle: "cardiffnlp/roberta-offensive",
     chip: "RoBERTa",
   },
   "HuggingFace Hate Speech": {
-    name: "Identity-Based Hate",
+    name: "RoBERTa Hate Speech",
     subtitle: "facebook/roberta-hate-speech",
     chip: "facebook",
   },
   "HuggingFace Bias Detector": {
-    name: "Language Bias",
+    name: "DistilRoBERTa Bias",
     subtitle: "valurank/distilroberta-bias",
     chip: "valurank",
   },
