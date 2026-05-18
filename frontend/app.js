@@ -1089,8 +1089,12 @@ function renderInsights(insights, results, platform, alignmentMap, data) {
   // Clear old content and insert new structure
   const disclaimerHTML = `
     <div class="ai-interpretation-disclaimer">
-      <span class="disclaimer-icon">ⓘ</span>
-      <span>Interpreted by Claude Haiku (claude-haiku-4-5-20251001). AI interpretation is probabilistic and may contain errors — it is intended to assist human review, not replace it.</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; opacity:0.6;">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="8"/>
+        <line x1="12" y1="12" x2="12" y2="16"/>
+      </svg>
+      <span>Interpreted by Claude Haiku. AI interpretation is probabilistic and may contain errors — intended to assist human review, not replace it.</span>
     </div>`;
   insightsContainer.innerHTML = disclaimerHTML + gridHTML;
 }
