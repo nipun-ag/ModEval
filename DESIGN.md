@@ -465,16 +465,16 @@ Never use for general reading text. Monospace signals "this is technical data."
 ### Insights Tab Redesign Components
 
 #### Insights Top Grid (.insights-grid)
-- CSS Grid: `1fr 2fr` (left tall card + right cluster), gap 20px, margin-bottom 28px
+- CSS Grid: `1fr 2fr` (left tall card + right cluster), gap 20px, margin-bottom 28px, `align-items: stretch`
 - Left column: Disagreement Vector tall card (`.insights-card-tall`)
-- Right column: `.insights-grid-right` — flex column (vertical stack), gap 20px
+- Right column: `.insights-grid-right` — flex column (vertical stack), gap 20px, `height: 100%`
   - Top: Most Lenient card (`.insights-card`)
   - Bottom: Strictest Model card (`.insights-card`)
 
 #### Insights Card (.insights-card, .insights-card-tall, .insights-card-wide)
 - Base: `var(--surface2)` background, `var(--border)` border, border-radius 12px, padding 28px
 - Hover: border-color `var(--border-strong)`, `translateY(-2px)`
-- `.insights-card-tall`: min-height 320px, flex column, `justify-content: space-between`
+- `.insights-card-tall`: `height: 100%`, `box-sizing: border-box`, flex column (ensures stretching to grid row height)
 - `.insights-card-wide`: `grid-column: 1 / -1` (spans full right column)
 - Eyebrow (`.insights-card-eyebrow`): JetBrains Mono 9px uppercase; color variants: default `--accent`, `.lenient` green, `.disagreement` `--text-secondary`, `.risk` red
 - Body text (`.insights-card-body`): Inter 13px, line-height 1.7

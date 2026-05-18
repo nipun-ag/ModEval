@@ -4,6 +4,27 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-05-19 (Evening)
+
+**style: fix AI Interpretation grid equal-height alignment**
+
+Changes:
+- Added `align-items: stretch` to `.insights-grid` to enforce grid item stretching
+- Added `height: 100%` and `box-sizing: border-box` to `.insights-card-tall` (removed `min-height: unset` and `grid-row: 1 / 3`)
+- Added `height: 100%` to `.insights-grid-right` flex container
+- Result: left tall card (Disagreement Vector) and right stacked cards (Most Lenient + Strictest Model) now always equal in height
+
+Why:
+- Grid columns were not stretching to fill available height; `.insights-card-tall` did not grow to match `.insights-grid-right`
+- CSS Grid `align-items: stretch` works on grid items (immediate children), but `.insights-card-tall` content needed explicit `height: 100%`
+- Right flex container needed explicit height to expand with left card
+
+Verification:
+- Tested with analysis run; both columns measured 463.125px height (verified via getBoundingClientRect)
+- Grid alignment now consistent regardless of content length in disagreement explanation
+
+---
+
 ## 2026-05-19
 
 **style/refactor: pre-launch polish pass -- severity removal, UI refinements, doc accuracy**
