@@ -2729,10 +2729,6 @@ tbody td {
 
 /* === VERDICT VISUALS CARD === */
 .verdict-visuals-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
   margin-top: 24px;
   max-width: 280px;
   margin-left: auto;
