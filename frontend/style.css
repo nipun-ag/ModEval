@@ -2974,7 +2974,7 @@ tbody td {
 
 .breakdown-fields {
   display: grid;
-  grid-template-columns: 110px 120px;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
   flex: 1;
   min-width: 0;
@@ -3109,7 +3109,7 @@ tbody td {
 
 .breakdown-header-fields {
   display: grid;
-  grid-template-columns: 110px 120px;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
   flex: 1;
   font-family: "JetBrains Mono", monospace;
