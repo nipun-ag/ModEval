@@ -1285,7 +1285,7 @@ form.addEventListener("submit", async (event) => {
     );
     setHeroState(
       data.insights?.consensus_recommendation || "Review",
-      data.ai_analysis?.risk_narrative || generateConsensusSummary(data.results || [], data.insights || {}, data.disagreements || {})
+      generateConsensusSummary(data.results || [], data.insights || {}, data.disagreements || {})
     );
     // --- Donut Chart ---
     const activeResults = (data.results || []).filter((r) => !r.disabled && !r.error);
