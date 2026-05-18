@@ -52,7 +52,6 @@ docs/ARCHITECTURE.md           Complete technical reference (this file)
 - **Panel IDs** — how-it-works-panel, models-panel
 - **Topbar status pill ID** — models-active-count (updated dynamically by /models fetch on page load)
 - **Platform policy box ID** — platform-policy-box (dynamic policy guidelines below platform selector)
-- **Context explainer link ID** — explainer-howtoworks-link (how it works link above platform selector)
 - **Alignment assessment container ID** — alignment-assessment-container (Insights tab alignment verdicts section)
 All these are referenced in app.js and must not be renamed or removed.
 
@@ -182,7 +181,7 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
 - **Requires ANTHROPIC_API_KEY in Doppler (project: modeval, config: prd) for production** — already configured
 - Dynamic platform policy guidelines box below platform selector showing accurate sourced rules for each platform (Reddit, Discord, Facebook, Instagram based on official documentation) — collapsible by default, expands on header click with smooth max-height transition and rotating chevron icon
 - AI Interpretation disclaimer banner at top of Insights tab (now renamed to AI INTERPRETATION) explaining Claude Haiku's output is probabilistic and intended to assist, not replace, human review — dynamically injected in renderInsights() to survive innerHTML overwrites, SVG info icon, 12px bright text with subtle left border accent for legibility
-- Context explainer blurb added above Platform selector explaining why platform selection exists, with link to How It Works tab
+- Context explainer tooltip above Platform selector explaining why platform selection exists (hover info icon to reveal)
 - Platform selector simplified to 5 options with modal dropdown showing platform name + description
 - AI analysis with 4 structured analytical fields: disagreement_explanation (what does disagreement reveal?), risk_narrative (direct CLEAR/SAFE/GREY verdict with reasoning), context_sensitivity (human review needed?), contested_category (most disagreed category)
 - Senior T&S analyst persona in AI summary generation using Claude Haiku: flags model failures, explains ambiguity, recommends human review, avoids passive summarization

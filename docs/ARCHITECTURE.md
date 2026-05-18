@@ -25,7 +25,7 @@ modeval/
 │   │   ├── hf_bias.py                  Valurank bias detector
 │   │   └── openai_moderation.py        OpenAI Moderation API wrapper
 │   └── engine/
-│       ├── context_engine.py           Threshold calculation, platform/content/strictness modifiers
+│       ├── context_engine.py           Fixed threshold calculation (review=0.40, remove=0.70); no platform modifiers
 │       ├── normalizer.py               Raw model output → unified schema conversion
 │       ├── policy_engine.py            Policy rule extraction and alignment scoring
 │       ├── comparison.py               Disagreement detection and insight building
@@ -290,7 +290,7 @@ review_threshold = BASE_REVIEW_THRESHOLD (0.40)
 remove_threshold = BASE_REMOVE_THRESHOLD (0.70)
 ```
 
-`calculate_context_adjustment()` always returns these fixed values regardless of platform, content_type, or strictness inputs.
+`calculate_context_adjustment()` takes no parameters and always returns these fixed values. Platform-specific judgment is handled by Claude Haiku alignment assessment, not by threshold adjustment.
 
 ---
 
@@ -582,7 +582,7 @@ Hetzner VPS (hetzner.com) — CX23 plan
 
 ### backend/app.py
 - Creates Flask app instance
-- Registers blueprints (`analyze_bp`, `batch_bp`)
+- Registers blueprints (`analyze_bp`, `batch_bp`, `models_bp`)
 - Serves frontend static files from `frontend/` directory
 - Provides `/health` endpoint
 - Entry point for both development and production
@@ -615,7 +615,7 @@ Hetzner VPS (hetzner.com) — CX23 plan
 - Returns `{"active_count": N, "total_count": 8}`
 
 ### backend/engine/context_engine.py
-- `calculate_context_adjustment()` — returns fixed base thresholds (review=0.40, remove=0.70) regardless of input; platform modifiers removed in favour of Claude Haiku policy judgment
+- `calculate_context_adjustment()` — no parameters; returns fixed base thresholds (review=0.40, remove=0.70); platform-specific policy judgment delegated entirely to Claude Haiku alignment assessment
 - `determine_action()` — maps confidence to Allow/Review/Remove
 - No side effects, purely functional
 
@@ -632,7 +632,7 @@ Hetzner VPS (hetzner.com) — CX23 plan
 - `evaluate_policy_alignment()` — keyword-based fallback alignment scoring if AI call fails
 - `get_platform_policy_summary()` — returns policy rules for 5 active platforms (Reddit, Discord, Facebook, Instagram, Custom)
 - Applies custom policy keyword matching
-- Returns alignment_score and enforced_action
+- `evaluate_policy_alignment()` returns alignment_score, aligned, and policy_note
 
 ### backend/engine/comparison.py
 - `detect_disagreements()` — identifies action/category conflicts (severity_gap detection removed)
@@ -655,7 +655,7 @@ Hetzner VPS (hetzner.com) — CX23 plan
 - Single-page app shell
 - Defines modal overlay for platform dropdown (5 options: Reddit, Discord, Facebook, Instagram, Custom)
 - Platform policy guidelines box (#platform-policy-box) below platform selector
-- Context explainer blurb above platform selector with link to How It Works (#explainer-howtoworks-link)
+- Context explainer tooltip above platform selector (hover info icon to reveal why platform selection matters)
 - Example pills for 100 pre-loaded test cases
 - Tab navigation: Analysis, How It Works, Models
 - Empty divs for JavaScript to populate
@@ -827,7 +827,6 @@ These IDs must never be renamed:
 - hero-action, hero-subtitle (consensus hero)
 - models-active-count (topbar status pill — updated dynamically by /models fetch)
 - platform-policy-box (dynamic policy guidelines below platform selector)
-- explainer-howtoworks-link (how it works link above platform selector)
 - alignment-assessment-container (Insights tab alignment verdicts section)
 
 
