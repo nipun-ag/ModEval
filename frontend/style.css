@@ -3104,6 +3104,12 @@ tbody td {
   flex: 0 0 180px;
 }
 
+.breakdown-header-action-spacer {
+  flex: 0 0 76px;
+  min-width: 76px;
+  max-width: 76px;
+}
+
 .breakdown-header-fields {
   display: grid;
   grid-template-columns: 1fr 1fr;

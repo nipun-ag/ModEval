@@ -723,6 +723,7 @@ function renderResults(results) {
         <span>CATEGORY</span>
         <span>CONFIDENCE</span>
       </div>
+      <div class="breakdown-header-action-spacer"></div>
     </div>`;
 
   html += `<div class="breakdown-section">`;
