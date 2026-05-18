@@ -279,8 +279,6 @@ These models run when their shared provider credentials are configured. If crede
 ```python
 BASE_REVIEW_THRESHOLD = 0.40      # Confidence threshold for Review action
 BASE_REMOVE_THRESHOLD = 0.70      # Confidence threshold for Remove action
-MIN_THRESHOLD = 0.10              # Floor — never go below
-MAX_THRESHOLD = 0.90              # Ceiling — never go above
 ```
 
 ### Threshold Calculation

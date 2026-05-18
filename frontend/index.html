@@ -271,51 +271,6 @@
 
               <div class="lower-panel hidden" id="lower-panel-insights">
 
-  <div class="insights-bento">
-
-    <article id="strictest-card" class="insight-card-new insight-card-new--remove" data-tone="review">
-      <p class="insight-card-new-label">Strictest Model</p>
-      <p class="insight-card-new-desc">The model that flagged this content most aggressively</p>
-      <strong id="strictest-model" class="insight-card-new-value">-</strong>
-    </article>
-
-    <article id="lenient-card" class="insight-card-new insight-card-new--allow" data-tone="allow">
-      <p class="insight-card-new-label">Most Lenient</p>
-      <p class="insight-card-new-desc">The model most likely to allow this content through</p>
-      <strong id="most-lenient-model" class="insight-card-new-value">-</strong>
-    </article>
-
-    <article class="ai-insight-card-new" id="ai-disagreement-card">
-      <div class="ai-insight-card-new-header">
-        <span class="ai-insight-icon">⇄</span>
-        <p class="ai-insight-label">WHY MODELS DISAGREED</p>
-      </div>
-      <p class="ai-insight-text" id="ai-disagreement-text">Analyzing...</p>
-    </article>
-
-    <article class="ai-insight-card-new" id="ai-risk-card">
-      <div class="ai-insight-card-new-header">
-        <span class="ai-insight-icon">◈</span>
-        <p class="ai-insight-label">RISK NARRATIVE</p>
-      </div>
-      <p class="ai-insight-text" id="ai-risk-text">Analyzing...</p>
-    </article>
-
-    <article class="ai-insight-card-new ai-insight-card-new--wide" id="ai-context-card">
-      <div class="ai-insight-card-new-header">
-        <span class="ai-insight-icon">⊕</span>
-        <p class="ai-insight-label">CONTEXT SENSITIVITY</p>
-      </div>
-      <p class="ai-insight-text" id="ai-context-text">Analyzing...</p>
-    </article>
-
-    <article class="ai-insight-card-new ai-insight-card-new--accent" id="ai-category-card">
-      <p class="ai-insight-label">MOST CONTESTED CATEGORY</p>
-      <p class="ai-insight-text ai-insight-category" id="ai-category-text">-</p>
-    </article>
-
-  </div>
-
   <div id="alignment-assessment-container"></div>
 
   <section class="explainability-section">
@@ -481,7 +436,6 @@
           <tbody>
             <tr><td>Action Mismatch</td><td>Models recommend different actions (Allow vs Remove)</td></tr>
             <tr><td>Category Mismatch</td><td>Models flag different top violation categories</td></tr>
-            <tr><td>Severity Gap</td><td>Severity scores differ by 3 or more points</td></tr>
           </tbody>
         </table>
         <div class="pull-quote-block">

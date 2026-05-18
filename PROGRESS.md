@@ -4,6 +4,18 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-05-19 (Night)
+
+**refactor: batch 1 dead code removal — config constants, CSS bento tree, stale HTML, severity gap UI**
+
+- `backend/config.py`: removed `MIN_THRESHOLD`, `MAX_THRESHOLD`, `PLATFORM_MODIFIERS`, `CONTENT_TYPE_MODIFIERS`, `STRICTNESS_MODIFIERS` — all were defined but never read by any code path post-refactor
+- `frontend/style.css`: removed `.topbar-nav-item.locked` (no locked nav items exist), `.context-explainer-link`/`:hover` (class not applied anywhere in HTML), entire `.insights-bento` tree (~150 lines: `.insights-bento`, `.insight-card-new` variants, `.ai-insight-card-new` variants, responsive overrides) — static HTML was overwritten by `renderInsights()` before it was ever visible
+- `frontend/index.html`: removed static `<div class="insights-bento">` block (6 article cards with ghost IDs referenced by nothing), removed `<tr>Severity Gap</tr>` from How It Works disagreement table — severity field was removed from the entire codebase in a prior session
+- `docs/ARCHITECTURE.md`: removed `MIN_THRESHOLD` / `MAX_THRESHOLD` from base thresholds code block — matches actual config.py state
+- No logic changed. No rendered output affected. All deletions verified by pre- and post-deletion grep passes.
+
+---
+
 ## 2026-05-19 (Late Evening)
 
 **feat: remove Benchmark tab and all associated code**

@@ -33,32 +33,6 @@ MAX_INPUT_LENGTH = 500
 
 BASE_REVIEW_THRESHOLD = 0.40
 BASE_REMOVE_THRESHOLD = 0.70
-MIN_THRESHOLD = 0.10
-MAX_THRESHOLD = 0.90
-
-
-PLATFORM_MODIFIERS = {
-    "Neutral": 0.00,
-    "Gaming": 0.10,
-    "Social Media": 0.00,
-    "Professional": -0.15,
-    "Forum": 0.05,
-    "VR/Metaverse": 0.15,
-}
-
-CONTENT_TYPE_MODIFIERS = {
-    "Original Post": 0.00,
-    "Comment/Reply": 0.05,
-    "Username": -0.20,
-    "Bio": -0.15,
-    "UGC": 0.05,
-}
-
-STRICTNESS_MODIFIERS = {
-    "Strict": -0.15,
-    "Balanced": 0.00,
-    "Lenient": 0.15,
-}
 
 
 PREDEFINED_POLICIES = {
