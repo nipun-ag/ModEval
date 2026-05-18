@@ -6,6 +6,30 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ## 2026-05-18
 
+**style: rework AI Interpretation top grid to 3-card layout, add model confidence header**
+
+Changes:
+- Restructured insights-grid layout in renderInsights() (app.js):
+  - Moved Disagreement Vector to left column as tall card spanning full height
+  - Created flex column wrapper on right with Most Lenient (top) and Strictest (bottom) stacked vertically
+  - Removed Risk Narrative card entirely
+- Updated .insights-grid-right CSS: changed from grid (2 columns) to flex (column direction)
+- Added MODEL CONFIDENCE header above confidence bars in insights-ai-section
+- Created .insights-bars-header CSS class: JetBrains Mono 10px uppercase, --muted color, 8px margin-bottom, 0.08em letter-spacing
+
+Why:
+- New 3-card layout emphasizes disagreement (left tall card) while showing model extremes (right stack)
+- Removing Risk Narrative reduces redundancy (already covered in executive summary)
+- Header improves visual hierarchy and clarity of the confidence metrics section
+
+Tradeoffs:
+- Disagreement Vector now takes up more visual prominence (intentional — shows what models disagree on)
+- Risk Narrative removed (consolidated into AI executive summary section)
+
+---
+
+## 2026-05-18
+
 **style: polish AI Interpretation disclaimer -- SVG icon, improved legibility**
 
 Changes:

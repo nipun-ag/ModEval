@@ -475,8 +475,11 @@ Never use for general reading text. Monospace signals "this is technical data."
 
 #### Insights Top Grid (.insights-grid)
 - CSS Grid: `1fr 2fr` (left tall card + right cluster), gap 20px, margin-bottom 28px
-- Left column: Strictest Model tall card (`.insights-card-tall`)
-- Right column: `.insights-grid-right` — 2-column grid containing Most Lenient (full width via `.insights-card-wide`), Disagreement Vector, Risk Narrative
+- Left column: Disagreement Vector tall card (`.insights-card-tall`)
+- Right column: `.insights-grid-right` — flex column (vertical stack), gap 20px
+  - Top: Most Lenient card (`.insights-card`)
+  - Bottom: Strictest Model card (`.insights-card`)
+  - Risk Narrative card removed entirely
 
 #### Insights Card (.insights-card, .insights-card-tall, .insights-card-wide)
 - Base: `var(--surface2)` background, `var(--border)` border, border-radius 12px, padding 28px
@@ -505,6 +508,9 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Body (`.insights-ai-body`): `2fr 1fr` grid
   - Finding card (`.insights-ai-finding`): dark background, absolute tag (Critical Finding / Safe / Grey Area), left border colored by violation type
   - Signal card (`.insights-ai-signal`): confidence bar with gradient fill (amber to red)
+- Confidence bars section:
+  - Header (`.insights-bars-header`): JetBrains Mono 10px uppercase `--muted`, margin-bottom 8px, letter-spacing 0.08em
+  - Bars (`.insights-confidence-bars`): flex column, gap 14px, z-index 1
 
 ### AI Interpretation Disclaimer (.ai-interpretation-disclaimer)
 - Appears at the top of the AI Interpretation tab (lower-panel-insights)
