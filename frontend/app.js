@@ -1075,7 +1075,7 @@ function renderInsights(insights, results, platform, alignmentMap, data) {
         )}
       </div>
 
-      <div class="insights-bars-header">MODEL CONFIDENCE</div>
+      <div class="insights-bars-header"></div>
       <div class="insights-confidence-bars">
         ${renderConfidenceBars(results)}
       </div>
