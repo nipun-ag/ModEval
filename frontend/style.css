@@ -2734,13 +2734,15 @@ tbody td {
   border-radius: 12px;
   padding: 24px;
   margin-top: 24px;
+  max-width: 280px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* === VERDICT VISUALS ROW === */
 .verdict-visuals-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
+  grid-template-columns: 1fr;
   align-items: end;
   justify-items: center;
 }
@@ -2972,7 +2974,7 @@ tbody td {
 
 .breakdown-fields {
   display: grid;
-  grid-template-columns: 110px 150px 120px;
+  grid-template-columns: 110px 120px;
   gap: 16px;
   flex: 1;
   min-width: 0;
@@ -3107,7 +3109,7 @@ tbody td {
 
 .breakdown-header-fields {
   display: grid;
-  grid-template-columns: 110px 150px 120px;
+  grid-template-columns: 110px 120px;
   gap: 16px;
   flex: 1;
   font-family: "JetBrains Mono", monospace;

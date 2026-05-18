@@ -721,7 +721,6 @@ function renderResults(results) {
       <div class="breakdown-header-spacer"></div>
       <div class="breakdown-header-fields">
         <span>CATEGORY</span>
-        <span>SEVERITY</span>
         <span>CONFIDENCE</span>
       </div>
     </div>`;
