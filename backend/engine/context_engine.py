@@ -8,9 +8,7 @@ from backend.config import (
 )
 
 
-def calculate_context_adjustment(
-    platform: str, content_type: str, strictness: str
-) -> dict:
+def calculate_context_adjustment() -> dict:
     """Return fixed base thresholds independent of platform or content context.
 
     Platform-specific policy judgment is handled by Claude Haiku's alignment

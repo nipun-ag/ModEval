@@ -30,7 +30,6 @@ CATEGORY_ALIASES = {
     "threat": "threat",
     "identity_attack": "identity_attack",
     "identity_hate": "identity_attack",
-    "hate": "hate",
     "hate/threatening": "hate/threatening",
     "harassment": "harassment",
     "harassment/threatening": "harassment/threatening",

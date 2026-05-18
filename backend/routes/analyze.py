@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import anthropic
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -146,7 +147,6 @@ Return ONLY the JSON object. No preamble, no markdown, no explanation."""
                 raw = raw[4:]
         raw = raw.strip()
 
-        import json
         parsed = json.loads(raw)
         print(f"AI Analysis generated successfully")
         return parsed
@@ -162,11 +162,7 @@ def build_response(payload: dict) -> dict:
     platform_config = PLATFORM_MAP.get(platform, PLATFORM_MAP.get("Reddit", {}))
     policy_key = platform_config.get("policy_key", "reddit")
 
-    thresholds = calculate_context_adjustment(
-        platform,
-        payload.get("content_type", "Original Post"),
-        payload.get("strictness", "Balanced"),
-    )
+    thresholds = calculate_context_adjustment()
     policy_rules = get_policy_rules(
         policy_key,
         payload.get("custom_policy_text", ""),

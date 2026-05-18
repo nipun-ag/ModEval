@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import anthropic
 
 from backend.config import CUSTOM_POLICY_KEYWORDS, PREDEFINED_POLICIES, PLATFORM_MAP
@@ -88,8 +89,6 @@ def evaluate_policy_alignment(result: dict, policy_rules: dict, thresholds: dict
         "alignment_score": round(alignment_score, 4),
         "aligned": aligned,
         "policy_note": policy_note,
-        "expected_threshold": round(expected_threshold, 2),
-        "enforced_action": enforced_action,
     }
 
 
@@ -216,7 +215,6 @@ Return only the JSON array. No other text."""
         raw = response.content[0].text.strip()
 
         # Try to extract JSON array from anywhere in the response
-        import re
         start = raw.find("[")
         end = raw.rfind("]")
         if start != -1 and end != -1 and end > start:
