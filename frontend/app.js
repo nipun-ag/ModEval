@@ -997,25 +997,20 @@ function renderInsights(insights, results, platform, alignmentMap, data) {
 
   const gridHTML = `
     <div class="insights-grid">
-      <!-- Strictest Model (tall left) -->
+      <!-- Left: Disagreement Vector (tall) -->
       <div class="insights-card insights-card-tall">
         <div class="insights-card-top">
-          <span class="insights-card-eyebrow">◈ STRICTEST MODEL</span>
-          <span style="color:var(--accent);font-size:16px">◈</span>
+          <span class="insights-card-eyebrow disagreement">⇄ DISAGREEMENT VECTOR</span>
         </div>
-        <p class="insights-card-description">
-          The model that flagged this content most aggressively across all signals.
+        <p class="insights-card-body" style="margin-top:12px">
+          ${highlightedDisagreement}
         </p>
-        <div class="insights-card-bottom">
-          <div class="insights-card-title">${escapeHtml(strictestDisplayName)}</div>
-          <div class="insights-card-subtitle">${escapeHtml(strictestDisplaySubtitle)}</div>
-        </div>
       </div>
 
-      <!-- Right column (2/3 width) -->
+      <!-- Right column (flex stacked) -->
       <div class="insights-grid-right">
-        <!-- Most Lenient (wide top) -->
-        <div class="insights-card insights-card-wide">
+        <!-- Most Lenient (top) -->
+        <div class="insights-card">
           <div class="insights-card-top">
             <span class="insights-card-eyebrow lenient">⬡ MOST LENIENT</span>
             <span style="color:var(--green);font-size:16px">⬡</span>
@@ -1031,24 +1026,19 @@ function renderInsights(insights, results, platform, alignmentMap, data) {
           </div>
         </div>
 
-        <!-- Disagreement Vector -->
+        <!-- Strictest Model (bottom) -->
         <div class="insights-card">
           <div class="insights-card-top">
-            <span class="insights-card-eyebrow disagreement">⇄ DISAGREEMENT VECTOR</span>
+            <span class="insights-card-eyebrow">◈ STRICTEST MODEL</span>
+            <span style="color:var(--accent);font-size:16px">◈</span>
           </div>
-          <p class="insights-card-body" style="margin-top:12px">
-            ${highlightedDisagreement}
+          <p class="insights-card-description">
+            The model that flagged this content most aggressively across all signals.
           </p>
-        </div>
-
-        <!-- Risk Narrative -->
-        <div class="insights-card">
-          <div class="insights-card-top">
-            <span class="insights-card-eyebrow risk">◉ RISK NARRATIVE</span>
+          <div class="insights-card-bottom">
+            <div class="insights-card-title">${escapeHtml(strictestDisplayName)}</div>
+            <div class="insights-card-subtitle">${escapeHtml(strictestDisplaySubtitle)}</div>
           </div>
-          <p class="insights-card-body" style="margin-top:12px">
-            ${highlightedRisk}
-          </p>
         </div>
       </div>
     </div>
@@ -1080,6 +1070,7 @@ function renderInsights(insights, results, platform, alignmentMap, data) {
         ${escapeHtml(data?.ai_analysis?.risk_narrative || "Analysis complete.")}
       </div>
 
+      <div class="insights-bars-header">MODEL CONFIDENCE</div>
       <div class="insights-confidence-bars">
         ${renderConfidenceBars(results)}
       </div>
