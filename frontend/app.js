@@ -965,7 +965,7 @@ function renderInsights(insights, results, platform, alignmentMap, data) {
       <!-- Left: Disagreement Vector (tall) -->
       <div class="insights-card insights-card-tall">
         <div class="insights-card-top">
-          <span class="insights-card-eyebrow disagreement">⇄ DISAGREEMENT VECTOR</span>
+          <span class="insights-card-eyebrow disagreement"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;vertical-align:middle"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>DISAGREEMENT VECTOR</span>
         </div>
         <p class="insights-card-body" style="margin-top:12px">
           ${highlightedDisagreement}
@@ -977,8 +977,7 @@ function renderInsights(insights, results, platform, alignmentMap, data) {
         <!-- Most Lenient (top) -->
         <div class="insights-card">
           <div class="insights-card-top">
-            <span class="insights-card-eyebrow lenient">⬡ MOST LENIENT</span>
-            <span style="color:var(--green);font-size:16px">⬡</span>
+            <span class="insights-card-eyebrow lenient"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;vertical-align:middle"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>MOST LENIENT</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:12px">
             <div>
@@ -994,8 +993,7 @@ function renderInsights(insights, results, platform, alignmentMap, data) {
         <!-- Strictest Model (bottom) -->
         <div class="insights-card">
           <div class="insights-card-top">
-            <span class="insights-card-eyebrow">◈ STRICTEST MODEL</span>
-            <span style="color:var(--accent);font-size:16px">◈</span>
+            <span class="insights-card-eyebrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;vertical-align:middle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>STRICTEST MODEL</span>
           </div>
           <p class="insights-card-description">
             The model that flagged this content most aggressively across all signals.
