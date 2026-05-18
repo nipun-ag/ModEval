@@ -3514,28 +3514,15 @@ tbody td {
 }
 
 .insights-bars-header {
-  display: flex;
-  align-items: center;
-  margin-top: 16px;
-  margin-bottom: 6px;
-}
-
-.insights-bars-header::before {
-  content: '';
-  flex: 0 0 140px;
-}
-
-.insights-bars-header::after {
-  content: 'MODEL CONFIDENCE';
-  flex: 0 0 35px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: "JetBrains Mono", monospace;
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--text-secondary);
-  text-align: right;
-  white-space: nowrap;
+  text-align: center;
+  margin-top: 24px;
+  margin-bottom: 12px;
 }
 
 .insights-confidence-bars {
