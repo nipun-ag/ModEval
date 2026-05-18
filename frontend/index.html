@@ -490,16 +490,6 @@
         <div class="formula-hero">Fixed thresholds: Allow &lt; 0.40 · Review 0.40–0.70 · Remove &gt; 0.70</div>
         <div class="methodology-grid">
           <div class="methodology-subcard">
-            <p class="section-label mono-label">Default Action Thresholds</p>
-            <table class="methodology-table">
-              <tbody>
-                <tr><td>0.00 - 0.39</td><td>Allow</td></tr>
-                <tr><td>0.40 - 0.69</td><td>Review</td></tr>
-                <tr><td>0.70 - 1.00</td><td>Remove</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="methodology-subcard">
             <p class="section-label mono-label">Platform Context</p>
             <table class="methodology-table">
               <tbody>
@@ -548,7 +538,7 @@
           </div>
         </div>
         <p class="methodology-copy">
-          A disagreement is flagged when two or more models produce different final actions after context adjustment. Three types of disagreement are detected:
+          A disagreement is flagged when two or more models produce different final actions after normalization. Three types of disagreement are detected:
         </p>
         <table class="methodology-table">
           <tbody>
