@@ -1082,6 +1082,56 @@ textarea:focus {
   border-radius: 8px;
 }
 
+.skeleton-hero-block {
+  width: 280px;
+  height: 80px;
+  border-radius: 8px;
+  margin: 8px auto;
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.skeleton-hero-block::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 100%);
+  transform: translateX(-100%);
+  animation: shimmer 1.4s linear infinite;
+}
+
+.skeleton-visuals-row {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  margin: 16px 0;
+}
+
+.skeleton-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.skeleton-circle::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 100%);
+  transform: translateX(-100%);
+  animation: shimmer 1.4s linear infinite;
+}
+
+.skeleton-legend-row {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
 .results-content {
   animation: fade-in 200ms ease;
 }
