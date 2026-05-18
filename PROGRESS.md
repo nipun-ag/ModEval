@@ -6,6 +6,30 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ## 2026-05-18
 
+**feat: rename Insights tab to AI Interpretation, add Claude Haiku disclaimer**
+
+Changes:
+- Renamed the "Insights" tab to "AI INTERPRETATION" in the lower-tab strip (lower-tab-insights ID unchanged)
+- Added a disclaimer banner as the first child of lower-panel-insights panel:
+  - Info icon (ⓘ) prefix with neutral styling
+  - Text: "Interpreted by Claude Haiku (claude-haiku-4-5-20251001). AI interpretation is probabilistic and may contain errors — it is intended to assist human review, not replace it."
+  - Styling: --surface2 background, --border border, 11px italic --text-secondary Inter font, 6px border-radius, 10px 14px padding
+- Added `.ai-interpretation-disclaimer` and `.disclaimer-icon` CSS classes for the new component
+
+Why:
+- Rename clarifies the Insights tab's purpose: it shows AI-powered interpretation of results, not human insights
+- Disclaimer banner establishes appropriate expectations around Claude Haiku's output
+- Explicitly states that AI interpretation assists but doesn't replace human review
+- Positions responsibility: Claude provides analysis, humans make decisions
+
+Tradeoffs:
+- Adds visual element to Insights tab that slightly increases vertical space
+- Disclaimer takes up space but is necessary for transparency about AI-generated content
+
+---
+
+## 2026-05-18
+
 **feat: collapsible platform policy box, update footer copy**
 
 Changes:

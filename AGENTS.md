@@ -182,6 +182,7 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
 - Both interpretation calls (alignment + AI summary) use Anthropic SDK — anthropic package added to requirements.txt
 - **Requires ANTHROPIC_API_KEY in Doppler (project: modeval, config: prd) for production** — already configured
 - Dynamic platform policy guidelines box below platform selector showing accurate sourced rules for each platform (Reddit, Discord, Facebook, Instagram based on official documentation) — collapsible by default, expands on header click with smooth max-height transition and rotating chevron icon
+- AI Interpretation disclaimer banner at top of Insights tab (now renamed to AI INTERPRETATION) explaining Claude Haiku's output is probabilistic and intended to assist, not replace, human review — neutral styling with info icon
 - Context explainer blurb added above Platform selector explaining why platform selection exists, with link to How It Works tab
 - Platform selector simplified to 5 options with modal dropdown showing platform name + description
 - AI analysis with 4 structured analytical fields: disagreement_explanation (what does disagreement reveal?), risk_narrative (direct CLEAR/SAFE/GREY verdict with reasoning), context_sensitivity (human review needed?), contested_category (most disagreed category)
@@ -195,7 +196,7 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
   - HOW IT WORKS and MODELS are full-page panels accessed from topbar, not results tabs
   - Panel padding increased to 48px
   - Consensus hero card leads results with large action word, AI analysis subtitle, donut chart, severity gauge, and action legend
-  - Results panel has three lower tabs: Summary, Model Breakdown, Insights — hidden until analysis runs
+  - Results panel has three lower tabs: Summary, Model Breakdown, AI Interpretation — hidden until analysis runs
   - Summary tab: disagreement banner + consensus hero + donut + gauge + legend
   - Model Breakdown tab: card-per-row layout with section header rows (CATEGORY, SEVERITY, CONFIDENCE, ACTION); one card per model; no alignment column
   - Insights tab: three-section asymmetric layout:

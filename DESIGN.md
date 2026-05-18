@@ -205,7 +205,7 @@ Never use for general reading text. Monospace signals "this is technical data."
 ### Lower Tab Strip (.results-lower-tabs)
 - Appears only after analysis results load
 - Hidden by default, shown when results render
-- Three tabs: Summary, Model Breakdown, Insights
+- Three tabs: Summary, Model Breakdown, AI Interpretation
 - Font: JetBrains Mono 11px uppercase
 - Active tab: var(--text), 2px var(--accent) bottom border
 - Inactive tab: var(--muted)
@@ -505,6 +505,17 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Body (`.insights-ai-body`): `2fr 1fr` grid
   - Finding card (`.insights-ai-finding`): dark background, absolute tag (Critical Finding / Safe / Grey Area), left border colored by violation type
   - Signal card (`.insights-ai-signal`): confidence bar with gradient fill (amber to red)
+
+### AI Interpretation Disclaimer (.ai-interpretation-disclaimer)
+- Appears at the top of the AI Interpretation tab (lower-panel-insights)
+- `--surface2` background, `--border` border, border-radius 6px
+- Padding: 10px 14px
+- Displays as flex row with icon and text
+- Icon (`.disclaimer-icon`): ⓘ symbol, 12px, color `--muted`, flex-shrink 0
+- Text: Inter 11px italic `--text-secondary`, line-height 1.5
+- Gap between icon and text: 10px
+- Purpose: Establishes transparent expectations about Claude Haiku's interpretive output
+- Non-alarming neutral styling — informational note, not a warning
 
 ### Editorial Quote
 - DM Serif Display, larger font
