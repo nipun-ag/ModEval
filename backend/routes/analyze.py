@@ -77,7 +77,11 @@ def generate_ai_analysis(results: list[dict], context: dict) -> dict:
     Note: ANTHROPIC_API_KEY must be added to Doppler (project: modeval, config: prd) for production.
     """
     try:
-        client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+        api_key = os.getenv("ANTHROPIC_API_KEY")
+        if not api_key:
+            print("AI Analysis skipped: ANTHROPIC_API_KEY is not set.")
+            return {}
+        client = anthropic.Anthropic(api_key=api_key)
 
         platform = context.get("platform", "Reddit")
         text = context.get("text", "")

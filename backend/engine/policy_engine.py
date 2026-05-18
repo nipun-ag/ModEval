@@ -149,7 +149,11 @@ def evaluate_alignment_with_ai(results: list[dict], platform: str, text: str = "
     Note: ANTHROPIC_API_KEY must be added to Doppler (project: modeval, config: prd) for production.
     """
     try:
-        client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+        api_key = os.getenv("ANTHROPIC_API_KEY")
+        if not api_key:
+            print("AI Alignment skipped: ANTHROPIC_API_KEY is not set.")
+            return {}
+        client = anthropic.Anthropic(api_key=api_key)
 
         model_results_json = []
         for r in results:
