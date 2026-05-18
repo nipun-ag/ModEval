@@ -3126,18 +3126,20 @@ tbody td {
   grid-template-columns: 1fr 2fr;
   gap: 20px;
   margin-bottom: 28px;
-  align-items: stretch;
 }
 
 .insights-grid-right {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  height: 100%;
 }
 
 .insights-grid-right .insights-card {
   flex: 1;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .insights-card {
