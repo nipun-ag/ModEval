@@ -23,12 +23,10 @@ def build_item_error_analysis(error_message: str) -> dict:
             "strictest_model": {
                 "model": "Unavailable",
                 "action": "Unavailable",
-                "reason": "No valid model results were available.",
             },
             "most_lenient_model": {
                 "model": "Unavailable",
                 "action": "Unavailable",
-                "reason": "No valid model results were available.",
             },
             "consensus_recommendation": "No Consensus",
         },

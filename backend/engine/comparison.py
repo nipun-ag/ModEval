@@ -33,12 +33,10 @@ def build_insights(results: list[dict]) -> dict:
             "strictest_model": {
                 "model": "Unavailable",
                 "action": "Unavailable",
-                "reason": "No model results were available.",
             },
             "most_lenient_model": {
                 "model": "Unavailable",
                 "action": "Unavailable",
-                "reason": "No model results were available.",
             },
             "consensus_recommendation": "No Consensus",
         }
@@ -57,12 +55,10 @@ def build_insights(results: list[dict]) -> dict:
         "strictest_model": {
             "model": strictest["model"],
             "action": strictest["action"],
-            "reason": "Highest combined action severity after policy alignment.",
         },
         "most_lenient_model": {
             "model": lenient["model"],
             "action": lenient["action"],
-            "reason": "Lowest combined action severity after policy alignment.",
         },
         "consensus_recommendation": consensus_action,
     }

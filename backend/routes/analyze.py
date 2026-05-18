@@ -180,7 +180,6 @@ def build_response(payload: dict) -> dict:
                 thresholds,
                 "Model output unavailable due to an integration error.",
             )
-            result["alignment_score"] = 0.0
             result["aligned"] = False
             normalized_results.append(result)
             continue
@@ -218,13 +217,11 @@ def build_response(payload: dict) -> dict:
             model_name = result.get("model", "")
             if model_name in ai_alignment_map:
                 alignment_data = ai_alignment_map[model_name]
-                result["alignment_score"] = alignment_data.get("alignment_score", 0.0)
                 result["aligned"] = alignment_data.get("aligned", False)
                 result["alignment_reason"] = alignment_data.get("alignment_reason", "")
     else:
         for result in active_results:
             policy_data = evaluate_policy_alignment(result, policy_rules, thresholds)
-            result["alignment_score"] = policy_data["alignment_score"]
             result["aligned"] = policy_data["aligned"]
             result["alignment_reason"] = policy_data.get("policy_note", "")
 
@@ -237,6 +234,9 @@ def build_response(payload: dict) -> dict:
         "strictness": payload.get("strictness", "Balanced"),
         "text": payload.get("text", ""),
     })
+
+    for result in normalized_results:
+        result.pop("raw_scores", None)
 
     return {
         "results": normalized_results,
