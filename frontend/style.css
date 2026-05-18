@@ -2524,9 +2524,6 @@ tbody td {
 .arch-flow-icon {
   width: 48px;
   height: 48px;
-  border-radius: 50%;
-  background: var(--surface3);
-  border: 1px solid var(--border-strong);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2535,8 +2532,6 @@ tbody td {
   color: var(--accent);
 }
 .arch-flow-step-accent .arch-flow-icon {
-  background: var(--accent-light);
-  border-color: var(--accent);
   color: var(--accent);
 }
 .arch-flow-label {
