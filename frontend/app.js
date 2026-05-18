@@ -11,7 +11,6 @@ const batchSummary = document.getElementById("batch-summary");
 const customPolicyField = document.getElementById("custom-policy-field");
 const analyzeButton = document.getElementById("analyze-button");
 const workspace = document.querySelector(".workspace");
-const benchmarkPanel = document.getElementById("benchmark-panel");
 const aiDisagreementText = document.getElementById("ai-disagreement-text");
 const aiRiskText = document.getElementById("ai-risk-text");
 const aiContextText = document.getElementById("ai-context-text");
@@ -599,17 +598,7 @@ function setHeroState(action, summary) {
 }
 
 function setPrimaryView(view) {
-  const showBenchmark = view === "benchmark";
-  if (workspace) workspace.style.display = 
-    showBenchmark ? "none" : "grid";
-  if (benchmarkPanel) benchmarkPanel.style.display = 
-    showBenchmark ? "block" : "none";
-  const navAnalysis = document.getElementById('nav-analysis');
-  const navBenchmark = document.getElementById('nav-benchmark');
-  if (navAnalysis) navAnalysis.classList.toggle(
-    "active", !showBenchmark);
-  if (navBenchmark) navBenchmark.classList.toggle(
-    "active", showBenchmark);
+  if (workspace) workspace.style.display = "grid";
 }
 
 function setSectionExpanded(toggle, content, expanded) {
@@ -1352,8 +1341,7 @@ showPanelState("empty");
 (function() {
   function showPanel(id) {
     const workspace = document.querySelector('.workspace');
-    const panels = ['benchmark-panel', 
-      'how-it-works-panel', 'models-panel'];
+    const panels = ['how-it-works-panel', 'models-panel'];
     if (workspace) workspace.style.display = 'none';
     panels.forEach(p => {
       const el = document.getElementById(p);
@@ -1375,17 +1363,12 @@ showPanelState("empty");
   }
 
   const navAnalysis = document.getElementById('nav-analysis');
-  const navBenchmark = document.getElementById('nav-benchmark');
   const navHowItWorks = document.getElementById('nav-how-it-works');
   const navModels = document.getElementById('nav-models');
 
   if (navAnalysis) navAnalysis.addEventListener('click', () => {
     showPanel('workspace');
     setActiveNav('nav-analysis');
-  });
-  if (navBenchmark) navBenchmark.addEventListener('click', () => {
-    showPanel('benchmark-panel');
-    setActiveNav('nav-benchmark');
   });
   if (navHowItWorks) navHowItWorks.addEventListener('click', () => {
     showPanel('how-it-works-panel');
