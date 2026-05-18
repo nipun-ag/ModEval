@@ -589,7 +589,7 @@ function setHeroState(action, summary) {
   heroAction.style.color = color;
 }
 
-function setPrimaryView(view) {
+function setPrimaryView() {
   if (workspace) workspace.style.display = "grid";
 }
 
@@ -1257,7 +1257,7 @@ updatePlatformPolicyBox("Reddit");
     });
 })();
 setHeroState("Review", "");
-setPrimaryView("analysis");
+setPrimaryView();
 showPanelState("empty");
 
 (function() {
