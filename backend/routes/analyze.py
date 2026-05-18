@@ -89,7 +89,6 @@ def generate_ai_analysis(results: list[dict], context: dict) -> dict:
                     f"- {r['model']}: action={r.get('action','?')}, "
                     f"confidence={r.get('confidence','?'):.2f}, "
                     f"top_category={r.get('top_category','?')}, "
-                    f"severity={r.get('severity','?')}, "
                     f"alignment={alignment_status}"
                 )
 

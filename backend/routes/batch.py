@@ -18,7 +18,6 @@ def build_item_error_analysis(error_message: str) -> dict:
         "disagreements": {
             "action_mismatch": [],
             "category_mismatch": [],
-            "severity_gap": [],
         },
         "insights": {
             "strictest_model": {
