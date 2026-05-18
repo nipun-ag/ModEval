@@ -384,12 +384,33 @@ function updatePlatformPolicyBox(platform) {
     .join("");
 
   policyBox.innerHTML = `
-    <div class="platform-policy-box-label">PLATFORM POLICY GUIDELINES</div>
-    <ul>${rulesHtml}</ul>
-    <div class="platform-policy-footer">
-      These rules are used by the AI interpretation model to assess alignment of moderation results.
+    <button class="platform-policy-header" type="button">
+      <span class="platform-policy-box-label">PLATFORM POLICY GUIDELINES</span>
+      <span class="platform-policy-chevron">⌄</span>
+    </button>
+    <div class="platform-policy-content">
+      <ul>${rulesHtml}</ul>
+      <div class="platform-policy-footer">
+        Guidelines sourced from official platform documentation. Last verified May 2026.
+      </div>
     </div>
   `;
+
+  // Set up collapse/expand toggle
+  const header = policyBox.querySelector(".platform-policy-header");
+  const content = policyBox.querySelector(".platform-policy-content");
+
+  if (header && content) {
+    // Default to collapsed
+    header.setAttribute("aria-expanded", "false");
+    content.classList.add("collapsed");
+
+    header.addEventListener("click", () => {
+      const isExpanded = header.getAttribute("aria-expanded") === "true";
+      header.setAttribute("aria-expanded", String(!isExpanded));
+      content.classList.toggle("collapsed");
+    });
+  }
 }
 
 function initializeModalSelects() {
