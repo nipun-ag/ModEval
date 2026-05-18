@@ -1126,6 +1126,17 @@ textarea:focus {
   animation: shimmer 1.4s linear infinite;
 }
 
+.skeleton-visuals-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
 .skeleton-legend-row {
   display: flex;
   justify-content: center;
