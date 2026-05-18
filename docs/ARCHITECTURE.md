@@ -235,7 +235,7 @@ These models run when their shared provider credentials are configured. If crede
 - **Strengths:** Production-grade, high accuracy, covers edge cases OpenAI has seen
 - **Limitations:** Proprietary, may not align with platform-specific policies
 
-#### 5. Toxicity Classifier (HuggingFace: unitary/toxic-bert)
+#### 5. toxic-bert (HuggingFace: unitary/toxic-bert)
 - **Architecture:** BERT (12-layer, 768-hidden, 12-head)
 - **Creator:** Unitary AI
 - **Training Data:** Jigsaw Toxic Comments dataset (Wikipedia talk page comments)
@@ -244,7 +244,7 @@ These models run when their shared provider credentials are configured. If crede
 - **Strengths:** Widely used in production, covers 6 toxicity dimensions, general-purpose
 - **Limitations:** Trained on formal Wikipedia comments, may underperform on informal slang
 
-#### 6. Offensive Language Detector (HuggingFace: cardiffnlp/twitter-roberta-base-offensive)
+#### 6. RoBERTa Offensive (HuggingFace: cardiffnlp/twitter-roberta-base-offensive)
 - **Architecture:** RoBERTa-base (24-layer, 1024-hidden, 16-head)
 - **Creator:** Cardiff NLP
 - **Training Data:** Twitter / SemEval-2019 Task 6 (offensive language identification)
@@ -253,7 +253,7 @@ These models run when their shared provider credentials are configured. If crede
 - **Strengths:** Twitter-specific training, excellent for slang and informal tone
 - **Limitations:** May overfit to Twitter conventions, may miss platform-specific patterns from other networks
 
-#### 7. Hate Speech Detector (HuggingFace: facebook/roberta-hate-speech-dynabench-r4-target)
+#### 7. RoBERTa Hate Speech (HuggingFace: facebook/roberta-hate-speech-dynabench-r4-target)
 - **Architecture:** RoBERTa-base
 - **Creator:** Facebook AI Research
 - **Training Data:** DynaBench R4 — adversarially collected hate speech examples
@@ -262,7 +262,7 @@ These models run when their shared provider credentials are configured. If crede
 - **Strengths:** Adversarial training makes it robust to evasion, focuses on hate not general offense
 - **Limitations:** Binary hate/not-hate less granular, only 3-class output
 
-#### 8. Bias Detector (HuggingFace: valurank/distilroberta-bias)
+#### 8. DistilRoBERTa Bias (HuggingFace: valurank/distilroberta-bias)
 - **Architecture:** DistilRoBERTa (6-layer, 768-hidden, 12-head) — 40% smaller than RoBERTa
 - **Creator:** Valurank
 - **Training Data:** Wikipedia Neutrality Comments (WNC) — real editorial decisions to remove biased language
@@ -371,7 +371,7 @@ User provides plain text. Keywords matched against predefined category keywords 
 
 ## Disagreement Detection
 
-Disagreements are flagged when models conflict on safety decisions. Three types are detected:
+Disagreements are flagged when models conflict on safety decisions. Two types are detected:
 
 | Type | Definition | Detection |
 |---|---|---|
@@ -626,6 +626,7 @@ Hetzner VPS (hetzner.com) — CX23 plan
 - `normalize_result()` — converts raw model output to unified schema
 - `build_error_result()` — creates safe placeholder for failed models
 - Category alias mapping happens here
+- Removed score_to_severity() function
 
 ### backend/engine/policy_engine.py
 - `get_policy_rules()` — extracts zero-tolerance and deprioritized categories per platform
@@ -636,7 +637,7 @@ Hetzner VPS (hetzner.com) — CX23 plan
 - Returns alignment_score and enforced_action
 
 ### backend/engine/comparison.py
-- `detect_disagreements()` — identifies action/category conflicts
+- `detect_disagreements()` — identifies action/category conflicts (severity_gap detection removed)
 - `build_insights()` — finds strictest model, most lenient model, consensus recommendation
 - Used to highlight edge cases
 
@@ -793,11 +794,10 @@ After analysis runs, three lower tabs appear inside
   legend (default active tab)
 - lower-panel-breakdown: card-per-row breakdown layout, one card per model,
   section header rows with column labels (CATEGORY, CONFIDENCE, ACTION)
-- lower-panel-insights: three-section asymmetric layout:
-  - Top grid (1fr 2fr): Strictest Model tall card (left) + right cluster with Most Lenient (full width), Disagreement Vector, Risk Narrative
+- lower-panel-insights (AI Interpretation tab): three-section asymmetric layout:
+  - Top grid (2 columns): Disagreement Vector tall card (left) + right column with Most Lenient (top) and Strictest Model (bottom)
   - Alignment matrix: all 8 model alignment verdicts with ALIGNED/MISALIGNED badges and reasons; footer shows "Alignment assessed by Claude Haiku against [platform] content policy."
-  - AI Executive Summary: gradient border card with consensus badge, finding tag (CLEAR VIOLATION/CLEAR SAFE/GENUINE GREY AREA), AI narrative, per-model confidence bars
-  Note: Context Sensitivity and Most Contested Category cards removed from Insights tab
+  - AI Executive Summary: gradient border card with consensus badge, finding tag (CLEAR VIOLATION/CLEAR SAFE/AMBIGUOUS), AI narrative, per-model confidence bars with MODEL CONFIDENCE header
 
 Tab switching handled by click handlers on 
 .lower-tab elements in frontend/app.js.

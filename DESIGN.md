@@ -212,9 +212,9 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Border-bottom: 1px var(--border)
 
 ### Lower Panels (.lower-panel)
-- Summary: consensus hero + donut chart + severity gauge + action legend
-- Model Breakdown: breakdown cards grouped into Enterprise APIs and Open Source Models with one shared header row per section; columns: CATEGORY, SEVERITY, CONFIDENCE, ACTION (no ALIGNMENT column)
-- Insights: insight cards + structured AI analysis cards + ALIGNMENT ASSESSMENT section
+- Summary: consensus hero + donut chart + action legend
+- Model Breakdown: breakdown cards grouped into Enterprise APIs and Open Source Models with one shared header row per section; columns: CATEGORY, CONFIDENCE, ACTION (no ALIGNMENT column)
+- AI Interpretation: insight cards + structured AI analysis cards + ALIGNMENT ASSESSMENT section
 - Hidden/shown by lower tab clicks
 - All start hidden, Summary shown by default when results load
 
@@ -226,13 +226,6 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Allow: `--green-light` background, `--green` text
 - Aligned: `--green-light` background, `--green` text
 - Misaligned: `--red-light` background, `--red` text
-
-### Severity Indicators (.severity-value)
-- Circular element with number
-- Low (1-3): `--green` glow
-- Medium (4-7): `--amber` glow
-- High (8-10): `--red` glow
-- Glow implemented via box-shadow
 
 ### Insight Cards (.insight-card)
 - Three equal cards side by side
@@ -246,23 +239,22 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Rendered as two sections (ENTERPRISE APIS, OPEN SOURCE MODELS), each with a shared column header row
 - Section header row (`.breakdown-header-row`): flex row, `padding: 0 24px 10px 24px`, `margin-bottom: 8px`, `border-bottom: 1px var(--border-strong)`
   - `.breakdown-header-spacer`: `width: 140px; flex-shrink: 0` — aligns with model info column
-  - `.breakdown-header-fields`: CSS grid `110px 150px 110px auto`, `font-size: 10px`, `color: var(--text-secondary)`, JetBrains Mono uppercase — columns: CATEGORY, SEVERITY, CONFIDENCE, ACTION
+  - `.breakdown-header-fields`: CSS grid `110px 150px 110px`, `font-size: 10px`, `color: var(--text-secondary)`, JetBrains Mono uppercase — columns: CATEGORY, CONFIDENCE, ACTION
 - Each card (`.breakdown-card`): flex row, `flex-wrap: nowrap`, `box-sizing: border-box`, `gap: 24px`, `padding: 16px 24px`, `border-radius: 8px`, `--surface2` background, `overflow: visible`
 - Action left border variants: `.aligned-allow` (3px `--green`), `.aligned-remove` (3px `--red`), `.aligned-review` (3px `--amber`)
 - `.breakdown-model-info`: `width: 140px; flex-shrink: 0` — model name, meta subtitle, arch chip
   - `.breakdown-model-name`: 13px Inter 600 `--text`
   - `.breakdown-model-meta`: 11px `--text-secondary`
   - `.breakdown-arch-chip`: JetBrains Mono 10px chip badge
-- `.breakdown-fields`: CSS grid `110px 150px 110px`, `align-items: center`, `gap: 16px`
+- `.breakdown-fields`: CSS grid `110px 150px`, `align-items: center`, `gap: 16px`
   - Column 1 (`.breakdown-field-value`): category name, 12px `--text`
-  - Column 2 (`.severity-bar-wrap`): severity number + bar track + fill (`.severity-bar-fill.low/mid/high`)
-  - Column 3 (`.breakdown-confidence`): confidence to 2 decimal places, JetBrains Mono 12px
+  - Column 2 (`.breakdown-confidence`): confidence to 2 decimal places, JetBrains Mono 12px
 - `.breakdown-action-btn`: `flex-shrink: 0; min-width: 76px; max-width: 76px`, pill button, JetBrains Mono 11px uppercase
   - `.action-allow`: `--green-light` bg, `--green` text/border
   - `.action-review`: `--amber-light` bg, `--amber` text/border
   - `.action-remove`: `--red-light` bg, `--red` text/border
 - Disabled cards: `opacity: 0.4`, action area replaced with "Coming Soon" italic span
-- No ALIGNMENT column (alignment verdicts consolidated in Insights tab ALIGNMENT ASSESSMENT section)
+- No ALIGNMENT column (alignment verdicts consolidated in AI Interpretation tab ALIGNMENT ASSESSMENT section)
 
 ### Disagreement Banner (.disagreement-banner)
 - Scoped to the Summary tab only — first child of `#lower-panel-summary`
@@ -289,12 +281,11 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Primary decision uses DM Serif Display at 64px
 - Subtitle shows the first two sentences of the AI summary for quick scanability
 
-### Verdict Visuals Row (.verdict-visuals-row)
-- Two-column grid inside .consensus-hero
-- Column 1: SVG donut chart (120px) showing model vote distribution -- segments colored by action
-- Column 2: SVG semicircle arc gauge (140x80px) showing average severity 1-10
-- Both populated by JS after results load
-- Colored green/amber/red by action/severity range
+### Verdict Visuals Card (.verdict-visuals-card)
+- Single centered donut chart showing model vote distribution
+- Box border removed; chart renders without container styling
+- SVG donut (120px) with segments colored by action: green (ALLOW), amber (REVIEW), red (REMOVE)
+- Populated by JS after results load
 
 ### Verdict Action Legend (.verdict-action-legend)
 - Row of three items below the visuals row
@@ -316,7 +307,7 @@ Never use for general reading text. Monospace signals "this is technical data."
 - No `backdrop-filter` or `will-change` — both removed to fix GPU compositing blank-render bug on first panel display
 
 ### Skeleton Loading
-- Table shows up to 8 skeleton rows (matching configured models) while models run
+- Skeleton shows eyebrow line, hero block, subtitle line, single circle (donut placeholder), and three legend dot lines while analysis runs
 - Shimmer: left-to-right highlight sweep (shimmer keyframe, 1.4s linear infinite)
 - Base: `--surface2`, highlight: rgba(255,255,255,0.06)
 - Replaced with real results on completion (200ms fade-in)
@@ -479,7 +470,6 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Right column: `.insights-grid-right` — flex column (vertical stack), gap 20px
   - Top: Most Lenient card (`.insights-card`)
   - Bottom: Strictest Model card (`.insights-card`)
-  - Risk Narrative card removed entirely
 
 #### Insights Card (.insights-card, .insights-card-tall, .insights-card-wide)
 - Base: `var(--surface2)` background, `var(--border)` border, border-radius 12px, padding 28px

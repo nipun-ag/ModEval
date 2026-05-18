@@ -27,9 +27,9 @@ ModEval is both a functional tool and a demonstration of applied AI governance t
 ## What It Does
 
 - Runs text through 8 moderation models in parallel — four enterprise APIs and four open source models, each covering a distinct safety dimension
-- Normalizes all outputs into a unified schema (category, severity, confidence, action)
+- Normalizes all outputs into a unified schema (category, confidence, action)
 - Uses Claude Haiku to assess how well each model's decision aligns with the selected platform's actual content policy
-- Detects and explains disagreements between models (action conflicts, category mismatches, severity gaps)
+- Detects and explains disagreements between models (action conflicts and category mismatches)
 - Generates an AI executive summary that reads between the lines: identifies CLEAR VIOLATION, CLEAR SAFE, or GENUINE GREY AREA, flags model failures, and recommends whether human review is needed
 - Includes a pre-loaded test case library with 100 real-world content examples across 10 violation categories
 - Documents the full methodology in a dedicated "How It Works" tab
@@ -54,10 +54,10 @@ ModEval runs 8 models in parallel across two tiers. Enterprise APIs require cred
 
 | Display Name | Model | Architecture | Creator | Safety Dimension |
 |---|---|---|---|---|
-| General Toxicity | `unitary/toxic-bert` | BERT | Unitary AI | General toxicity baseline |
-| Social Media Offensive | `cardiffnlp/twitter-roberta-base-offensive` | RoBERTa | Cardiff NLP | Social media offensive language |
-| Identity-Based Hate | `facebook/roberta-hate-speech-dynabench-r4-target` | RoBERTa | Facebook AI Research | Identity-based hate speech |
-| Language Bias | `valurank/distilroberta-bias` | DistilRoBERTa | Valurank | Non-neutral language detection |
+| toxic-bert | `unitary/toxic-bert` | BERT | Unitary AI | General toxicity baseline |
+| RoBERTa Offensive | `cardiffnlp/twitter-roberta-base-offensive` | RoBERTa | Cardiff NLP | Social media offensive language |
+| RoBERTa Hate Speech | `facebook/roberta-hate-speech-dynabench-r4-target` | RoBERTa | Facebook AI Research | Identity-based hate speech |
+| DistilRoBERTa Bias | `valurank/distilroberta-bias` | DistilRoBERTa | Valurank | Non-neutral language detection |
 
 ---
 
@@ -127,7 +127,6 @@ After alignment assessment, a second Claude Haiku call generates an analytical i
 |---|---|
 | Action Mismatch | Models recommend different actions |
 | Category Mismatch | Models flag different top violation categories |
-| Severity Gap | Severity scores differ by 3 or more points |
 
 ### Known Limitations
 
@@ -145,9 +144,9 @@ After alignment assessment, a second Claude Haiku call generates an analytical i
 - **Four tabs** — Analysis, How It Works, Models, Benchmark (coming)
 - **Single Platform selector** — Reddit, Discord, Facebook, Instagram, Custom with live policy guidelines shown below
 - **Execute Analysis button** — runs all 8 models in parallel
-- **Summary tab** — consensus verdict (ALLOW/REVIEW/REMOVE), donut chart showing model vote distribution, severity gauge
-- **Model Breakdown tab** — card-per-row layout showing category, severity, confidence, and action per model
-- **Insights tab** — asymmetric grid with strictest/most lenient model cards, disagreement explanation, risk narrative, full alignment assessment matrix, and elevated AI executive summary with confidence bars
+- **Summary tab** — consensus verdict (ALLOW/REVIEW/REMOVE), donut chart showing model vote distribution
+- **Model Breakdown tab** — card-per-row layout showing category, confidence, and action per model
+- **AI Interpretation tab** — 3-card top grid (Disagreement Vector, Most Lenient, Strictest Model), full policy alignment assessment matrix, and elevated AI executive summary with MODEL CONFIDENCE bars and Claude Haiku disclaimer
 - **Disagreement Banner** — high-contrast alert when models conflict
 - **Skeleton shimmer loading** — premium loading state while models run
 - **Model Cards** — detailed cards for all 8 models with architecture, training data, strengths, and limitations

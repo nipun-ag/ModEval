@@ -4,6 +4,41 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-05-19
+
+**style/refactor: pre-launch polish pass -- severity removal, UI refinements, doc accuracy**
+
+Changes:
+- Removed severity field completely from entire codebase (normalizer.py, comparison.py, all frontend rendering, CSS)
+- Removed score_to_severity() function from normalizer.py
+- Removed severity_gap disagreement detection from comparison.py
+- Removed severity gauge from Summary tab verdict visuals
+- Removed severity bar column from Model Breakdown cards
+- Skeleton loading state redesigned to match Summary tab layout (single circle, no 8-row table)
+- Verdict visuals card box border removed; donut chart renders clean without container
+- HuggingFace model display names updated to actual model names: toxic-bert, RoBERTa Offensive, RoBERTa Hate Speech, DistilRoBERTa Bias
+- AI Interpretation top grid restructured to 3 cards: Disagreement Vector (tall left), Most Lenient (top right), Strictest Model (bottom right); Risk Narrative removed
+- MODEL CONFIDENCE header added above confidence bars in Executive Summary, centered
+- Summary tab subtitle now shows vote-based consensus text instead of AI narrative
+- Platform policy box made collapsible, footer copy updated to "Guidelines sourced from official platform documentation. Last verified May 2026."
+- Insights tab renamed to AI INTERPRETATION; Claude Haiku disclaimer banner added
+- How It Works panel fully corrected: fixed threshold formula, removed platform modifiers table, updated Platform Context table, stale gaming/professional platform references removed, unicode icons replaced with SVGs, arch flow circle borders removed
+- risk_narrative prompt updated to prevent Claude from prefixing narrative with verdict label
+- Model Breakdown card columns fixed: CATEGORY and CONFIDENCE evenly spaced with aligned headers
+- CSS: insights grid right column cards now divide space equally with flex: 1, min-height 160px, display flex, flex-direction column, justify-content space-between
+
+Why:
+- Severity was a redundant rescaling of confidence (0-1 to 1-10) that added visual noise without analytical value
+- Display names now match actual model identifiers for technical credibility with target audience
+- How It Works was documenting removed features (platform modifiers, severity scaling); now accurate
+- UI polish pass ahead of public launch on Reddit, X, and LinkedIn
+
+Tradeoffs:
+- Severity gap disagreement detection removed along with severity field; action_mismatch and category_mismatch cover the meaningful disagreements
+- Custom display names for HuggingFace models replaced with technical names; less friendly but more accurate for technical audience
+
+---
+
 ## 2026-05-18
 
 **style: rework AI Interpretation top grid to 3-card layout, add model confidence header**
