@@ -191,10 +191,9 @@
               <!-- Subtitle line -->
               <div class="skeleton-line large" style="margin: 0 auto;"></div>
 
-              <!-- Two circles side by side (donut + gauge) -->
+              <!-- Donut chart circle -->
               <div class="skeleton-visuals-card">
                 <div class="skeleton-visuals-row">
-                  <div class="skeleton-circle"></div>
                   <div class="skeleton-circle"></div>
                 </div>
 
@@ -243,22 +242,6 @@
       </div>
     </div>
     <span class="verdict-visual-label">MODEL VOTES</span>
-  </div>
-
-  <div class="verdict-visual-item">
-    <div class="gauge-container">
-      <svg class="gauge-svg" viewBox="0 0 140 80"
-           xmlns="http://www.w3.org/2000/svg">
-        <path class="gauge-track"
-              d="M 10 70 A 60 60 0 0 1 130 70"/>
-        <path class="gauge-fill" id="gauge-fill-path"
-              d="M 10 70 A 60 60 0 0 1 130 70"/>
-      </svg>
-      <div class="gauge-number-wrap">
-        <span class="gauge-number" id="gauge-number">0</span>
-      </div>
-    </div>
-    <span class="verdict-visual-label">SEVERITY</span>
   </div>
 
   </div>
@@ -452,7 +435,6 @@
             <ul class="integrity-card-list">
               <li>Standardized category mapping across all providers</li>
               <li>Floating point score alignment (0.00 - 1.00)</li>
-              <li>Severity scaling from raw confidence (1-10)</li>
               <li>Action assignment based on fixed thresholds</li>
             </ul>
           </div>
@@ -468,7 +450,6 @@
             <pre class="methodology-code" style="margin: 0; border-radius: 0 0 8px 8px;"><code><span class="code-punctuation">{</span>
   <span class="code-key">model</span><span class="code-punctuation">:</span> <span class="code-type">string</span><span class="code-punctuation">,</span>
   <span class="code-key">top_category</span><span class="code-punctuation">:</span> <span class="code-type">string</span><span class="code-punctuation">,</span>
-  <span class="code-key">severity</span><span class="code-punctuation">:</span> <span class="code-type">number</span> <span class="code-comment">(1-10)</span><span class="code-punctuation">,</span>
   <span class="code-key">confidence</span><span class="code-punctuation">:</span> <span class="code-type">number</span> <span class="code-comment">(0-1)</span><span class="code-punctuation">,</span>
   <span class="code-key">action</span><span class="code-punctuation">:</span> <span class="code-string">"Allow"</span> <span class="code-punctuation">|</span> <span class="code-string">"Review"</span> <span class="code-punctuation">|</span> <span class="code-string">"Remove"</span><span class="code-punctuation">,</span>
   <span class="code-key">flagged</span><span class="code-punctuation">:</span> <span class="code-type">boolean</span>

@@ -9,12 +9,11 @@ ACTION_RANK = {"Allow": 0, "Review": 1, "Remove": 2}
 
 
 def detect_disagreements(results: list[dict]) -> dict:
-    """Find action/category/severity disagreements across model outputs."""
+    """Find action/category disagreements across model outputs."""
     valid_results = [result for result in results if not result.get("error")]
     disagreements = {
         "action_mismatch": [],
         "category_mismatch": [],
-        "severity_gap": [],
     }
 
     if len({result["action"] for result in valid_results}) > 1:
@@ -22,13 +21,6 @@ def detect_disagreements(results: list[dict]) -> dict:
 
     if len({result["top_category"] for result in valid_results}) > 1:
         disagreements["category_mismatch"] = [result["model"] for result in valid_results]
-
-    if valid_results:
-        max_result = max(valid_results, key=lambda item: item["severity"])
-        min_result = min(valid_results, key=lambda item: item["severity"])
-        severity_gap = max_result["severity"] - min_result["severity"]
-        if severity_gap >= 3:
-            disagreements["severity_gap"] = [max_result["model"], min_result["model"]]
 
     return disagreements
 

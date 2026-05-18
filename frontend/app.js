@@ -561,15 +561,6 @@ function actionTone(action) {
   return "neutral";
 }
 
-function severityTone(severity) {
-  if (severity >= 8) {
-    return "high";
-  }
-  if (severity >= 4) {
-    return "medium";
-  }
-  return "low";
-}
 
 function badge(label, variant) {
   return `<span class="badge ${variant}">${escapeHtml(label)}</span>`;
@@ -689,14 +680,8 @@ function renderBreakdownCard(result) {
           <span class="breakdown-arch-chip">${escapeHtml(display.chip)}</span>
         </div>
         <div class="breakdown-fields">
-          <div class="breakdown-field-value">unavailable</div>
-          <div class="severity-bar-wrap">
-            <span class="severity-bar-number" style="color:var(--muted);">â€”</span>
-            <div class="severity-bar-track">
-              <div class="severity-bar-fill" style="width:0;"></div>
-            </div>
-          </div>
-          <div class="breakdown-confidence">â€”</div>
+          <div class=”breakdown-field-value”>unavailable</div>
+          <div class=”breakdown-confidence”>–</div>
         </div>
         <button class="breakdown-action-btn action-error">Error</button>
       </div>
@@ -707,11 +692,6 @@ function renderBreakdownCard(result) {
   const borderClass = tone === "allow" ? "aligned-allow" : tone === "remove" ? "aligned-remove" : "aligned-review";
   const actionBtnClass = tone === "allow" ? "action-allow" : tone === "remove" ? "action-remove" : "action-review";
 
-  const severity = Number(result.severity);
-  const sevClass = severity <= 3 ? "low" : severity <= 7 ? "mid" : "high";
-  const sevColorVar = sevClass === "low" ? "var(--green)" : sevClass === "mid" ? "var(--amber)" : "var(--red)";
-  const sevWidth = Math.round((severity / 10) * 100);
-
   return `
     <div class="breakdown-card ${borderClass}">
       <div class="breakdown-model-info">
@@ -721,12 +701,6 @@ function renderBreakdownCard(result) {
       </div>
       <div class="breakdown-fields">
         <div class="breakdown-field-value">${escapeHtml(result.top_category)}</div>
-        <div class="severity-bar-wrap">
-          <span class="severity-bar-number" style="color:${sevColorVar};">${severity}</span>
-          <div class="severity-bar-track">
-            <div class="severity-bar-fill ${sevClass}" style="width:${sevWidth}%;"></div>
-          </div>
-        </div>
         <div class="breakdown-confidence">${Number(result.confidence).toFixed(2)}</div>
       </div>
       <button class="breakdown-action-btn ${actionBtnClass}">${escapeHtml(result.action)}</button>
@@ -788,15 +762,6 @@ function getDisagreementItems(disagreements) {
       type: "Action Mismatch",
       description: "Models disagree on the final moderation recommendation.",
       models: disagreements.action_mismatch,
-    });
-  }
-
-  if (disagreements?.severity_gap?.length > 1) {
-    items.push({
-      key: "severity_gap",
-      type: "Severity Gap",
-      description: "Models disagree on how severe this content is.",
-      models: disagreements.severity_gap,
     });
   }
 
@@ -1326,26 +1291,6 @@ form.addEventListener("submit", async (event) => {
     const donutLabel = document.getElementById('donut-action-label');
     if (donutFraction) donutFraction.textContent = dominant[1] + '/' + total;
     if (donutLabel) donutLabel.textContent = dominant[0].toUpperCase();
-
-    // --- Severity Gauge ---
-    const avgSeverity = activeResults.length
-      ? Math.round(
-          activeResults.reduce((sum, r) => sum + (r.severity || 0), 0) / activeResults.length
-        )
-      : 0;
-    const gaugeNumber = document.getElementById('gauge-number');
-    const gaugeFill = document.getElementById('gauge-fill-path');
-    const gaugeColor = avgSeverity <= 3 ? 'var(--green)' :
-                       avgSeverity <= 7 ? 'var(--amber)' : 'var(--red)';
-    if (gaugeNumber) {
-      gaugeNumber.textContent = avgSeverity;
-      gaugeNumber.style.color = gaugeColor;
-    }
-    if (gaugeFill) {
-      const fillLength = (avgSeverity / 10) * 188.5;
-      gaugeFill.style.strokeDasharray = fillLength + ' 188.5';
-      gaugeFill.style.stroke = gaugeColor;
-    }
 
     showPanelState("results");
     setStatus("Analysis complete", "success");

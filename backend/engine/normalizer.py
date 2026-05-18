@@ -69,11 +69,6 @@ def normalize_scores(raw_scores: dict) -> dict:
     return normalized
 
 
-def score_to_severity(score: float) -> int:
-    """Scale a 0-1 score into the 1-10 severity range from the spec."""
-    return min(10, max(1, round(score * 10)))
-
-
 def normalize_result(raw_result: dict, thresholds: dict) -> dict:
     """Convert one raw provider response into the unified ModEval schema."""
     if raw_result.get("disabled"):
@@ -83,7 +78,6 @@ def normalize_result(raw_result: dict, thresholds: dict) -> dict:
             "action": "Disabled",
             "flagged": False,
             "confidence": 0.0,
-            "severity": 0,
             "top_category": "none",
             "raw_scores": {},
             "explanation": "API credentials not configured.",
@@ -97,14 +91,12 @@ def normalize_result(raw_result: dict, thresholds: dict) -> dict:
     else:
         top_category, confidence = max(raw_scores.items(), key=lambda item: item[1])
 
-    severity = score_to_severity(confidence)
     action, flagged = determine_action(confidence, thresholds)
 
     return {
         "model": raw_result.get("model", "Unknown Model"),
         "raw_scores": raw_scores,
         "top_category": top_category,
-        "severity": severity,
         "confidence": round(confidence, 4),
         "action": action,
         "flagged": flagged,
@@ -117,7 +109,6 @@ def build_error_result(model_name: str, error_message: str) -> dict:
         "model": model_name,
         "raw_scores": {},
         "top_category": "unavailable",
-        "severity": 0,
         "confidence": 0.0,
         "action": "Error",
         "flagged": False,

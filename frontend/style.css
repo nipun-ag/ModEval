@@ -2813,43 +2813,6 @@ tbody td {
   color: var(--muted);
 }
 
-/* === SEVERITY GAUGE === */
-.gauge-container {
-  position: relative;
-  width: 140px;
-  height: 80px;
-}
-.gauge-svg {
-  width: 140px;
-  height: 80px;
-}
-.gauge-track {
-  fill: none;
-  stroke: rgba(255,255,255,0.05);
-  stroke-width: 10;
-  stroke-linecap: round;
-}
-.gauge-fill {
-  fill: none;
-  stroke-width: 10;
-  stroke-linecap: round;
-  stroke-dasharray: 0 188.5;
-  transition: stroke-dasharray 400ms ease;
-}
-.gauge-number-wrap {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-}
-.gauge-number {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 28px;
-  font-weight: 600;
-  line-height: 1;
-}
-
 /* === VERDICT ACTION LEGEND === */
 .verdict-action-legend {
   display: flex;
@@ -3020,44 +2983,6 @@ tbody td {
   font-family: "Inter", -apple-system, sans-serif;
   font-size: 13px;
   color: var(--text);
-}
-
-.severity-bar-wrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.severity-bar-number {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 16px;
-  font-weight: 600;
-  min-width: 16px;
-}
-
-.severity-bar-track {
-  height: 3px;
-  width: 64px;
-  background: var(--surface3);
-  border-radius: 99px;
-  overflow: hidden;
-}
-
-.severity-bar-fill {
-  height: 100%;
-  border-radius: 99px;
-}
-
-.severity-bar-fill.low {
-  background: var(--green);
-}
-
-.severity-bar-fill.mid {
-  background: var(--amber);
-}
-
-.severity-bar-fill.high {
-  background: var(--red);
 }
 
 .breakdown-confidence {
