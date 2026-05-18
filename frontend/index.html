@@ -485,9 +485,9 @@
           </div>
         </div>
         <p class="methodology-copy">
-          The models themselves are frozen -- thresholds adjust, not models. This mirrors how real Trust &amp; Safety pipelines work. A high-confidence toxicity score on a gaming platform may result in Review. The same score on a professional platform results in Remove. The model's output is identical -- the interpretation changes based on context.
+          The models themselves are frozen -- thresholds are fixed, not adjusted per platform. All platforms use identical base thresholds. Platform context instead determines how Claude Haiku interprets each model's output against that platform's specific content policy. The same confidence score can mean different things depending on what the platform prohibits.
         </p>
-        <div class="formula-hero">Final threshold = Base threshold + Platform adjustment</div>
+        <div class="formula-hero">Fixed thresholds: Allow &lt; 0.40 · Review 0.40–0.70 · Remove &gt; 0.70</div>
         <div class="methodology-grid">
           <div class="methodology-subcard">
             <p class="section-label mono-label">Default Action Thresholds</p>
@@ -500,21 +500,18 @@
             </table>
           </div>
           <div class="methodology-subcard">
-            <p class="section-label mono-label">Platform Modifiers</p>
+            <p class="section-label mono-label">Platform Context</p>
             <table class="methodology-table">
               <tbody>
-                <tr><td>Reddit</td><td>0.00</td><td>Baseline</td></tr>
-                <tr><td>Discord</td><td>0.00</td><td>Community-moderated norms</td></tr>
-                <tr><td>Facebook</td><td class="modifier-negative">-0.05</td><td>Broader audience, mainstream enforcement</td></tr>
-                <tr><td>Instagram</td><td class="modifier-negative">-0.10</td><td>Visual context, stricter on harassment</td></tr>
-                <tr><td>Custom</td><td>user-defined</td><td>User policy controls threshold</td></tr>
+                <tr><td>Reddit</td><td>Reddit content policy rules</td></tr>
+                <tr><td>Discord</td><td>Discord community guidelines</td></tr>
+                <tr><td>Facebook</td><td>Facebook community standards</td></tr>
+                <tr><td>Instagram</td><td>Instagram community standards</td></tr>
+                <tr><td>Custom</td><td>User-defined policy text</td></tr>
               </tbody>
             </table>
           </div>
         </div>
-        <p class="methodology-copy">
-          All thresholds are clamped between 0.10 and 0.90 to prevent extreme values.
-        </p>
       </section>
 
       <section class="methodology-section methodology-card">
@@ -536,7 +533,7 @@
           <li><span class="mono">alignment_reason</span>: A plain-English explanation of why the model is or isn't aligned</li>
         </ul>
         <p class="methodology-copy">
-          This approach captures nuance that keyword rules cannot. A high-confidence hate speech detection on Reddit aligns perfectly. The same detection on a gaming platform may not align as strongly due to different enforcement norms. The AI understands context; the numbers follow.
+          This approach captures nuance that keyword rules cannot. A high-confidence hate speech detection on Reddit aligns perfectly. The same detection on Discord may not align as strongly, since Discord deprioritizes general toxicity in favour of zero-tolerance for CSAM and threatening behaviour. The AI understands context; the numbers follow.
         </p>
         <p class="methodology-copy">
           If the Claude call fails, ModEval falls back to keyword-based alignment rules, ensuring the analysis always completes.
@@ -626,7 +623,7 @@
           <div class="integrity-card">
             <div class="integrity-card-icon">⊘</div>
             <h4>Models Are Frozen</h4>
-            <p>The eight models cannot be retrained, and novel slang may score incorrectly. The Context Engine adjusts thresholds rather than changing model knowledge.</p>
+            <p>The eight models cannot be retrained, and novel slang may score incorrectly. Platform context is handled through AI policy alignment, not by adjusting model thresholds.</p>
           </div>
           <div class="integrity-card">
             <div class="integrity-card-icon">◎</div>
