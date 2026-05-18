@@ -6,6 +6,27 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ## 2026-05-18
 
+**fix: inject disclaimer via JS in renderInsights to survive innerHTML overwrite**
+
+Changes:
+- Moved AI Interpretation disclaimer from static HTML in index.html to dynamic injection in renderInsights() function
+- Disclaimer now constructed as disclaimerHTML string and prepended to gridHTML before setting insightsContainer.innerHTML
+- Removed static `<div class="ai-interpretation-disclaimer">` from index.html lower-panel-insights
+- Disclaimer persists across every analysis render because it's regenerated each time
+
+Why:
+- Previous implementation placed disclaimer as static HTML, which was immediately overwritten by renderInsights() at line 1090
+- Dynamic injection ensures disclaimer appears on every analysis execution
+- More robust than static HTML approach
+
+Tradeoffs:
+- Disclaimer is now regenerated for each analysis (negligible performance impact)
+- All disclaimer content is now in JS rather than HTML (standard pattern for dynamic content)
+
+---
+
+## 2026-05-18
+
 **feat: rename Insights tab to AI Interpretation, add Claude Haiku disclaimer**
 
 Changes:
