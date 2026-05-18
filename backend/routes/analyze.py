@@ -125,7 +125,7 @@ Provide your analytical interpretation in this JSON format:
 
 {{
   "disagreement_explanation": "If models disagreed: what does the disagreement reveal? Is it ambiguous wording, missing context, or a model failure? If they agreed, say so briefly. 1-2 sentences.",
-  "risk_narrative": "Your direct assessment: is this CLEAR VIOLATION, CLEAR SAFE, or GENUINE GREY AREA? Explain why. If it's grey area, be explicit about the ambiguity. 1-2 sentences.",
+  "risk_narrative": "Your direct assessment of the content. Do NOT start with CLEAR VIOLATION, CLEAR SAFE, or GENUINE GREY AREA — the verdict label is shown separately in the UI. Start directly with your reasoning. If it is a grey area, be explicit about the ambiguity. 1-2 sentences.",
   "context_sensitivity": "Should a human reviewer look at this? Is the {platform} policy clear enough to automate, or does this require judgment? 1-2 sentences.",
   "contested_category": "Which category had the most disagreement or uncertainty among models? If none, state 'None'. Single category or 'None' only."
 }}
