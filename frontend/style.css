@@ -3126,12 +3126,14 @@ tbody td {
   grid-template-columns: 1fr 2fr;
   gap: 20px;
   margin-bottom: 28px;
+  align-items: stretch;
 }
 
 .insights-grid-right {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  height: 100%;
 }
 
 .insights-grid-right .insights-card {
@@ -3150,14 +3152,14 @@ tbody td {
 }
 
 .insights-card-tall {
-  min-height: unset;
+  height: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   background: var(--surface2);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 28px;
-  grid-row: 1 / 3;
 }
 
 .insights-card-wide {
