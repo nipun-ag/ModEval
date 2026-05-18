@@ -2973,7 +2973,7 @@ tbody td {
 
 .breakdown-fields {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 160px 80px;
   gap: 16px;
   flex: 1;
   align-items: center;
@@ -3112,7 +3112,7 @@ tbody td {
 
 .breakdown-header-fields {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 160px 80px;
   gap: 16px;
   flex: 1;
   font-family: "JetBrains Mono", monospace;
