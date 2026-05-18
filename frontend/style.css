@@ -3126,6 +3126,7 @@ tbody td {
   grid-template-columns: 1fr 2fr;
   gap: 20px;
   margin-bottom: 28px;
+  align-items: stretch;
 }
 
 .insights-grid-right {
@@ -3147,10 +3148,9 @@ tbody td {
 }
 
 .insights-card-tall {
-  min-height: 320px;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   background: var(--surface2);
   border: 1px solid var(--border);
   border-radius: 12px;

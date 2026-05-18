@@ -979,13 +979,11 @@ function renderInsights(insights, results, platform, alignmentMap, data) {
           <div class="insights-card-top">
             <span class="insights-card-eyebrow lenient">MOST LENIENT</span>
           </div>
-          <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:12px">
-            <div>
-              <p class="insights-card-description" style="margin-bottom:8px">
-                The model most likely to allow this content through.
-              </p>
-              <div class="insights-card-title">${escapeHtml(lenientDisplayName)}</div>
-            </div>
+          <div style="margin-top:12px">
+            <p class="insights-card-description" style="margin-bottom:8px">
+              The model most likely to allow this content through.
+            </p>
+            <div class="insights-card-title">${escapeHtml(lenientDisplayName)}</div>
             <div class="insights-card-subtitle">${escapeHtml(lenientDisplaySubtitle)}</div>
           </div>
         </div>
