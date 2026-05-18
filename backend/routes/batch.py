@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from flask import Blueprint, jsonify, request
 
+from backend.config import MAX_BATCH_SIZE
 from backend.routes.analyze import build_response, validate_payload
 
 
@@ -44,6 +45,11 @@ def batch_analyze():
 
     if not isinstance(texts, list) or not texts:
         return jsonify({"error": "A non-empty texts array is required."}), 400
+
+    if len(texts) > MAX_BATCH_SIZE:
+        return jsonify({
+            "error": f"Batch size exceeds the maximum of {MAX_BATCH_SIZE} inputs per request."
+        }), 400
 
     results = []
     flagged_count = 0
