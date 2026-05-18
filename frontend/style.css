@@ -3520,10 +3520,9 @@ tbody td {
   text-transform: uppercase;
   color: var(--text-secondary);
   letter-spacing: 0.08em;
-  margin-top: 20px;
-  margin-bottom: 12px;
-  border-top: 1px solid var(--border);
-  padding-top: 16px;
+  text-align: right;
+  margin-top: 16px;
+  margin-bottom: 4px;
 }
 
 .insights-confidence-bars {
