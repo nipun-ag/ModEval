@@ -176,6 +176,7 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
 - Content Type and Strictness dropdowns removed from UI entirely; backend defaults to "Original Post" and "Balanced" if not provided
 - AI-powered policy alignment using Claude Haiku (claude-haiku-4-5-20251001): single batched call evaluates all model results against platform policy with original content context, returns alignment_score, aligned (bool), and alignment_reason for each model; flags model failures and acknowledges ambiguous content
 - Alignment reasons reference actual content being analyzed, not just category labels
+- Claude prompts clarified: models return confidence scores only; ModEval's threshold system (score <0.40=Allow, 0.40-0.70=Review, >0.70=Remove) assigns actions. AI evaluation assesses confidence appropriateness, not model "decisions."
 - Fallback to keyword-based alignment logic if Claude call fails, ensuring analysis always completes
 - Both interpretation calls (alignment + AI summary) use Anthropic SDK — anthropic package added to requirements.txt
 - **Requires ANTHROPIC_API_KEY in Doppler (project: modeval, config: prd) for production** — already configured

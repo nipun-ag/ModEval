@@ -4,6 +4,17 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-05-19 (Late Night)
+
+**fix: reframe model results in AI prompts -- system assigns actions, models return scores only**
+
+- `backend/routes/analyze.py`: Updated model_lines loop to present `confidence` as primary signal, `system_action` as threshold-derived consequence, and renamed `alignment` → `policy_alignment`. Updated instruction #3 to clarify that Allow/Review/Remove are system-assigned based on confidence thresholds, not model decisions.
+- `backend/engine/policy_engine.py`: Updated model_results_json to use `system_action` field with explanatory note. Rewrote "Rules for your assessment" block to explain that models produce confidence scores only; the system applies threshold logic to assign actions. Claude now evaluates whether confidence is appropriate, not whether the model "decided" correctly.
+- Why: Previous framing misled Claude into treating system-assigned actions as model outputs. Low-confidence models were mischaracterized as "failing to decide to allow" rather than "failing to detect content." New framing separates signal (confidence) from decision (system action) cleanly.
+- Impact: AI Interpretation tab (Disagreement Vector, Alignment Matrix) now reasons about confidence appropriately. No schema changes, no logic changes, only prompt text.
+
+---
+
 ## 2026-05-19 (Night)
 
 **refactor: batch 1 dead code removal — config constants, CSS bento tree, stale HTML, severity gap UI**
