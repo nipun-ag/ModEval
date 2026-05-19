@@ -205,7 +205,9 @@ Return ONLY a JSON array in this exact format:
   }},
   ...
 ]
-Return only the JSON array. No other text."""
+Return only the JSON array. No other text.
+
+Do not use em dashes (—) in any part of your response. Use commas, colons, or periods instead."""
 
         user_message = f"Evaluate alignment for the model results above:\n{json.dumps(model_results_json, indent=2)}"
 

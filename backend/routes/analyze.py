@@ -115,7 +115,9 @@ Specifically you must:
 
 5. If the content is a genuine grey area (could be interpreted multiple ways depending on context, intent, or platform), say so explicitly. Do not force a verdict on ambiguous content.
 
-Keep your response to 3-4 sentences maximum per field. Be direct and specific. Do not use phrases like 'the models suggest' or 'analysis indicates'. Write like an experienced analyst giving a verbal briefing, not a report."""
+Keep your response to 3-4 sentences maximum per field. Be direct and specific. Do not use phrases like 'the models suggest' or 'analysis indicates'. Write like an experienced analyst giving a verbal briefing, not a report.
+
+Do not use em dashes (—) in any part of your response. Use commas, colons, or periods instead."""
 
         user_message = f"""Platform: {platform}
 
