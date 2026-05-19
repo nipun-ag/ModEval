@@ -28,6 +28,10 @@ def create_app() -> Flask:
     def serve_index():
         return send_from_directory(app.static_folder, "index.html")
 
+    @app.get("/og-image.png")
+    def serve_og_image():
+        return send_from_directory(app.static_folder, "og-image.png")
+
     return app
 
 
