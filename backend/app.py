@@ -26,7 +26,11 @@ def create_app() -> Flask:
 
     @app.get("/")
     def serve_index():
-        return send_from_directory(app.static_folder, "index.html")
+        response = send_from_directory(app.static_folder, "index.html")
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+        return response
 
     @app.get("/og-image.png")
     def serve_og_image():
