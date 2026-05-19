@@ -162,7 +162,8 @@ def evaluate_alignment_with_ai(results: list[dict], platform: str, text: str = "
                     "model": r.get("model", ""),
                     "top_category": r.get("top_category", ""),
                     "confidence": float(r.get("confidence", 0.0)),
-                    "action": r.get("action", ""),
+                    "system_action": r.get("action", ""),
+                    "note": "system_action is assigned by threshold logic (confidence <0.40=Allow, 0.40-0.70=Review, >0.70=Remove), not by the model itself",
                 })
 
         if not model_results_json:
@@ -186,14 +187,13 @@ For each model result, answer this single question:
 GIVEN WHAT THIS CONTENT ACTUALLY IS, is the model's final action (ALLOW/REVIEW/REMOVE) the correct decision under this platform's policy?
 
 Rules for your assessment:
+- The models return confidence scores only. The system_action field (Allow/Review/Remove) is assigned by ModEval's threshold logic, not by the model itself.
 - First determine what the content actually is and whether it violates the platform policy. This is your ground truth.
-- Then check if the model's action matches that ground truth.
-- A model is ALIGNED if its action is correct, regardless of whether its category label is accurate.
-- A model is MISALIGNED if its action is wrong, even if its category reasoning sounds plausible.
-- A model giving 0.00 confidence and ALLOW on content that clearly violates policy is MISALIGNED -- it failed to detect the violation, not just miscategorized it.
-- A model giving REMOVE on content that does not violate policy is MISALIGNED -- it overcalled.
-- Focus on the action, not the category. A model can flag the wrong category but still make the right call.
-- If the content is genuinely ambiguous (could go either way under the policy), mark the model as ALIGNED if its action is reasonable, and note the ambiguity in the reason.
+- Then evaluate whether the model's confidence score is appropriate for this content. A high confidence score on safe content is wrong. A near-zero confidence score on clearly violating content means the model failed to detect the violation.
+- A model is ALIGNED if its confidence score led to the correct system_action for this content under this platform's policy.
+- A model is MISALIGNED if its confidence score was so wrong that the threshold system assigned an incorrect action.
+- Do NOT say the model 'decided' to Allow or Remove. The model only produced a score. The system decided the action.
+- If the content is genuinely ambiguous, mark the model as ALIGNED if its confidence score is reasonable, and note the ambiguity in the reason.
 
 Return ONLY a JSON array in this exact format:
 [

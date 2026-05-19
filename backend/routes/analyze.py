@@ -91,10 +91,10 @@ def generate_ai_analysis(results: list[dict], context: dict) -> dict:
             if not r.get("error") and not r.get("disabled"):
                 alignment_status = "ALIGNED" if r.get("aligned") else "MISALIGNED"
                 model_lines.append(
-                    f"- {r['model']}: action={r.get('action','?')}, "
-                    f"confidence={r.get('confidence','?'):.2f}, "
+                    f"- {r['model']}: confidence={r.get('confidence', 0.0):.2f}, "
                     f"top_category={r.get('top_category','?')}, "
-                    f"alignment={alignment_status}"
+                    f"system_action={r.get('action','?')} (assigned by threshold: <0.40=Allow, 0.40-0.70=Review, >0.70=Remove), "
+                    f"policy_alignment={alignment_status}"
                 )
 
         models_text = "\n".join(model_lines)
@@ -109,7 +109,7 @@ Specifically you must:
 
 2. If models strongly disagree (e.g. one says ALLOW with low confidence while another says REMOVE with high confidence), call this out explicitly. Explain what the disagreement reveals about the content — is it ambiguous language? Missing context? A model limitation?
 
-3. Flag if any model result looks like a failure rather than a genuine disagreement. For example: a model giving 0.00 confidence on clearly harmful content is likely a model failure, not a legitimate ALLOW decision.
+3. Remember that Allow/Review/Remove actions are assigned by ModEval's threshold system based on confidence score, not by the models themselves. A model returning 0.00 confidence means it detected nothing — evaluate whether that low detection is correct given the content, not whether the model 'decided' to allow it. Only flag a model failure if the confidence score itself is surprising given the content (e.g. 0.00 on clearly harmful text).
 
 4. Give a concrete recommendation: should a human reviewer look at this? Is the platform policy clear enough to automate this decision, or does it require judgment?
 
