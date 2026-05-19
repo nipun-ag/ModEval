@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 import os
 import anthropic
-import openai
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from flask import Blueprint, jsonify, request
@@ -73,16 +72,16 @@ def run_models(text: str) -> list[dict]:
 
 
 def generate_ai_analysis(results: list[dict], context: dict) -> dict:
-    """Generate structured AI analysis of model results using GPT-4o-mini.
+    """Generate structured AI analysis of model results using Claude Haiku.
 
-    Note: OPENAI_API_KEY must be added to Doppler (project: modeval, config: prd) for production.
+    Note: ANTHROPIC_API_KEY must be added to Doppler (project: modeval, config: prd) for production.
     """
     try:
-        api_key = os.getenv("OPENAI_API_KEY")
+        api_key = os.getenv("ANTHROPIC_API_KEY")
         if not api_key:
-            print("AI Analysis skipped: OPENAI_API_KEY is not set.")
+            print("AI Analysis skipped: ANTHROPIC_API_KEY is not set.")
             return {}
-        client = openai.OpenAI(api_key=api_key)
+        client = anthropic.Anthropic(api_key=api_key)
 
         platform = context.get("platform", "Reddit")
         text = context.get("text", "")
@@ -111,9 +110,9 @@ Specifically you must:
 
 1. Identify if this is a CLEAR VIOLATION, CLEAR SAFE, or GENUINE GREY AREA — and explain why in one sentence.
 
-2. If models strongly disagree (e.g. one says ALLOW with low confidence while another says REMOVE with high confidence), call this out explicitly. Explain what the disagreement reveals about the content — is it ambiguous language? Missing context? A model limitation?
+2. If models strongly disagree (e.g. one scores near zero while others score 0.78-1.00 confidence), call this out explicitly. Explain what the disagreement reveals about the content — is it ambiguous language? Missing context? A model limitation?
 
-3. Remember that Allow/Review/Remove actions are assigned by ModEval's threshold system based on confidence score, not by the models themselves. A model returning 0.00 confidence means it detected nothing — evaluate whether that low detection is correct given the content, not whether the model 'decided' to allow it. Only flag a model failure if the confidence score itself is surprising given the content (e.g. 0.00 on clearly harmful text).
+3. Remember that the models only return confidence scores. A score near zero means the model detected nothing. A score above 0.70 means strong detection. Evaluate whether each model's score is appropriate for this content. Only flag a model as likely failed if its score is surprisingly low for clearly violating content.
 
 4. Give a concrete recommendation: should a human reviewer look at this? Is the platform policy clear enough to automate this decision, or does it require judgment?
 
@@ -140,16 +139,14 @@ Provide your analytical interpretation in this JSON format:
 
 Return ONLY the JSON object. No preamble, no markdown, no explanation."""
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
+        response = client.messages.create(
+            model="claude-haiku-4-5-20251001",
             max_tokens=500,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_message},
-            ],
+            system=system_prompt,
+            messages=[{"role": "user", "content": user_message}],
         )
 
-        raw = response.choices[0].message.content.strip()
+        raw = response.content[0].text.strip()
         # Strip markdown fences if present
         if raw.startswith("```"):
             raw = raw.split("```")[1]
@@ -158,6 +155,12 @@ Return ONLY the JSON object. No preamble, no markdown, no explanation."""
         raw = raw.strip()
 
         parsed = json.loads(raw)
+
+        # Server-side em dash stripping as safety net
+        for field in ["disagreement_explanation", "risk_narrative", "context_sensitivity", "contested_category"]:
+            if field in parsed and isinstance(parsed[field], str):
+                parsed[field] = parsed[field].replace("—", ",").replace("--", ",")
+
         print(f"AI Analysis generated successfully")
         return parsed
 

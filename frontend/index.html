@@ -451,7 +451,7 @@
       <section class="methodology-section methodology-card">
         <p class="section-label mono-label" style="color: var(--accent); letter-spacing: 0.2em;">SECTION 5</p>
         <h3>AI Interpretation Layer</h3>
-        <p class="methodology-copy">After all eight models have returned results and disagreements have been detected, ModEval passes the full output to a language model for synthesis. GPT-4o-mini receives each model's action, confidence score, and top category, along with AI alignment assessments per model and the detected disagreement type, and generates an analytical verdict.</p>
+        <p class="methodology-copy">After all eight models have returned results and disagreements have been detected, ModEval passes the full output to a language model for synthesis. Claude Haiku receives each model's action, confidence score, and top category, along with AI alignment assessments per model and the detected disagreement type, and generates an analytical verdict.</p>
         <p class="methodology-copy">This layer exists because structured data alone does not always communicate risk clearly. A Trust & Safety reviewer scanning hundreds of results needs to understand not just what the models said, but what the disagreement means in context. The AI interpretation translates model outputs into an actionable summary.</p>
         <p class="methodology-copy">If the Claude call fails or times out, ModEval falls back to a rule-based consensus summary generated from the same structured data — ensuring the Explainability section always renders.</p>
         <table class="methodology-table">
