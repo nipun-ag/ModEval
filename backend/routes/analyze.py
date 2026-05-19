@@ -100,6 +100,8 @@ def generate_ai_analysis(results: list[dict], context: dict) -> dict:
 
         system_prompt = """Do not use em dashes (—) anywhere in your response. Use commas, colons, or periods instead.
 
+Do not use the words Allow, Review, or Remove anywhere in your response. Describe model behavior in terms of confidence scores and detection only. For example: instead of 'model X returned an Allow decision', say 'model X returned 0.00 confidence'. Instead of 'five models returned Remove', say 'five models returned high confidence (0.78-1.00)'.
+
 You are a senior Trust & Safety analyst with expertise in content moderation. You will be given moderation results from multiple AI models analyzing a piece of content on a specific platform.
 
 Your job is NOT to summarize what the models said. Your job is to read between the lines and provide genuine analytical insight.
