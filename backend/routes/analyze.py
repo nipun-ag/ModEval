@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 import anthropic
+import openai
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from flask import Blueprint, jsonify, request
@@ -72,16 +73,16 @@ def run_models(text: str) -> list[dict]:
 
 
 def generate_ai_analysis(results: list[dict], context: dict) -> dict:
-    """Generate structured AI analysis of model results using Claude Haiku.
+    """Generate structured AI analysis of model results using GPT-4o-mini.
 
-    Note: ANTHROPIC_API_KEY must be added to Doppler (project: modeval, config: prd) for production.
+    Note: OPENAI_API_KEY must be added to Doppler (project: modeval, config: prd) for production.
     """
     try:
-        api_key = os.getenv("ANTHROPIC_API_KEY")
+        api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
-            print("AI Analysis skipped: ANTHROPIC_API_KEY is not set.")
+            print("AI Analysis skipped: OPENAI_API_KEY is not set.")
             return {}
-        client = anthropic.Anthropic(api_key=api_key)
+        client = openai.OpenAI(api_key=api_key)
 
         platform = context.get("platform", "Reddit")
         text = context.get("text", "")
@@ -139,14 +140,16 @@ Provide your analytical interpretation in this JSON format:
 
 Return ONLY the JSON object. No preamble, no markdown, no explanation."""
 
-        response = client.messages.create(
-            model="claude-haiku-4-5-20251001",
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
             max_tokens=500,
-            system=system_prompt,
-            messages=[{"role": "user", "content": user_message}],
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message},
+            ],
         )
 
-        raw = response.content[0].text.strip()
+        raw = response.choices[0].message.content.strip()
         # Strip markdown fences if present
         if raw.startswith("```"):
             raw = raw.split("```")[1]

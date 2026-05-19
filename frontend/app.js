@@ -977,7 +977,7 @@ function renderInsights(insights, results, platform, alignmentMap, data) {
         <line x1="12" y1="8" x2="12" y2="8"/>
         <line x1="12" y1="12" x2="12" y2="16"/>
       </svg>
-      <span>Interpreted by Claude Haiku. AI interpretation is probabilistic and may contain errors — intended to assist human review, not replace it.</span>
+      <span>Interpreted by GPT-4o-mini. AI interpretation is probabilistic and may contain errors — intended to assist human review, not replace it.</span>
     </div>`;
   insightsContainer.innerHTML = disclaimerHTML + gridHTML;
 }
