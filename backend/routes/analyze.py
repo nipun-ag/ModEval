@@ -159,7 +159,13 @@ Return ONLY the JSON object. No preamble, no markdown, no explanation."""
         # Server-side em dash stripping as safety net
         for field in ["disagreement_explanation", "risk_narrative", "context_sensitivity", "contested_category"]:
             if field in parsed and isinstance(parsed[field], str):
-                parsed[field] = parsed[field].replace("—", ",").replace("--", ",")
+                parsed[field] = (parsed[field]
+                    .replace("—", ",")
+                    .replace("–", ",")
+                    .replace("&mdash;", ",")
+                    .replace("&ndash;", ",")
+                    .replace(" -- ", ", ")
+                    .replace("--", ","))
 
         print(f"AI Analysis generated successfully")
         return parsed
