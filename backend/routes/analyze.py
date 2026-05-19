@@ -93,13 +93,14 @@ def generate_ai_analysis(results: list[dict], context: dict) -> dict:
                 model_lines.append(
                     f"- {r['model']}: confidence={r.get('confidence', 0.0):.2f}, "
                     f"top_category={r.get('top_category','?')}, "
-                    f"system_action={r.get('action','?')} (assigned by threshold: <0.40=Allow, 0.40-0.70=Review, >0.70=Remove), "
                     f"policy_alignment={alignment_status}"
                 )
 
         models_text = "\n".join(model_lines)
 
-        system_prompt = """You are a senior Trust & Safety analyst with expertise in content moderation. You will be given moderation results from multiple AI models analyzing a piece of content on a specific platform.
+        system_prompt = """Do not use em dashes (—) anywhere in your response. Use commas, colons, or periods instead.
+
+You are a senior Trust & Safety analyst with expertise in content moderation. You will be given moderation results from multiple AI models analyzing a piece of content on a specific platform.
 
 Your job is NOT to summarize what the models said. Your job is to read between the lines and provide genuine analytical insight.
 
@@ -115,9 +116,7 @@ Specifically you must:
 
 5. If the content is a genuine grey area (could be interpreted multiple ways depending on context, intent, or platform), say so explicitly. Do not force a verdict on ambiguous content.
 
-Keep your response to 3-4 sentences maximum per field. Be direct and specific. Do not use phrases like 'the models suggest' or 'analysis indicates'. Write like an experienced analyst giving a verbal briefing, not a report.
-
-Do not use em dashes (—) in any part of your response. Use commas, colons, or periods instead."""
+Keep your response to 3-4 sentences maximum per field. Be direct and specific. Do not use phrases like 'the models suggest' or 'analysis indicates'. Write like an experienced analyst giving a verbal briefing, not a report."""
 
         user_message = f"""Platform: {platform}
 
