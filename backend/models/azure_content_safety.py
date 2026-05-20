@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-import os
 import requests
 
-from backend.config import REQUEST_TIMEOUT
+from backend.config import AZURE_CS_ENDPOINT, AZURE_CS_KEY, REQUEST_TIMEOUT
 
 
 CATEGORY_MAPPINGS = {
@@ -18,19 +17,16 @@ CATEGORY_MAPPINGS = {
 
 def analyze(text: str) -> dict:
     """Analyze text using Azure Content Safety API."""
-    api_key = os.environ.get("AZURE_CS_KEY", "").strip()
-    endpoint = os.environ.get("AZURE_CS_ENDPOINT", "").strip()
-
-    if not api_key or not endpoint:
+    if not AZURE_CS_KEY or not AZURE_CS_ENDPOINT:
         return {
             "model": "Azure Content Safety",
             "disabled": True,
             "scores": {},
         }
 
-    url = f"{endpoint}contentsafety/text:analyze?api-version=2023-10-01"
+    url = f"{AZURE_CS_ENDPOINT}contentsafety/text:analyze?api-version=2023-10-01"
     headers = {
-        "Ocp-Apim-Subscription-Key": api_key,
+        "Ocp-Apim-Subscription-Key": AZURE_CS_KEY,
         "Content-Type": "application/json",
     }
 

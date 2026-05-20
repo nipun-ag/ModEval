@@ -2,23 +2,20 @@
 
 from __future__ import annotations
 
-import os
 import requests
-from backend.config import REQUEST_TIMEOUT
+from backend.config import GOOGLE_NLP_KEY, REQUEST_TIMEOUT
 
 
 def analyze(text: str) -> dict:
     """Analyze text using Google NLP moderateText endpoint."""
-    api_key = os.getenv("GOOGLE_NLP_KEY", "").strip()
-
-    if not api_key:
+    if not GOOGLE_NLP_KEY:
         return {
             "model": "Google NLP",
             "disabled": True,
             "scores": {},
         }
 
-    url = f"https://language.googleapis.com/v1/documents:moderateText?key={api_key}"
+    url = f"https://language.googleapis.com/v1/documents:moderateText?key={GOOGLE_NLP_KEY}"
 
     payload = {
         "document": {

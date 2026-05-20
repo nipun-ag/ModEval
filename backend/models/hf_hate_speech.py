@@ -43,5 +43,4 @@ def analyze(text: str) -> dict:
     return {
         "model": "HuggingFace Hate Speech",
         "scores": scores,
-        "raw_response": data,
     }

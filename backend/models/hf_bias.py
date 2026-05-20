@@ -43,5 +43,4 @@ def analyze(text: str) -> dict:
     return {
         "model": "HuggingFace Bias Detector",
         "scores": scores,
-        "raw_response": data,
     }

@@ -477,7 +477,7 @@ Never commit `.env` to git (covered by `.gitignore`)
 ## Local Development Setup
 
 ### Prerequisites
-- Python 3.14+
+- Python 3.12+
 - pip
 - Git
 
@@ -568,7 +568,7 @@ Hetzner VPS (hetzner.com) — CX23 plan
 |---|---|---|---|
 | Backend Framework | Flask | 3.1 | HTTP routing, request handling |
 | WSGI Server | Gunicorn | (latest) | Production HTTP server |
-| Python | Python | 3.14 | Core language |
+| Python | Python | 3.12 | Core language |
 | Model Inference | HuggingFace, Enterprise APIs | (live) | 3 Enterprise APIs + 4 HuggingFace + OpenAI |
 | AI Summary & Alignment | Anthropic API | claude-haiku-4-5-20251001 | Natural language synthesis + policy alignment |
 | Frontend | Vanilla HTML/CSS/JS | (native) | Single-page app, no frameworks |

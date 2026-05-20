@@ -32,5 +32,4 @@ def analyze(text: str) -> dict:
     return {
         "model": "OpenAI Moderation",
         "scores": scores,
-        "raw_response": data,
     }

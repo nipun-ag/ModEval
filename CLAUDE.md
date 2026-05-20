@@ -4,7 +4,7 @@
 ModEval is a context and policy-aware AI moderation evaluation system. Runs text through 8 independent models (Hive Moderation, Azure Content Safety, Google NLP, OpenAI Moderation, toxic-bert, RoBERTa offensive, Facebook hate speech, Valurank bias), normalizes outputs, applies platform context and strictness rules, scores policy alignment, and surfaces disagreements. Live at [modeval.bynipun.com](https://modeval.bynipun.com).
 
 ## Tech Stack
-- **Backend:** Python 3.14, Flask 3.1, Gunicorn
+- **Backend:** Python 3.12, Flask 3.1, Gunicorn
 - **Models:** OpenAI Moderation API + 4 HuggingFace models (Inference API)
 - **AI Summary:** Claude Haiku (Anthropic)
 - **Frontend:** Plain HTML, CSS, JavaScript (no frameworks)

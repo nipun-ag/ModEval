@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-import os
 import requests
-from backend.config import REQUEST_TIMEOUT
+from backend.config import HIVE_API_KEY, REQUEST_TIMEOUT
 
 
 MODERATION_CLASSES = {
@@ -26,9 +25,7 @@ CLASS_NAME_MAPPINGS = {
 
 def analyze(text: str) -> dict:
     """Analyze text using The Hive AI V3 Text Moderation API."""
-    api_key = os.environ.get("HIVE_API_KEY", "").strip()
-
-    if not api_key:
+    if not HIVE_API_KEY:
         return {
             "model": "Hive Moderation",
             "disabled": True,
@@ -37,7 +34,7 @@ def analyze(text: str) -> dict:
 
     url = "https://api.thehive.ai/api/v3/hive/text-moderation"
     headers = {
-        "Authorization": f"Bearer {api_key}",
+        "Authorization": f"Bearer {HIVE_API_KEY}",
         "Content-Type": "application/json",
     }
 
