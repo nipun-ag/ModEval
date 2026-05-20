@@ -21,6 +21,22 @@ def create_app() -> Flask:
     app.register_blueprint(batch_bp)
     app.register_blueprint(models_bp)
 
+    @app.errorhandler(400)
+    def handle_bad_request(e):
+        return jsonify({"error": "Bad request"}), 400
+
+    @app.errorhandler(404)
+    def handle_not_found(e):
+        return jsonify({"error": "Not found"}), 404
+
+    @app.errorhandler(429)
+    def handle_rate_limit(e):
+        return jsonify({"error": "Rate limit exceeded"}), 429
+
+    @app.errorhandler(500)
+    def handle_internal_error(e):
+        return jsonify({"error": "Internal server error"}), 500
+
     @app.get("/health")
     def healthcheck():
         return jsonify({"status": "ok"})

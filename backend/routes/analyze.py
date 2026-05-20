@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import json
-import os
+import logging
 import anthropic
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError
 
 from flask import Blueprint, jsonify, request
 
-from backend.config import MAX_INPUT_LENGTH, PLATFORM_MAP
+from backend.config import ANTHROPIC_API_KEY, MAX_INPUT_LENGTH, PLATFORM_MAP
 from backend.engine.comparison import build_insights, detect_disagreements
 from backend.engine.context_engine import calculate_context_adjustment
 from backend.engine.explainer import explain_result
@@ -53,6 +53,7 @@ def validate_payload(payload: dict) -> tuple[bool, str]:
 def run_models(text: str) -> list[dict]:
     """Execute model calls in parallel and capture per-model failures."""
     results = []
+    completed_models = set()
 
     with ThreadPoolExecutor(max_workers=len(MODEL_RUNNERS)) as executor:
         future_map = {
@@ -60,12 +61,19 @@ def run_models(text: str) -> list[dict]:
             for model_name, runner in MODEL_RUNNERS.items()
         }
 
-        for future in as_completed(future_map):
-            model_name = future_map[future]
-            try:
-                results.append(future.result())
-            except Exception as exc:  # noqa: BLE001 - surface provider errors in the UI.
-                results.append({"model": model_name, "error": str(exc), "scores": {}})
+        try:
+            for future in as_completed(future_map, timeout=25):
+                model_name = future_map[future]
+                completed_models.add(model_name)
+                try:
+                    results.append(future.result())
+                except Exception as exc:  # noqa: BLE001 - surface provider errors in the UI.
+                    results.append({"model": model_name, "error": str(exc), "scores": {}})
+        except TimeoutError:
+            logging.error("Model execution timeout (25s exceeded); returning incomplete results")
+            for model_name in MODEL_RUNNERS.keys():
+                if model_name not in completed_models:
+                    results.append({"model": model_name, "error": "Service temporarily unavailable", "scores": {}})
 
     order = list(MODEL_RUNNERS.keys())
     return sorted(results, key=lambda item: order.index(item["model"]))
@@ -77,11 +85,10 @@ def generate_ai_analysis(results: list[dict], context: dict) -> dict:
     Note: ANTHROPIC_API_KEY must be added to Doppler (project: modeval, config: prd) for production.
     """
     try:
-        api_key = os.getenv("ANTHROPIC_API_KEY")
-        if not api_key:
-            print("AI Analysis skipped: ANTHROPIC_API_KEY is not set.")
+        if not ANTHROPIC_API_KEY:
+            logging.warning("AI Analysis skipped: ANTHROPIC_API_KEY is not set.")
             return {}
-        client = anthropic.Anthropic(api_key=api_key)
+        client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
         platform = context.get("platform", "Reddit")
         text = context.get("text", "")
@@ -144,6 +151,7 @@ Return ONLY the JSON object. No preamble, no markdown, no explanation."""
             max_tokens=500,
             system=system_prompt,
             messages=[{"role": "user", "content": user_message}],
+            timeout=25.0,
         )
 
         raw = response.content[0].text.strip()
@@ -167,11 +175,11 @@ Return ONLY the JSON object. No preamble, no markdown, no explanation."""
                     .replace(" -- ", ", ")
                     .replace("--", ","))
 
-        print(f"AI Analysis generated successfully")
+        logging.info("AI Analysis generated successfully")
         return parsed
 
     except Exception as e:
-        print(f"AI Analysis failed: {e}")
+        logging.error(f"AI Analysis failed: {e}")
         return {}
 
 

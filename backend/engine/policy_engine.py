@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import json
-import os
+import logging
 import re
 import anthropic
 
-from backend.config import CUSTOM_POLICY_KEYWORDS, PREDEFINED_POLICIES, PLATFORM_MAP
+from backend.config import ANTHROPIC_API_KEY, CUSTOM_POLICY_KEYWORDS, PREDEFINED_POLICIES, PLATFORM_MAP
 
 
 def summarize_custom_policy(policy_text: str) -> dict:
@@ -149,11 +149,10 @@ def evaluate_alignment_with_ai(results: list[dict], platform: str, text: str = "
     Note: ANTHROPIC_API_KEY must be added to Doppler (project: modeval, config: prd) for production.
     """
     try:
-        api_key = os.getenv("ANTHROPIC_API_KEY")
-        if not api_key:
-            print("AI Alignment skipped: ANTHROPIC_API_KEY is not set.")
+        if not ANTHROPIC_API_KEY:
+            logging.warning("AI Alignment skipped: ANTHROPIC_API_KEY is not set.")
             return {}
-        client = anthropic.Anthropic(api_key=api_key)
+        client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
         model_results_json = []
         for r in results:
@@ -216,6 +215,7 @@ Do not use em dashes (—) in any part of your response. Use commas, colons, or 
             max_tokens=1200,
             system=system_prompt,
             messages=[{"role": "user", "content": user_message}],
+            timeout=25.0,
         )
 
         raw = response.content[0].text.strip()
@@ -234,5 +234,5 @@ Do not use em dashes (—) in any part of your response. Use commas, colons, or 
         return alignment_map
 
     except Exception as e:
-        print(f"AI Alignment evaluation failed: {e}")
+        logging.error(f"AI Alignment evaluation failed: {e}")
         return {}

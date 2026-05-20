@@ -28,6 +28,7 @@ HIVE_API_KEY = os.getenv("HIVE_API_KEY", "").strip()
 AZURE_CS_KEY = os.getenv("AZURE_CS_KEY", "").strip()
 AZURE_CS_ENDPOINT = os.getenv("AZURE_CS_ENDPOINT", "").strip()
 GOOGLE_NLP_KEY = os.getenv("GOOGLE_NLP_KEY", "").strip()
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 
 REQUEST_TIMEOUT = 20
 MAX_INPUT_LENGTH = 500
