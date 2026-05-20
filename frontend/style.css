@@ -2492,6 +2492,28 @@ tbody td {
     font-size: 9px;
     padding: 10px 8px;
   }
+
+  .results-panel {
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .insights-grid {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .insights-grid-right {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .results-lower-tabs {
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 /* === VERDICT VISUALS CARD === */
