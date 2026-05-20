@@ -3,9 +3,7 @@
 from __future__ import annotations
 
 
-def build_context_summary(
-    platform_context: str, content_type: str, strictness: str, thresholds: dict
-) -> str:
+def build_context_summary(thresholds: dict) -> str:
     """Explain the active thresholds (now fixed; platform judgment handled by Claude Haiku)."""
     return (
         f"Fixed thresholds in use: Review at {thresholds['review_threshold']:.2f}, "
@@ -16,9 +14,6 @@ def build_context_summary(
 
 def explain_result(
     result: dict,
-    platform_context: str,
-    content_type: str,
-    strictness: str,
     thresholds: dict,
     policy_note: str,
 ) -> str:
@@ -43,6 +38,6 @@ def explain_result(
         else "No categories crossed the 0.30 explainability threshold."
     )
 
-    context_line = build_context_summary(platform_context, content_type, strictness, thresholds)
+    context_line = build_context_summary(thresholds)
 
     return f"{top_line} {category_line} {context_line} Policy note: {policy_note}"

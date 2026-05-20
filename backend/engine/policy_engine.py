@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import logging
-import re
 import anthropic
 
 from backend.config import ANTHROPIC_API_KEY, CUSTOM_POLICY_KEYWORDS, PREDEFINED_POLICIES, PLATFORM_MAP

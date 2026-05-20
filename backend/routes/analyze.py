@@ -201,9 +201,6 @@ def build_response(payload: dict) -> dict:
             result = build_error_result(raw_result["model"], raw_result["error"])
             result["explanation"] = explain_result(
                 result,
-                platform,
-                payload.get("content_type", "Original Post"),
-                payload.get("strictness", "Balanced"),
                 thresholds,
                 "Model output unavailable due to an integration error.",
             )
@@ -219,9 +216,6 @@ def build_response(payload: dict) -> dict:
 
         result["explanation"] = explain_result(
             result,
-            platform,
-            payload.get("content_type", "Original Post"),
-            payload.get("strictness", "Balanced"),
             thresholds,
             "Alignment evaluation pending.",
         )
