@@ -151,6 +151,7 @@ Never use for general reading text. Monospace signals "this is technical data."
 - Below 900px: single column, input panel stacks above results panel
 - Padding reduces to 20px on mobile
 - Example pills wrap naturally
+- Mobile layout overrides reset margins, padding, width, and max-width of cards, panels, and sections to 100% width / 0 margin to prevent right-edge clipping on narrow viewports
 
 ---
 

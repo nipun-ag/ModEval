@@ -4,6 +4,16 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-05-20
+
+**style: fix mobile card right edge clipping**
+
+- `frontend/style.css`: Added mobile layout overrides inside `@media (max-width: 900px)` for breakdown cards, insights cards, disagreement banner, consensus hero, insights matrix, AI summary section, alignment assessment section, and main results panels.
+- Why: Reset margins, padding, width, max-width, and overflow rules to prevent cards and panels from overflowing the right edge of narrow viewports, resolving mobile horizontal scroll/clipping issues.
+- Impact: Restores robust responsive layout on mobile screens without altering desktop visual design.
+
+---
+
 ## 2026-05-19 (Late Night)
 
 **fix: reframe model results in AI prompts -- system assigns actions, models return scores only**
