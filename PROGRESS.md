@@ -44,6 +44,27 @@ Verification:
 
 ---
 
+## 2026-05-21 (Phase 4)
+
+**refactor: dead code removal — unused import and parameters**
+
+Code changes (in git, commit d64f3bd):
+
+- `backend/engine/policy_engine.py`: Removed unused `import re` statement (line 7) — imported but never used in the file
+- `backend/engine/explainer.py`:
+  * `build_context_summary()` signature: Removed unused parameters `platform_context`, `content_type`, `strictness` — function only uses `thresholds`
+  * `explain_result()` signature: Removed unused parameters `platform_context`, `content_type`, `strictness` — function only uses `result`, `thresholds`, `policy_note`
+  * Updated call to `build_context_summary()` to pass only `thresholds` parameter
+- `backend/routes/analyze.py`: Updated both calls to `explain_result()` to pass only 3 arguments (result, thresholds, policy_note) instead of 6
+
+Verification:
+- No regex module calls found in policy_engine.py
+- Function signatures match expected parameters only
+- Flask app starts without import errors
+- All 3 files committed together
+
+---
+
 ## 2026-05-21 (Phase 3 Part 2)
 
 **fix: Flask backend security hardening — timeout enforcement and error sanitization**
