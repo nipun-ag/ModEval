@@ -2514,6 +2514,25 @@ tbody td {
     overflow-x: scroll;
     -webkit-overflow-scrolling: touch;
   }
+
+  .breakdown-fields {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .breakdown-confidence {
+    display: block;
+    width: 100%;
+  }
+
+  .breakdown-action-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: 8px;
+  }
 }
 
 /* === VERDICT VISUALS CARD === */
