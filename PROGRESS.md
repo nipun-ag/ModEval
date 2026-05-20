@@ -44,6 +44,40 @@ Verification:
 
 ---
 
+## 2026-05-21 (Phase 3 Part 2)
+
+**fix: Flask backend security hardening — timeout enforcement and error sanitization**
+
+Code changes (in git, commit 38282ab):
+
+Config centralization:
+- `backend/config.py`: Added `ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")` constant so it's loaded once at startup, not repeatedly via os.getenv() in request handlers
+
+Timeout enforcement:
+- `backend/engine/policy_engine.py`: 
+  * Added `timeout=25.0` parameter to `client.messages.create()` call for Claude Haiku API calls
+  * Removed `import os`, added `import logging`
+  * Replaced `os.getenv("ANTHROPIC_API_KEY")` with direct use of `ANTHROPIC_API_KEY` constant from config
+- `backend/routes/analyze.py`:
+  * Added `timeout=25.0` parameter to `client.messages.create()` call for Claude Haiku API calls
+  * Added `timeout=25` parameter to `ThreadPoolExecutor.as_completed()` to enforce 25-second hard limit on parallel model execution
+  * Wrapped model execution loop with try/except TimeoutError to gracefully handle timeout by returning incomplete futures with sanitized "Service temporarily unavailable" error
+  * Removed `import os`, added `import logging`, added `TimeoutError` to concurrent.futures imports
+  * Replaced `os.getenv("ANTHROPIC_API_KEY")` with direct use of constant
+
+Exception sanitization:
+- All routes now use `logging` instead of `print()` for both success and error messages — errors logged server-side as "AI Analysis/Alignment failed: {exception}" while users see sanitized "Service temporarily unavailable" messages
+- `backend/routes/analyze.py`: Replaces raw exception strings in model error results with "Service temporarily unavailable"
+- `backend/app.py`: Added global error handlers for 400, 404, 429, 500 status codes returning JSON with generic error messages (no stack traces or implementation details exposed to clients)
+
+Impact:
+- Request timeouts now enforced at Flask application layer (25s for Anthropic API calls, 25s for model parallel execution)
+- Layered timeout protection: Cloudflare → Nginx proxy → ThreadPoolExecutor → Anthropic SDK (all set to 25-30s window)
+- Errors logged server-side with full details, but only sanitized messages sent to clients
+- Structured logging enables better monitoring and debugging without exposing security/privacy information
+
+---
+
 ## 2026-05-21
 
 **docs: fix documentation drift identified in codebase audit**

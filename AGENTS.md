@@ -216,6 +216,13 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
   - Backend API responses no longer contain severity field
   - Focused on action-based consensus (donut chart) instead of severity-based visualization
 - Mobile overflow fix in `style.css` (`@media max-width: 900px` + `600px`): `min-width: 0` on flex/grid children, mobile-only universal shrink, `100%` containment (no `100vw`), stacked breakdown fields, fixed `.insights-alignment-reason` mobile selector, `overflow-wrap: anywhere` for long URLs/strings/AI text, methodology table scroll + `table-layout: fixed`, arch-flow wrapping — QA passed at 375/393/360px widths
+- Flask backend security hardening complete:
+  - Timeout enforcement at multiple layers: Cloudflare (via HTTP timeout) → Nginx proxy (30s connect/send/read) → ThreadPoolExecutor (25s on model execution) → Anthropic SDK (25s on API calls) — creates defense-in-depth with no single point of failure
+  - Error sanitization: Full exception details logged server-side via structured logging; clients receive only generic "Service temporarily unavailable" messages in error states (400, 404, 429, 500)
+  - ANTHROPIC_API_KEY centralized in config.py and loaded once at startup instead of repeated os.getenv() calls in request handlers
+  - Global error handlers for 400, 404, 429, 500 return JSON with generic error messages (no stack traces or implementation details exposed)
+  - All print() calls replaced with logging module (warning/info/error levels) — better auditability and structured output
+  - TimeoutError handling in ThreadPoolExecutor.as_completed() returns partial results with sanitized errors instead of crashing
 
 ## Known Limitations
 - HuggingFace free tier may rate-limit under high traffic
