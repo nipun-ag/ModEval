@@ -215,7 +215,7 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
   - Removed all gauge-related CSS classes and severity bar column from breakdown cards
   - Backend API responses no longer contain severity field
   - Focused on action-based consensus (donut chart) instead of severity-based visualization
-- Added mobile layout overrides (margin, padding, width, max-width, box-sizing, and overflow overrides) inside `@media (max-width: 900px)` in `style.css` to fix mobile card right edge clipping for breakdown cards, insights cards, disagreement banner, consensus hero, insights matrix, AI summary section, and alignment assessment section
+- Mobile overflow fix in `style.css` (`@media max-width: 900px` + `600px`): `min-width: 0` on flex/grid children, mobile-only universal shrink, `100%` containment (no `100vw`), stacked breakdown fields, fixed `.insights-alignment-reason` mobile selector, `overflow-wrap: anywhere` for long URLs/strings/AI text, methodology table scroll + `table-layout: fixed`, arch-flow wrapping — QA passed at 375/393/360px widths
 
 ## Known Limitations
 - HuggingFace free tier may rate-limit under high traffic

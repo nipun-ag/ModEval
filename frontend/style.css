@@ -964,6 +964,7 @@ textarea:focus {
   transform: translateY(-8px);
   opacity: 0;
   transition: transform 200ms ease, opacity 200ms ease;
+  min-width: 0;
 }
 
 .disagreement-banner.visible {
@@ -1108,6 +1109,7 @@ textarea:focus {
 
 .results-content {
   animation: fade-in 200ms ease;
+  min-width: 0;
 }
 
 .consensus-hero {
@@ -1122,6 +1124,7 @@ textarea:focus {
   text-align: center;
   position: relative;
   overflow: hidden;
+  min-width: 0;
 }
 
 .consensus-hero-eyebrow {
@@ -2383,14 +2386,22 @@ tbody td {
 
 @media (max-width: 900px) {
   /* === GLOBAL MOBILE OVERFLOW FIX === */
+  * {
+    min-width: 0;
+  }
+
   html, body {
-    overflow-x: hidden !important;
-    width: 100% !important;
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .app-shell {
-    max-width: 100vw;
+    width: 100%;
+    max-width: 100%;
     overflow-x: hidden;
+    box-sizing: border-box;
   }
 
   .app-shell::before {
@@ -2438,29 +2449,77 @@ tbody td {
   /* === CONSENSUS HERO === */
   .consensus-hero {
     padding: 24px 16px;
+    width: 100%;
     max-width: 100%;
+    min-width: 0;
     overflow: hidden;
     word-wrap: break-word;
+    box-sizing: border-box;
   }
 
   .consensus-hero-action {
     font-size: 40px;
   }
 
+  /* === STATUS DISCLAIMER === */
+  .status-disclaimer {
+    white-space: normal;
+    max-width: 100%;
+    text-align: left;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  /* === LONG TEXT / URL WRAPPING === */
+  .hero-copy,
+  .consensus-hero-subtitle,
+  .disagreement-banner,
+  .disagreement-banner span,
+  .breakdown-field-value,
+  .breakdown-model-name,
+  .breakdown-model-meta,
+  .insights-card-body,
+  .insights-card-description,
+  .insights-ai-summary,
+  .insights-alignment-reason,
+  .alignment-reason-text,
+  .ai-interpretation-disclaimer,
+  .insights-confidence-label,
+  .model-detail-card p {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
+  }
+
+  .disagreement-banner {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
   /* === RESULTS PANEL === */
   .results-panel,
+  .results-panel .panel-inner,
+  .results-view,
   .results-content,
   .lower-panel {
-    max-width: 100vw !important;
-    overflow-x: hidden !important;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     box-sizing: border-box;
+  }
+
+  .results-panel {
+    overflow-x: hidden;
   }
 
   /* === DISAGREEMENT BANNER === */
   .disagreement-banner {
+    width: 100%;
     max-width: 100%;
+    min-width: 0;
     overflow: hidden;
     word-wrap: break-word;
+    box-sizing: border-box;
   }
 
   /* === LOWER TABS === */
@@ -2489,19 +2548,32 @@ tbody td {
     padding: 14px 16px !important;
     overflow: hidden !important;
     align-items: flex-start !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
   }
 
   .breakdown-model-info {
     width: 100% !important;
-    flex: none !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
   }
 
   .breakdown-fields {
     display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    gap: 12px !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    gap: 10px !important;
     width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    grid-template-columns: unset !important;
+  }
+
+  .breakdown-header-fields {
+    display: none !important;
   }
 
   .breakdown-field-value,
@@ -2544,6 +2616,8 @@ tbody td {
     flex-direction: column !important;
     gap: 16px !important;
     width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
   }
 
   .insights-grid-right {
@@ -2551,6 +2625,8 @@ tbody td {
     flex-direction: column !important;
     gap: 16px !important;
     width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
   }
 
   .insights-card,
@@ -2558,11 +2634,18 @@ tbody td {
   .insights-card-wide {
     width: 100% !important;
     max-width: 100% !important;
+    min-width: 0 !important;
     min-height: unset !important;
     padding: 20px 16px;
     box-sizing: border-box;
     overflow: hidden;
     word-wrap: break-word;
+  }
+
+  .insights-card-top {
+    min-width: 0;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
   .insights-card-body {
@@ -2585,27 +2668,66 @@ tbody td {
     flex-direction: column !important;
     gap: 8px !important;
     padding: 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
   }
 
   .insights-matrix-model {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
     font-size: 13px;
   }
 
-  .insights-matrix-reason {
+  .insights-matrix-alignment {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    flex-wrap: wrap !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    gap: 8px !important;
+  }
+
+  .insights-alignment-reason {
     padding-left: 0 !important;
     border-left: none !important;
     font-size: 12px;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+
+  .insights-alignment-badge {
+    white-space: normal;
   }
 
   /* === ALIGNMENT ASSESSMENT === */
   .alignment-assessment-item {
     flex-direction: column;
     gap: 8px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
 
   .alignment-model-name {
-    min-width: unset !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
     flex-shrink: 1;
+  }
+
+  .alignment-reason-text {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
   }
 
   /* === AI EXECUTIVE SUMMARY === */
@@ -2628,8 +2750,34 @@ tbody td {
   }
 
   .insights-confidence-bars {
+    width: 100%;
     max-width: 100%;
+    min-width: 0;
     overflow: hidden;
+  }
+
+  .insights-confidence-item {
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .insights-confidence-label {
+    flex: 1 1 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .insights-confidence-bar-wrapper {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .insights-confidence-value {
+    flex: 0 0 auto;
+    min-width: 0;
   }
 
   /* === AI DISCLAIMER === */
@@ -2671,6 +2819,142 @@ tbody td {
     max-width: 100% !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
+  }
+
+  /* === PANEL OVERRIDES === */
+  #how-it-works-panel {
+    padding: 24px 16px !important;
+  }
+
+  #models-panel {
+    padding: 0 16px 24px !important;
+  }
+
+  /* === TOPBAR OVERRIDES === */
+  .topbar {
+    height: auto !important;
+    min-height: 72px;
+  }
+
+  /* === MODELS GRID OVERRIDES === */
+  .model-cards-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .model-cards-grid .model-detail-card:last-child:nth-child(odd) {
+    max-width: 100% !important;
+  }
+
+  /* === RESULTS HEADER OVERRIDES === */
+  .results-header, .section-heading {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+  
+  .results-header > div:last-child {
+    align-items: flex-start !important;
+  }
+
+  /* === HOW IT WORKS OVERRIDES === */
+  .arch-flow-strip,
+  .arch-flow-visual {
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  .arch-flow-visual {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    padding: 20px 16px !important;
+  }
+
+  .arch-flow-step {
+    min-width: 0;
+    flex: 1 1 120px;
+    max-width: 100%;
+  }
+
+  .arch-flow-label {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  .arch-flow-connector {
+    display: none;
+  }
+
+  .pull-quote-block,
+  .equation-block {
+    padding: 24px 16px !important;
+  }
+
+  .pull-quote-text {
+    font-size: 20px !important;
+  }
+
+  .methodology-card,
+  .methodology-subcard,
+  .limitation-card,
+  .integrity-card {
+    padding: 16px !important;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  #how-it-works-panel,
+  #models-panel {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  .methodology-card,
+  .methodology-subcard {
+    overflow-x: auto;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table,
+  .methodology-table {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    table-layout: fixed;
+  }
+
+  thead th,
+  tbody td,
+  .methodology-table td {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+}
+
+@media (max-width: 600px) {
+  .breakdown-fields {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .breakdown-field-value,
+  .breakdown-confidence {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
   }
 }
 
@@ -2816,6 +3100,7 @@ tbody td {
 }
 .lower-panel {
   display: block;
+  min-width: 0;
 }
 .lower-panel.hidden {
   display: none !important;
@@ -2885,6 +3170,7 @@ tbody td {
 
 .breakdown-model-info {
   flex: 0 0 180px;
+  min-width: 0;
 }
 
 .breakdown-model-name {
@@ -2920,6 +3206,7 @@ tbody td {
   gap: 16px;
   flex: 1;
   align-items: center;
+  min-width: 0;
 }
 
 .breakdown-field-value {
@@ -2962,6 +3249,7 @@ tbody td {
   gap: 12px;
   padding: 10px 0;
   border-bottom: 1px solid var(--border);
+  min-width: 0;
 }
 
 .alignment-assessment-item:last-child {
@@ -2984,6 +3272,7 @@ tbody td {
   color: var(--muted);
   line-height: 1.5;
   flex: 1;
+  min-width: 0;
 }
 
 .alignment-assessment-footer {
@@ -3093,11 +3382,17 @@ tbody td {
   }
 }
 
+.insights-grid,
+.insights-grid-right {
+  min-width: 0;
+}
+
 .insights-card {
   background: var(--surface2);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 28px;
+  min-width: 0;
 }
 
 .insights-card-tall {
@@ -3109,6 +3404,7 @@ tbody td {
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 28px;
+  min-width: 0;
 }
 
 .insights-card-wide {
@@ -3117,6 +3413,7 @@ tbody td {
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 28px;
+  min-width: 0;
 }
 
 .insights-card-eyebrow {
@@ -3288,6 +3585,7 @@ tbody td {
   justify-content: space-between;
   align-items: flex-start;
   gap: 16px;
+  min-width: 0;
 }
 
 .insights-matrix-model {
@@ -3295,6 +3593,7 @@ tbody td {
   font-size: 13px;
   font-weight: 600;
   color: var(--text-primary);
+  min-width: 0;
 }
 
 .insights-matrix-alignment {
@@ -3302,6 +3601,7 @@ tbody td {
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
 }
 
 .insights-alignment-badge {
@@ -3332,6 +3632,7 @@ tbody td {
   line-height: 1.5;
   color: var(--text-secondary);
   flex: 1;
+  min-width: 0;
 }
 
 .insights-matrix-footer {
@@ -3464,6 +3765,7 @@ tbody td {
   display: flex;
   align-items: flex-end;
   gap: 12px;
+  min-width: 0;
 }
 
 .insights-confidence-label {

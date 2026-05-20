@@ -149,9 +149,13 @@ Never use for general reading text. Monospace signals "this is technical data."
 
 ### Responsive
 - Below 900px: single column, input panel stacks above results panel
-- Padding reduces to 20px on mobile
+- Padding reduces to 16px on mobile (panel-inner / topbar)
 - Example pills wrap naturally
-- Mobile layout overrides reset margins, padding, width, and max-width of cards, panels, and sections to 100% width / 0 margin to prevent right-edge clipping on narrow viewports
+- Mobile overflow containment: `min-width: 0` on flex/grid children, mobile-only `* { min-width: 0 }`, width/max-width `100%` (not `100vw`) on panels/cards
+- Breakdown cards stack vertically; `.breakdown-fields` becomes a single column (reinforced at 600px)
+- Insights matrix rows and confidence bars stack; alignment reasons use `.insights-alignment-reason` (not legacy `.insights-matrix-reason`)
+- Long URLs, unbroken strings, and AI rationale use `overflow-wrap: anywhere` + `word-break: break-word`
+- Methodology tables: `table-layout: fixed` inside horizontally scrollable cards; arch-flow labels wrap
 
 ---
 

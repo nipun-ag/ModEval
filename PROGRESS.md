@@ -6,11 +6,11 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ## 2026-05-20
 
-**style: fix mobile card right edge clipping**
+**style: fix mobile horizontal overflow and right-edge clipping**
 
-- `frontend/style.css`: Added mobile layout overrides inside `@media (max-width: 900px)` for breakdown cards, insights cards, disagreement banner, consensus hero, insights matrix, AI summary section, alignment assessment section, and main results panels.
-- Why: Reset margins, padding, width, max-width, and overflow rules to prevent cards and panels from overflowing the right edge of narrow viewports, resolving mobile horizontal scroll/clipping issues.
-- Impact: Restores robust responsive layout on mobile screens without altering desktop visual design.
+- `frontend/style.css`: Comprehensive mobile overflow pass — `min-width: 0` on flex/grid children, mobile-only universal shrink rule, replaced `100vw` with `100%`, stacked breakdown fields (column under 900px), fixed `.insights-alignment-reason` mobile selector (was wrong class), insights matrix/confidence bar mobile stacking, `overflow-wrap: anywhere` for long URLs/unbroken strings/AI rationale, methodology table `table-layout: fixed` with scroll containment, arch-flow label wrapping.
+- QA: Verified at iPhone SE (375px), iPhone 14 Pro (393px), and Galaxy S21 (360px) target widths via stress-test fixture + live analysis flow (landing, results, breakdown, insights, methodology, models); zero horizontal page scroll, no right-side clipping.
+- Impact: Mobile layouts contain long content correctly; desktop layout unchanged.
 
 ---
 
