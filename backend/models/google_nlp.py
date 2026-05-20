@@ -15,7 +15,12 @@ def analyze(text: str) -> dict:
             "scores": {},
         }
 
-    url = f"https://language.googleapis.com/v1/documents:moderateText?key={GOOGLE_NLP_KEY}"
+    url = "https://language.googleapis.com/v1/documents:moderateText"
+
+    headers = {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": GOOGLE_NLP_KEY,
+    }
 
     payload = {
         "document": {
@@ -25,7 +30,7 @@ def analyze(text: str) -> dict:
     }
 
     try:
-        response = requests.post(url, json=payload, timeout=REQUEST_TIMEOUT)
+        response = requests.post(url, json=payload, headers=headers, timeout=REQUEST_TIMEOUT)
         response.raise_for_status()
         data = response.json()
 
