@@ -2426,6 +2426,72 @@ tbody td {
   .consensus-hero-action {
     font-size: 48px;
   }
+
+  /* ISSUE 1 -- Model Breakdown cards responsive */
+  .breakdown-card {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 14px 16px;
+    overflow: hidden;
+  }
+
+  .breakdown-model-info {
+    width: 100%;
+    flex-shrink: unset;
+  }
+
+  .breakdown-fields {
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+
+  .breakdown-action-btn {
+    min-width: unset;
+    max-width: unset;
+    width: auto;
+  }
+
+  .breakdown-header-row {
+    display: none;
+  }
+
+  /* ISSUE 2 -- AI Interpretation grid responsive */
+  .insights-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .insights-grid-right {
+    flex-direction: column;
+  }
+
+  .insights-card-tall {
+    min-height: unset;
+  }
+
+  .insights-matrix-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .insights-matrix-header {
+    display: none;
+  }
+
+  .insights-matrix-reason {
+    padding-left: 0;
+    border-left: none;
+  }
+
+  /* ISSUE 3 -- AI Interpretation tab label responsive */
+  .results-lower-tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .lower-tab {
+    font-size: 9px;
+    padding: 10px 8px;
+  }
 }
 
 /* === VERDICT VISUALS CARD === */
