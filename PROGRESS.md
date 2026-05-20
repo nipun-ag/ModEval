@@ -4,6 +4,46 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-05-21 (Phase 3 Part 1)
+
+**infra+fix: security and operational hardening — rate limiting, headers, API key exposure fix**
+
+Infrastructure changes (server-side, not in git):
+
+Cloudflare:
+- Enabled Cloudflare proxying (orange cloud) for modeval.bynipun.com — real server IP (178.105.93.92) is now hidden from public DNS
+- Upgraded SSL/TLS mode from Full to Full (Strict) — Cloudflare now verifies the origin Let's Encrypt certificate is valid
+- Enabled Always Use HTTPS — all HTTP requests redirected to HTTPS at Cloudflare edge before reaching the server
+
+Nginx (/etc/nginx/nginx.conf):
+- Added two rate limiting zones using $http_cf_connecting_ip (Cloudflare real IP header, not $remote_addr which would be Cloudflare's own IP):
+  - analyze_limit: 10 requests/minute for /analyze and /batch-analyze
+  - general_limit: 60 requests/minute for all other routes
+
+Nginx (/etc/nginx/sites-available/modeval):
+- Added client_max_body_size 16k — oversized POST bodies rejected before reaching Flask (verified: returns 413)
+- Added proxy timeouts: connect 10s, send 30s, read 30s
+- Added security headers on all responses:
+  - X-Content-Type-Options: nosniff
+  - X-Frame-Options: DENY
+  - Referrer-Policy: strict-origin-when-cross-origin
+  - X-XSS-Protection: 1; mode=block
+- Added strict rate limiting on /analyze (burst=3) and /batch-analyze (burst=2) with 429 status on violation
+- Added general rate limiting on all other routes (burst=20)
+- Updated X-Real-IP header to use $http_cf_connecting_ip so Flask sees real visitor IP, not Cloudflare's IP
+- Backed up original config to modeval.backup before changes
+
+Code change (in git, commit 7dcc80f):
+- fix: moved Google NLP API key from URL query parameter to X-Goog-Api-Key request header in backend/models/google_nlp.py — key was previously visible in Nginx access logs, systemd journal, and any proxy logs
+
+Verification:
+- curl -I: all four security headers confirmed present
+- Rate limit test (15 requests): 429s firing after burst exceeded
+- Oversized request test (20,000 chars): 413 returned correctly
+- Site remains live at modeval.bynipun.com throughout
+
+---
+
 ## 2026-05-21
 
 **docs: fix documentation drift identified in codebase audit**
