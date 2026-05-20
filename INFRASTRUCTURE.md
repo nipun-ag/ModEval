@@ -2,12 +2,12 @@
 
 ## Hosting Overview
 
-The backend is no longer on Render. It is self-hosted on a Hetzner VPS. The frontend remains on Vercel unchanged.
+The entire application is self-hosted on a Hetzner VPS. Both backend (Flask/Gunicorn) and frontend (static files) are served from the same VPS instance.
 
 | Layer | Provider | URL |
 |---|---|---|
 | Backend (Flask/Gunicorn) | Hetzner VPS | Internal — accessed via modeval.bynipun.com |
-| Frontend (static) | Vercel | modeval.bynipun.com |
+| Frontend (static) | Hetzner VPS (Flask/Gunicorn) | modeval.bynipun.com |
 | Domain/DNS | Cloudflare | bynipun.com |
 | SSL | Let's Encrypt via Certbot | Auto-renewing |
 | Secrets | Doppler | Project: modeval, Config: prd |

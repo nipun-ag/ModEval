@@ -739,7 +739,7 @@ frontend/app.js
 - **API Keys in Environment** — Never hardcoded, never logged, loaded from environment/`.env` only.
 - **No Session State** — Stateless architecture, each request is independent.
 - **HTTPS Only** — Enforced by Nginx, certificate managed by Certbot/Let's Encrypt.
-- **CORS** — Not needed, frontend and backend same origin.
+- **CORS** — Not needed. Frontend static files and API are served from the same Flask/Gunicorn instance on Hetzner, so all requests are same-origin.
 - **Input Validation** — Max length 500 characters, schema validation on all inputs.
 - **Error Messages** — Never expose API keys or internal paths in error responses.
 

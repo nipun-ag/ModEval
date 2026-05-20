@@ -41,7 +41,7 @@ docs/ARCHITECTURE.md           Complete technical reference (this file)
 
 ## What NOT to Touch
 - **Model IDs** in `config.py` — exact HuggingFace/OpenAI model identifiers
-- **Threshold clamping** (0.10–0.90) in `context_engine.py` — critical safety bounds
+- **Fixed thresholds** (review=0.40, remove=0.70) in `context_engine.py` — do not add modifier logic here; platform policy judgment belongs in `policy_engine.py`
 - **Normalizer schema** fields — frontend depends on exact names
 - **CSS variable names** in `style.css` — JS references some
 - **Font imports** — DM Serif Display, Inter, JetBrains Mono (branding)

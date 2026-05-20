@@ -4,6 +4,16 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-05-21
+
+**docs: fix documentation drift identified in codebase audit**
+
+- INFRASTRUCTURE.md: corrected hosting table — frontend is served by Flask/Gunicorn on Hetzner, not Vercel; updated opening statement to reflect that entire app is self-hosted
+- docs/ARCHITECTURE.md: clarified CORS rationale (same-origin via Flask static serving, not separate Vercel frontend)
+- CLAUDE.md + AGENTS.md: corrected threshold behavior claim in "What NOT to Touch" section (context_engine.py has no clamping, returns fixed thresholds only; platform policy judgment belongs in policy_engine.py)
+
+---
+
 ## 2026-05-20
 
 **style: fix mobile horizontal overflow and right-edge clipping**
