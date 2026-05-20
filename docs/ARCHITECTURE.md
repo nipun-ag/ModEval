@@ -541,6 +541,32 @@ Hetzner VPS (hetzner.com) — CX23 plan
 - Systemd logs: `journalctl -u modeval -f`
 - Nginx logs: `/var/log/nginx/{access,error}.log`
 
+### Request Protection & Rate Limiting
+
+Traffic flow with Cloudflare proxying active:
+```
+Browser → Cloudflare Edge → Nginx (Hetzner) → Gunicorn → Flask
+```
+
+**Cloudflare layer:**
+- Proxy status: orange cloud enabled — real server IP hidden from DNS
+- SSL/TLS mode: Full (Strict) — validates origin Let's Encrypt cert
+- Always Use HTTPS: enabled — HTTP redirected to HTTPS at edge
+
+**Nginx rate limiting zones (/etc/nginx/nginx.conf):**
+- Uses `$http_cf_connecting_ip` for real visitor IP (not Cloudflare's IP)
+- analyze_limit: 10 requests/minute (for /analyze and /batch-analyze)
+- general_limit: 60 requests/minute (for all other routes)
+
+**Nginx site config (/etc/nginx/sites-available/modeval):**
+- client_max_body_size: 16k — oversized requests return 413 before reaching Flask
+- proxy_connect_timeout: 10s
+- proxy_send_timeout: 30s
+- proxy_read_timeout: 30s
+- /analyze: analyze_limit zone, burst=3, returns 429 on violation
+- /batch-analyze: analyze_limit zone, burst=2, returns 429 on violation
+- All other routes: general_limit zone, burst=20
+
 ---
 
 ## Known Limitations
@@ -742,6 +768,11 @@ frontend/app.js
 - **CORS** — Not needed. Frontend static files and API are served from the same Flask/Gunicorn instance on Hetzner, so all requests are same-origin.
 - **Input Validation** — Max length 500 characters, schema validation on all inputs.
 - **Error Messages** — Never expose API keys or internal paths in error responses.
+- **Cloudflare Proxy** — All traffic proxied through Cloudflare edge. Origin server IP not exposed in public DNS. SSL Full (Strict) mode enforced end-to-end.
+- **Rate Limiting** — Nginx enforces per-IP rate limits using real visitor IP from Cloudflare header. /analyze and /batch-analyze: 10 req/min (burst 3 and 2 respectively). All other routes: 60 req/min (burst 20). Violations return 429.
+- **Request Size** — client_max_body_size 16k at Nginx level. Oversized POST bodies return 413 before reaching Flask.
+- **Security Headers** — Set on all responses via Nginx: X-Content-Type-Options (nosniff), X-Frame-Options (DENY), Referrer-Policy (strict-origin-when-cross-origin), X-XSS-Protection (1; mode=block).
+- **Proxy Timeouts** — Nginx enforces connect (10s), send (30s), and read (30s) timeouts on all proxied requests.
 
 ---
 
