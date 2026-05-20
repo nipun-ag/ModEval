@@ -56,10 +56,11 @@ docs/ARCHITECTURE.md           Complete technical reference (this file)
 All these are referenced in app.js and must not be renamed or removed.
 
 ## Where to Find Things
-- **Technical architecture, APIs, models** → `docs/ARCHITECTURE.md`
-- **Visual design system** → `DESIGN.md`
-- **Public description** → `README.md`
-- **Change log** → `PROGRESS.md`
+- **Technical architecture, APIs, models** → docs/ARCHITECTURE.md
+- **Visual design system** → docs/DESIGN.md
+- **Public description** → README.md
+- **Change log** → docs/PROGRESS.md
+- **deployment details** → docs/INFRASTRUCTURE.md
 
 ## Self-Updating Meta Instruction
 
