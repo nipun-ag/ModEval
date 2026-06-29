@@ -6,6 +6,16 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ## 2026-06-29
 
+**chore: remove unnecessary vercel.json**
+
+- Vercel requires no config file for a plain static site
+- Root directory (frontend/) will be set in the Vercel dashboard
+- vercel.json deleted from repo root
+
+---
+
+## 2026-06-29
+
 **infra: split frontend to Vercel, backend API to api.modeval.bynipun.com**
 
 - frontend/app.js: added API_BASE constant pointing to api.modeval.bynipun.com; updated all fetch() calls to use it
