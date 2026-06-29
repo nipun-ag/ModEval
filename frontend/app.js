@@ -90,6 +90,8 @@ function initColumnTooltips() {
 
 document.addEventListener("DOMContentLoaded", initColumnTooltips);
 
+const API_BASE = 'https://api.modeval.bynipun.com';
+
 const ENTERPRISE_MODELS = [
   "Hive Moderation",
   "Azure Content Safety",
@@ -1139,7 +1141,7 @@ form.addEventListener("submit", async (event) => {
   lastAnalyzedText = payload.text || "";
 
   try {
-    const data = await postJson("/analyze", payload);
+    const data = await postJson(`${API_BASE}/analyze`, payload);
     renderResults(data.results || []);
     renderDisagreements(data.disagreements || {});
     renderInsights(
@@ -1244,7 +1246,7 @@ updateCustomPolicyVisibility();
 updatePlatformPolicyBox("Reddit");
 
 (function () {
-  fetch("/models")
+  fetch(`${API_BASE}/models`)
     .then((r) => r.json())
     .then((data) => {
       const el = document.getElementById("models-active-count");

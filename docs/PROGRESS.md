@@ -6,6 +6,26 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ## 2026-06-29
 
+**infra: split frontend to Vercel, backend API to api.modeval.bynipun.com**
+
+- frontend/app.js: added API_BASE constant pointing to api.modeval.bynipun.com; updated all fetch() calls to use it
+- backend/requirements.txt: added flask-cors
+- backend/app.py: imported and configured CORS scoped to modeval.bynipun.com and localhost origins
+- vercel.json: created at repo root for Vercel static deployment of frontend/ directory
+- INFRASTRUCTURE.md: updated hosting table and request flow for split architecture; added post-migration Nginx/DNS steps
+- CLAUDE.md, docs/ARCHITECTURE.md: updated deployment documentation
+
+Manual steps still required after this commit:
+- Cloudflare: add A record for api.modeval.bynipun.com → 178.105.93.92
+- Cloudflare: update modeval.bynipun.com to point to Vercel
+- Hetzner Nginx: update server_name to api.modeval.bynipun.com
+- Hetzner: run certbot for api.modeval.bynipun.com
+- Vercel: create project pointing at this repo, set root to frontend/
+
+---
+
+## 2026-06-29
+
 **docs: correct deployment documentation to reflect actual hosting state**
 
 - INFRASTRUCTURE.md: removed stale Vercel row from hosting table, corrected request flow to include Cloudflare edge layer, updated section header to reflect Flask serving both API and frontend, added Cloudflare Configuration section, noted absence of Nginx static-file location block

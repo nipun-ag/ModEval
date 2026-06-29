@@ -2,11 +2,12 @@
 
 ## Hosting Overview
 
-The entire application is self-hosted on a Hetzner VPS. Flask serves both the backend API and all frontend static files from a single Gunicorn process. Cloudflare acts as a reverse proxy in front of the origin server.
+The application is deployed across two providers: Vercel hosts the frontend static files, while Hetzner VPS hosts the backend API. Cloudflare provides DNS, reverse proxy, and CDN services for both.
 
 | Layer | Provider | URL |
 |---|---|---|
-| Backend API + Frontend (Flask/Gunicorn) | Hetzner VPS | modeval.bynipun.com |
+| Frontend (static) | Vercel | modeval.bynipun.com |
+| Backend API (Flask/Gunicorn) | Hetzner VPS | api.modeval.bynipun.com |
 | Reverse Proxy / CDN | Cloudflare | bynipun.com |
 | SSL (origin) | Let's Encrypt via Certbot | Auto-renewing |
 | Secrets | Doppler | Project: modeval, Config: prd |
@@ -25,15 +26,19 @@ The entire application is self-hosted on a Hetzner VPS. Flask serves both the ba
 
 ---
 
-## How the App Runs (API + Frontend)
+## How the App Runs (Split Architecture)
 
-Flask serves both the backend API routes and all frontend static files (index.html, app.js, style.css) from a single Gunicorn process. There is no separate static file server or CDN for the frontend.
-
-The Flask app runs under Gunicorn, managed by systemd, with secrets injected by Doppler.
-
+**Frontend:**
 ```
-Request → Cloudflare Edge (reverse proxy) → Nginx (port 443) → Gunicorn (127.0.0.1:5000) → Flask (API + static files)
+User → Cloudflare Edge → Vercel → index.html / app.js / style.css
 ```
+
+**API:**
+```
+app.js → Cloudflare Edge → Nginx (api.modeval.bynipun.com:443) → Gunicorn (127.0.0.1:5000) → Flask
+```
+
+The Flask backend runs under Gunicorn, managed by systemd, with secrets injected by Doppler. The frontend is a static site served by Vercel. All API calls from the frontend are made to `https://api.modeval.bynipun.com` with CORS enabled.
 
 **systemd service:** `/etc/systemd/system/modeval.service`
 - Runs as user `nipun`
@@ -42,9 +47,9 @@ Request → Cloudflare Edge (reverse proxy) → Nginx (port 443) → Gunicorn (1
 - Doppler injects secrets before Flask starts
 
 **Nginx config:** `/etc/nginx/sites-available/modeval`
-- Routes `modeval.bynipun.com` to `127.0.0.1:5000`
-- Certbot manages HTTPS — certificate at `/etc/letsencrypt/live/modeval.bynipun.com/`
-- Nginx has no static-file location block — all requests including CSS, JS, and images are proxied through to Gunicorn/Flask
+- Routes `api.modeval.bynipun.com` to `127.0.0.1:5000`
+- Certbot manages HTTPS — certificate at `/etc/letsencrypt/live/api.modeval.bynipun.com/`
+- All requests are reverse proxied to Gunicorn/Flask for API processing
 
 **No cold starts.** The app runs permanently. There is no spin-down behaviour. Any previous references to Render cold starts are no longer applicable.
 
@@ -98,23 +103,58 @@ Adding a new secret to Doppler takes effect on the next `systemctl restart modev
 
 ## Cloudflare Configuration
 
-Cloudflare acts as both DNS provider and reverse proxy for modeval.bynipun.com. All traffic reaches Cloudflare's edge network before hitting the Hetzner VPS.
+Cloudflare acts as DNS provider and reverse proxy for both modeval.bynipun.com (fronted by Vercel) and api.modeval.bynipun.com (Hetzner backend API).
 
-**Key responsibilities:**
-- DNS resolution for modeval.bynipun.com → points to Hetzner VPS IP
-- Reverse proxy layer — requests pass through Cloudflare edge before reaching origin
-- TLS termination at edge — Cloudflare presents its own certificate to browsers
-- Origin connection to Nginx uses the Let's Encrypt certificate (Full Strict SSL mode)
+**Frontend (modeval.bynipun.com):**
+- DNS: CNAME record pointing to Vercel's edge (provided by Vercel on project creation)
+- Cloudflare proxies requests to Vercel
 
-**Cloudflare settings in use:**
+**API (api.modeval.bynipun.com):**
+- DNS: A record pointing to Hetzner VPS IP (178.105.93.92)
+- Cloudflare proxies requests to Nginx on the Hetzner origin
+- Orange cloud enabled — real server IP hidden from public DNS
 - SSL/TLS mode: Full (Strict) — validates origin Let's Encrypt cert
 - Always Use HTTPS: enabled — HTTP redirected to HTTPS at edge
-- Orange cloud enabled — real server IP (178.105.93.92) hidden from public DNS
 
 **Rate limiting integration:**
 - Nginx rate limiting uses `$http_cf_connecting_ip` header (not `$remote_addr`) to get the real visitor IP through Cloudflare's proxy layer
 - Analyze endpoints: 10 requests/minute per IP
 - All other routes: 60 requests/minute per IP
+
+### Post-Migration Nginx Changes Required
+
+After the Vercel migration, the following manual steps are required on the Hetzner VPS:
+
+1. **Update Nginx to respond to api.modeval.bynipun.com:**
+
+   In `/etc/nginx/sites-available/modeval`, change the `server_name` directive:
+   ```
+   server_name api.modeval.bynipun.com;
+   ```
+
+   Then test and reload:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+
+2. **Update or create Let's Encrypt certificate for the API subdomain:**
+
+   Run Certbot to issue a certificate for the new subdomain:
+   ```bash
+   sudo certbot --nginx -d api.modeval.bynipun.com
+   ```
+
+3. **Add DNS record in Cloudflare for api subdomain:**
+
+   Create an A record in Cloudflare DNS:
+   - Name: `api`
+   - Content (IPv4): `178.105.93.92`
+   - Proxy status: Proxied (orange cloud)
+
+4. **Update DNS for main domain:**
+
+   In Cloudflare, change the `modeval` A record to a CNAME pointing to Vercel's edge domain (provided by Vercel when the project is created). This typically looks like `modeval-<your-username>.vercel.app` or similar.
 
 ---
 

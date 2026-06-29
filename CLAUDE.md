@@ -206,7 +206,7 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
     - Elevated AI executive summary card: Gradient teal/purple border with glow, consensus badge, auto-classified finding tag (CLEAR VIOLATION/SAFE CONTENT/AMBIGUOUS), AI narrative, MODEL CONFIDENCE header above per-model confidence bars with gradient fill
   - How It Works panel with 7 sections: Normalization, Context Engine (simplified to platform modifier only), AI-powered Policy Alignment Engine, Disagreement Detection, AI Interpretation Layer, Why These Models, Known Limitations
   - Ambient glow blobs on results panel background
-- Deployed on Hetzner VPS at modeval.bynipun.com — Flask serves both API and frontend static files via a single Gunicorn process; Cloudflare proxies all traffic in front of Nginx; no cold starts
+- Deployed as split architecture: Vercel serves frontend at modeval.bynipun.com, Hetzner VPS serves API at api.modeval.bynipun.com; Cloudflare proxies both; flask-cors enabled scoped to modeval.bynipun.com
 - Fixed threshold model: All platforms use identical base thresholds (review=0.40, remove=0.70) — platform-specific policy judgment delegated entirely to Claude Haiku alignment assessment
 - Platform threshold modifiers completely removed — prior approach (Discord +0.05, Facebook -0.05, Instagram -0.10, etc.) was discarded as it distorted raw model signal before Claude evaluation
 - Content Type and Strictness modifiers removed — these inputs accepted but not used (v1 convenience, non-essential)

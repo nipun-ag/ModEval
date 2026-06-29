@@ -519,18 +519,37 @@ curl -X POST http://127.0.0.1:5000/analyze \
 
 ## Deployment
 
-### Platform
-Hetzner VPS (hetzner.com) — CX23 plan
+### Architecture
+The application uses a split architecture with frontend on Vercel and API on Hetzner:
 
-### Frontend Serving
-Flask serves both the backend API routes and all frontend static files (index.html, app.js, style.css) from a single Gunicorn process. There is no separate static file server or CDN for the frontend.
+**Frontend:**
+- Platform: Vercel (vercel.com)
+- URL: modeval.bynipun.com
+- Files: index.html, app.js, style.css served as static files
+- No API calls to local server — all calls to https://api.modeval.bynipun.com
 
-### Infrastructure
-- **Server:** Hetzner CX23 (2 vCPU, 4 GB RAM, Nuremberg)
-- **Request Flow:** Request → Cloudflare Edge (reverse proxy) → Nginx (port 443) → Gunicorn (127.0.0.1:5000) → Flask (API + static files)
-- **Process Manager:** systemd — auto-starts on boot, auto-restarts on crash
-- **Secret Management:** Doppler (project: modeval, config: prd) injects secrets at runtime
-- **Reverse Proxy:** Nginx on port 80/443 → 127.0.0.1:5000 (Flask/Gunicorn) — no static-file location block, all requests proxied to Flask
+**API Backend:**
+- Platform: Hetzner VPS (hetzner.com) — CX23 plan
+- URL: api.modeval.bynipun.com
+- Server: Hetzner CX23 (2 vCPU, 4 GB RAM, Nuremberg)
+- Process Manager: systemd — auto-starts on boot, auto-restarts on crash
+- Secret Management: Doppler (project: modeval, config: prd) injects secrets at runtime
+- CORS: Enabled scoped to modeval.bynipun.com and localhost origins
+
+### Request Flows
+
+**Frontend (static assets):**
+```
+User → Cloudflare Edge → Vercel → index.html / app.js / style.css
+```
+
+**API (from frontend):**
+```
+app.js → Cloudflare Edge → Nginx (api.modeval.bynipun.com:443) → Gunicorn (127.0.0.1:5000) → Flask
+```
+
+### Infrastructure (API Backend)
+- **Reverse Proxy:** Nginx on port 80/443 → 127.0.0.1:5000 (Flask/Gunicorn)
 - **SSL:** Let's Encrypt via Certbot with auto-renewal (origin cert); Cloudflare also terminates TLS at edge
 - **Uptime:** App runs permanently — no cold starts, no spin-down behavior
 
@@ -547,12 +566,7 @@ Flask serves both the backend API routes and all frontend static files (index.ht
 
 ### Request Protection & Rate Limiting
 
-Traffic flow with Cloudflare proxying active:
-```
-Browser → Cloudflare Edge → Nginx (Hetzner) → Gunicorn → Flask
-```
-
-**Cloudflare layer:**
+**Cloudflare layer (api.modeval.bynipun.com):**
 - Proxy status: orange cloud enabled — real server IP hidden from DNS
 - SSL/TLS mode: Full (Strict) — validates origin Let's Encrypt cert
 - Always Use HTTPS: enabled — HTTP redirected to HTTPS at edge
