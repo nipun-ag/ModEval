@@ -115,11 +115,19 @@ Cloudflare acts as DNS provider and reverse proxy for both modeval.bynipun.com (
 - Orange cloud enabled — real server IP hidden from public DNS
 - SSL/TLS mode: Full (Strict) — validates origin Let's Encrypt cert
 - Always Use HTTPS: enabled — HTTP redirected to HTTPS at edge
+- **Note:** The subdomain is `modeval-api.bynipun.com` (not `api.modeval.bynipun.com`) because Cloudflare's free plan wildcard SSL cert covers `*.bynipun.com` (one level deep) but not `*.modeval.bynipun.com` (two levels deep)
 
 **Rate limiting integration:**
 - Nginx rate limiting uses `$http_cf_connecting_ip` header (not `$remote_addr`) to get the real visitor IP through Cloudflare's proxy layer
 - Analyze endpoints: 10 requests/minute per IP
 - All other routes: 60 requests/minute per IP
+
+### Stale DNS Records to Clean Up
+
+The following DNS record was created during migration and is no longer needed — it should be deleted from Cloudflare DNS:
+- A record: `api.modeval.bynipun.com` → `178.105.93.92`
+
+The active API subdomain is `modeval-api.bynipun.com` (one level deep, covered by wildcard cert).
 
 ### Post-Migration Nginx Changes Required
 

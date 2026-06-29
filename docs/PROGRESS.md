@@ -6,6 +6,18 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ## 2026-06-29
 
+**docs: post-migration cleanup — stale subdomain references and DNS notes**
+
+- Audited all .md files for stale api.modeval.bynipun.com references
+- Updated CLAUDE.md and docs/ARCHITECTURE.md with correct subdomain
+- Added Cloudflare DNS cleanup note for stale A record
+- Added explanation for modeval-api subdomain naming decision (wildcard cert coverage)
+- Manual action still required: delete api.modeval.bynipun.com A record from Cloudflare DNS dashboard
+
+---
+
+## 2026-06-29
+
 **infra: rename API subdomain from api.modeval.bynipun.com to modeval-api.bynipun.com**
 
 - Cloudflare wildcard cert only covers one subdomain level (*.bynipun.com)

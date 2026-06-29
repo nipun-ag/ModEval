@@ -526,11 +526,11 @@ The application uses a split architecture with frontend on Vercel and API on Het
 - Platform: Vercel (vercel.com)
 - URL: modeval.bynipun.com
 - Files: index.html, app.js, style.css served as static files
-- No API calls to local server — all calls to https://api.modeval.bynipun.com
+- No API calls to local server — all calls to https://modeval-api.bynipun.com
 
 **API Backend:**
 - Platform: Hetzner VPS (hetzner.com) — CX23 plan
-- URL: api.modeval.bynipun.com
+- URL: modeval-api.bynipun.com
 - Server: Hetzner CX23 (2 vCPU, 4 GB RAM, Nuremberg)
 - Process Manager: systemd — auto-starts on boot, auto-restarts on crash
 - Secret Management: Doppler (project: modeval, config: prd) injects secrets at runtime
@@ -545,7 +545,7 @@ User → Cloudflare Edge → Vercel → index.html / app.js / style.css
 
 **API (from frontend):**
 ```
-app.js → Cloudflare Edge → Nginx (api.modeval.bynipun.com:443) → Gunicorn (127.0.0.1:5000) → Flask
+app.js → Cloudflare Edge → Nginx (modeval-api.bynipun.com:443) → Gunicorn (127.0.0.1:5000) → Flask
 ```
 
 ### Infrastructure (API Backend)
@@ -566,7 +566,7 @@ app.js → Cloudflare Edge → Nginx (api.modeval.bynipun.com:443) → Gunicorn 
 
 ### Request Protection & Rate Limiting
 
-**Cloudflare layer (api.modeval.bynipun.com):**
+**Cloudflare layer (modeval-api.bynipun.com):**
 - Proxy status: orange cloud enabled — real server IP hidden from DNS
 - SSL/TLS mode: Full (Strict) — validates origin Let's Encrypt cert
 - Always Use HTTPS: enabled — HTTP redirected to HTTPS at edge
