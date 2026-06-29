@@ -522,12 +522,16 @@ curl -X POST http://127.0.0.1:5000/analyze \
 ### Platform
 Hetzner VPS (hetzner.com) — CX23 plan
 
+### Frontend Serving
+Flask serves both the backend API routes and all frontend static files (index.html, app.js, style.css) from a single Gunicorn process. There is no separate static file server or CDN for the frontend.
+
 ### Infrastructure
 - **Server:** Hetzner CX23 (2 vCPU, 4 GB RAM, Nuremberg)
+- **Request Flow:** Request → Cloudflare Edge (reverse proxy) → Nginx (port 443) → Gunicorn (127.0.0.1:5000) → Flask (API + static files)
 - **Process Manager:** systemd — auto-starts on boot, auto-restarts on crash
 - **Secret Management:** Doppler (project: modeval, config: prd) injects secrets at runtime
-- **Reverse Proxy:** Nginx on port 80/443 → 127.0.0.1:5000 (Flask/Gunicorn)
-- **SSL:** Let's Encrypt via Certbot with auto-renewal
+- **Reverse Proxy:** Nginx on port 80/443 → 127.0.0.1:5000 (Flask/Gunicorn) — no static-file location block, all requests proxied to Flask
+- **SSL:** Let's Encrypt via Certbot with auto-renewal (origin cert); Cloudflare also terminates TLS at edge
 - **Uptime:** App runs permanently — no cold starts, no spin-down behavior
 
 ### Auto-Deploy

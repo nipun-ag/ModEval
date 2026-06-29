@@ -2,14 +2,13 @@
 
 ## Hosting Overview
 
-The entire application is self-hosted on a Hetzner VPS. Both backend (Flask/Gunicorn) and frontend (static files) are served from the same VPS instance.
+The entire application is self-hosted on a Hetzner VPS. Flask serves both the backend API and all frontend static files from a single Gunicorn process. Cloudflare acts as a reverse proxy in front of the origin server.
 
 | Layer | Provider | URL |
 |---|---|---|
-| Backend (Flask/Gunicorn) | Hetzner VPS | Internal — accessed via modeval.bynipun.com |
-| Frontend (static) | Hetzner VPS (Flask/Gunicorn) | modeval.bynipun.com |
-| Domain/DNS | Cloudflare | bynipun.com |
-| SSL | Let's Encrypt via Certbot | Auto-renewing |
+| Backend API + Frontend (Flask/Gunicorn) | Hetzner VPS | modeval.bynipun.com |
+| Reverse Proxy / CDN | Cloudflare | bynipun.com |
+| SSL (origin) | Let's Encrypt via Certbot | Auto-renewing |
 | Secrets | Doppler | Project: modeval, Config: prd |
 
 ---
@@ -26,12 +25,14 @@ The entire application is self-hosted on a Hetzner VPS. Both backend (Flask/Guni
 
 ---
 
-## How the Backend Runs
+## How the App Runs (API + Frontend)
+
+Flask serves both the backend API routes and all frontend static files (index.html, app.js, style.css) from a single Gunicorn process. There is no separate static file server or CDN for the frontend.
 
 The Flask app runs under Gunicorn, managed by systemd, with secrets injected by Doppler.
 
 ```
-Request → Nginx (port 443) → Gunicorn (127.0.0.1:5000) → Flask
+Request → Cloudflare Edge (reverse proxy) → Nginx (port 443) → Gunicorn (127.0.0.1:5000) → Flask (API + static files)
 ```
 
 **systemd service:** `/etc/systemd/system/modeval.service`
@@ -43,6 +44,7 @@ Request → Nginx (port 443) → Gunicorn (127.0.0.1:5000) → Flask
 **Nginx config:** `/etc/nginx/sites-available/modeval`
 - Routes `modeval.bynipun.com` to `127.0.0.1:5000`
 - Certbot manages HTTPS — certificate at `/etc/letsencrypt/live/modeval.bynipun.com/`
+- Nginx has no static-file location block — all requests including CSS, JS, and images are proxied through to Gunicorn/Flask
 
 **No cold starts.** The app runs permanently. There is no spin-down behaviour. Any previous references to Render cold starts are no longer applicable.
 
@@ -91,6 +93,28 @@ Secrets are stored in Doppler under project `modeval`, config `prd`.
 - `GOOGLE_NLP_KEY` — Google Cloud Natural Language API key
 
 Adding a new secret to Doppler takes effect on the next `systemctl restart modeval` — no server changes needed.
+
+---
+
+## Cloudflare Configuration
+
+Cloudflare acts as both DNS provider and reverse proxy for modeval.bynipun.com. All traffic reaches Cloudflare's edge network before hitting the Hetzner VPS.
+
+**Key responsibilities:**
+- DNS resolution for modeval.bynipun.com → points to Hetzner VPS IP
+- Reverse proxy layer — requests pass through Cloudflare edge before reaching origin
+- TLS termination at edge — Cloudflare presents its own certificate to browsers
+- Origin connection to Nginx uses the Let's Encrypt certificate (Full Strict SSL mode)
+
+**Cloudflare settings in use:**
+- SSL/TLS mode: Full (Strict) — validates origin Let's Encrypt cert
+- Always Use HTTPS: enabled — HTTP redirected to HTTPS at edge
+- Orange cloud enabled — real server IP (178.105.93.92) hidden from public DNS
+
+**Rate limiting integration:**
+- Nginx rate limiting uses `$http_cf_connecting_ip` header (not `$remote_addr`) to get the real visitor IP through Cloudflare's proxy layer
+- Analyze endpoints: 10 requests/minute per IP
+- All other routes: 60 requests/minute per IP
 
 ---
 

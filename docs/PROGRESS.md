@@ -4,6 +4,16 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-06-29
+
+**docs: correct deployment documentation to reflect actual hosting state**
+
+- INFRASTRUCTURE.md: removed stale Vercel row from hosting table, corrected request flow to include Cloudflare edge layer, updated section header to reflect Flask serving both API and frontend, added Cloudflare Configuration section, noted absence of Nginx static-file location block
+- CLAUDE.md: updated deployment bullet to clarify Flask serves frontend
+- docs/ARCHITECTURE.md: updated Deployment section to match
+
+---
+
 ## 2026-05-21 (Phase 3 Part 1)
 
 **infra+fix: security and operational hardening — rate limiting, headers, API key exposure fix**
