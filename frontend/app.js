@@ -90,7 +90,7 @@ function initColumnTooltips() {
 
 document.addEventListener("DOMContentLoaded", initColumnTooltips);
 
-const API_BASE = 'https://api.modeval.bynipun.com';
+const API_BASE = 'https://modeval-api.bynipun.com';
 
 const ENTERPRISE_MODELS = [
   "Hive Moderation",

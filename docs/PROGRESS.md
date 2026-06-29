@@ -6,6 +6,18 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ## 2026-06-29
 
+**infra: rename API subdomain from api.modeval.bynipun.com to modeval-api.bynipun.com**
+
+- Cloudflare wildcard cert only covers one subdomain level (*.bynipun.com)
+- api.modeval.bynipun.com was three levels deep and not covered by wildcard
+- modeval-api.bynipun.com is two levels deep and covered by wildcard
+- Updated API_BASE in frontend/app.js
+- Updated all references in INFRASTRUCTURE.md
+
+---
+
+## 2026-06-29
+
 **chore: remove unnecessary vercel.json**
 
 - Vercel requires no config file for a plain static site

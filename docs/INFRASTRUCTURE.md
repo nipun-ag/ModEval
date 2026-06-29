@@ -7,7 +7,7 @@ The application is deployed across two providers: Vercel hosts the frontend stat
 | Layer | Provider | URL |
 |---|---|---|
 | Frontend (static) | Vercel | modeval.bynipun.com |
-| Backend API (Flask/Gunicorn) | Hetzner VPS | api.modeval.bynipun.com |
+| Backend API (Flask/Gunicorn) | Hetzner VPS | modeval-api.bynipun.com |
 | Reverse Proxy / CDN | Cloudflare | bynipun.com |
 | SSL (origin) | Let's Encrypt via Certbot | Auto-renewing |
 | Secrets | Doppler | Project: modeval, Config: prd |
@@ -35,10 +35,10 @@ User → Cloudflare Edge → Vercel → index.html / app.js / style.css
 
 **API:**
 ```
-app.js → Cloudflare Edge → Nginx (api.modeval.bynipun.com:443) → Gunicorn (127.0.0.1:5000) → Flask
+app.js → Cloudflare Edge → Nginx (modeval-api.bynipun.com:443) → Gunicorn (127.0.0.1:5000) → Flask
 ```
 
-The Flask backend runs under Gunicorn, managed by systemd, with secrets injected by Doppler. The frontend is a static site served by Vercel. All API calls from the frontend are made to `https://api.modeval.bynipun.com` with CORS enabled.
+The Flask backend runs under Gunicorn, managed by systemd, with secrets injected by Doppler. The frontend is a static site served by Vercel. All API calls from the frontend are made to `https://modeval-api.bynipun.com` with CORS enabled.
 
 **systemd service:** `/etc/systemd/system/modeval.service`
 - Runs as user `nipun`
@@ -47,8 +47,8 @@ The Flask backend runs under Gunicorn, managed by systemd, with secrets injected
 - Doppler injects secrets before Flask starts
 
 **Nginx config:** `/etc/nginx/sites-available/modeval`
-- Routes `api.modeval.bynipun.com` to `127.0.0.1:5000`
-- Certbot manages HTTPS — certificate at `/etc/letsencrypt/live/api.modeval.bynipun.com/`
+- Routes `modeval-api.bynipun.com` to `127.0.0.1:5000`
+- Certbot manages HTTPS — certificate at `/etc/letsencrypt/live/modeval-api.bynipun.com/`
 - All requests are reverse proxied to Gunicorn/Flask for API processing
 
 **No cold starts.** The app runs permanently. There is no spin-down behaviour. Any previous references to Render cold starts are no longer applicable.
@@ -103,13 +103,13 @@ Adding a new secret to Doppler takes effect on the next `systemctl restart modev
 
 ## Cloudflare Configuration
 
-Cloudflare acts as DNS provider and reverse proxy for both modeval.bynipun.com (fronted by Vercel) and api.modeval.bynipun.com (Hetzner backend API).
+Cloudflare acts as DNS provider and reverse proxy for both modeval.bynipun.com (fronted by Vercel) and modeval-api.bynipun.com (Hetzner backend API).
 
 **Frontend (modeval.bynipun.com):**
 - DNS: CNAME record pointing to Vercel's edge (provided by Vercel on project creation)
 - Cloudflare proxies requests to Vercel
 
-**API (api.modeval.bynipun.com):**
+**API (modeval-api.bynipun.com):**
 - DNS: A record pointing to Hetzner VPS IP (178.105.93.92)
 - Cloudflare proxies requests to Nginx on the Hetzner origin
 - Orange cloud enabled — real server IP hidden from public DNS
@@ -125,11 +125,11 @@ Cloudflare acts as DNS provider and reverse proxy for both modeval.bynipun.com (
 
 After the Vercel migration, the following manual steps are required on the Hetzner VPS:
 
-1. **Update Nginx to respond to api.modeval.bynipun.com:**
+1. **Update Nginx to respond to modeval-api.bynipun.com:**
 
    In `/etc/nginx/sites-available/modeval`, change the `server_name` directive:
    ```
-   server_name api.modeval.bynipun.com;
+   server_name modeval-api.bynipun.com;
    ```
 
    Then test and reload:
@@ -142,7 +142,7 @@ After the Vercel migration, the following manual steps are required on the Hetzn
 
    Run Certbot to issue a certificate for the new subdomain:
    ```bash
-   sudo certbot --nginx -d api.modeval.bynipun.com
+   sudo certbot --nginx -d modeval-api.bynipun.com
    ```
 
 3. **Add DNS record in Cloudflare for api subdomain:**
