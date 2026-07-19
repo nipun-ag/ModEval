@@ -4,7 +4,7 @@ import type {
   ModelsResponse,
 } from "@/types/api"
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api"
+const API_BASE = import.meta.env.DEV ? "/api" : "https://modeval-api.bynipun.com"
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`, {
