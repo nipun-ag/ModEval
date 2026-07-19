@@ -1,4 +1,6 @@
 .env
+.env.*
+skills/
 __pycache__/
 *.pyc
 .venv/

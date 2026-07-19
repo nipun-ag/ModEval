@@ -140,7 +140,7 @@ After alignment assessment, a second Claude Haiku call generates an analytical i
 
 ## UI Features
 
-- **Premium dark theme** — enterprise-grade UI inspired by Vercel, Stripe, and OpenAI
+- **Alloy Night theme** — React/Vite rebuild with dark ink-blue + cyan accent (shadcn/ui)
 - **Three tabs** — Analysis, How It Works, Models
 - **Single Platform selector** — Reddit, Discord, Facebook, Instagram, Custom with live policy guidelines shown below
 - **Execute Analysis button** — runs all 8 models in parallel
@@ -162,7 +162,7 @@ After alignment assessment, a second Claude Haiku call generates an analytical i
 | Enterprise APIs | Hive Moderation, Azure Content Safety, Google NLP, OpenAI Moderation |
 | Open Source Models | HuggingFace Inference API (4 models) |
 | AI Interpretation | Claude Haiku (claude-haiku-4-5-20251001) via Anthropic API |
-| Frontend | Plain HTML, CSS, JavaScript |
+| Frontend | React, TypeScript, Vite, Tailwind CSS, shadcn/ui (Alloy Night theme) |
 | Fonts | DM Serif Display, Inter, JetBrains Mono |
 | Deployment | Hetzner VPS (self-hosted) |
 | Version Control | Git + GitHub |
