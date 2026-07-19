@@ -1,5 +1,7 @@
 .env
 .env.*
+!.env.production
+!frontend/.env.production
 skills/
 __pycache__/
 *.pyc
