@@ -1,6 +1,6 @@
 # ModEval — Complete Technical Architecture
 
-**Last Updated:** May 2026  
+**Last Updated:** July 2026  
 **Status:** Live at [modeval.bynipun.com](https://modeval.bynipun.com)
 
 ---
@@ -10,38 +10,31 @@
 ```
 modeval/
 ├── backend/
-│   ├── app.py                          Flask entry point, blueprint registration, static file serving
-│   ├── config.py                       Centralized config: API keys, thresholds, modifiers, policies
+│   ├── app.py                          Flask entry point, blueprint registration (API-only)
+│   ├── config.py                       Centralized config: API keys, thresholds, policies
 │   ├── requirements.txt                Python dependencies (Flask, Gunicorn, OpenAI SDK, dotenv)
-│   ├── __pycache__/
 │   ├── routes/
 │   │   ├── analyze.py                  POST /analyze route, model orchestration, AI summary generation
-│   │   ├── batch.py                    POST /batch-analyze route for multi-input bulk analysis
 │   │   └── models.py                   GET /models route, credential-presence check returning active/total counts
 │   ├── models/
+│   │   ├── hive_moderation.py          Hive Moderation API wrapper
+│   │   ├── azure_content_safety.py     Azure Content Safety wrapper
+│   │   ├── google_nlp.py               Google Cloud Natural Language wrapper
+│   │   ├── openai_moderation.py        OpenAI Moderation API wrapper
 │   │   ├── hf_toxic_bert.py            Unitary toxic-bert model wrapper
 │   │   ├── hf_roberta_offensive.py     Cardiff NLP offensive language detector
 │   │   ├── hf_hate_speech.py           Facebook FAIR hate speech detector
-│   │   ├── hf_bias.py                  Valurank bias detector
-│   │   └── openai_moderation.py        OpenAI Moderation API wrapper
+│   │   └── hf_bias.py                  Valurank bias detector
 │   └── engine/
 │       ├── context_engine.py           Fixed threshold calculation (review=0.40, remove=0.70); no platform modifiers
 │       ├── normalizer.py               Raw model output → unified schema conversion
 │       ├── policy_engine.py            Policy rule extraction and alignment scoring
 │       ├── comparison.py               Disagreement detection and insight building
 │       └── explainer.py                Per-model result interpretation and explanation text
-├── frontend/
-│   ├── index.html                      Single-page app shell, tabbed UI structure
-│   ├── app.js                          All client-side logic: API calls, rendering, state management
-│   └── style.css                       CSS variables, layout, animations, all responsive design
-├── .env                                HF_API_KEY and OPENAI_API_KEY (local development only)
-├── .gitignore                          Excludes .env, __pycache__, venv
-├── README.md                           Public-facing project overview
-├── DESIGN.md                           Design system: colors, typography, components, animations
-├── CLAUDE.md                           Codebase documentation for AI assistance (< 150 lines)
-├── PROGRESS.md                         Dated changelog of all features and fixes
-└── docs/
-    └── ARCHITECTURE.md                 This file — complete technical reference
+├── frontend/                           React/Vite/TypeScript app (Vercel)
+├── docs/
+│   └── ARCHITECTURE.md                 This file — complete technical reference
+└── README.md                           Public-facing project overview
 ```
 
 ---
@@ -56,8 +49,6 @@ modeval/
 {
   "text": "string (1-500 characters, required)",
   "platform": "Reddit | Discord | Facebook | Instagram | Custom (default: Reddit)",
-  "content_type": "string (optional, defaults to 'Original Post')",
-  "strictness": "string (optional, defaults to 'Balanced')",
   "custom_policy_text": "string (optional, used only when platform='Custom')"
 }
 ```
@@ -76,16 +67,15 @@ All platforms use identical fixed base thresholds (review=0.40, remove=0.70). Pl
   "results": [
     {
       "model": "string — model display name",
-      "raw_scores": {"category": score, ...},
       "top_category": "string — highest-confidence violation category",
       "confidence": "0.0-1.0 float, 4 decimal places",
-      "action": "Allow | Review | Remove",
+      "action": "Allow | Review | Remove | Disabled | Error",
       "flagged": "boolean — true if action != Allow",
-      "alignment_score": "0.0-1.0 float — AI-powered policy alignment",
-      "aligned": "boolean — true if model verdict matches platform policy",
-      "alignment_reason": "string — content-aware explanation from Claude Haiku",
+      "aligned": "boolean — true if model verdict matches platform policy (active/error rows)",
+      "alignment_reason": "string — content-aware explanation from Claude Haiku (active rows)",
       "explanation": "string — plain English explainer text",
-      "error": "string (optional) — only on model failures"
+      "error": "string (optional) — only on model failures",
+      "disabled": "boolean (optional) — true when credentials are not configured"
     },
     ...up to 8 models total
   ],
@@ -94,55 +84,27 @@ All platforms use identical fixed base thresholds (review=0.40, remove=0.70). Pl
     "category_mismatch": ["list of model names"]
   },
   "insights": {
-    "strictest_model": {"model": "string", "action": "string", "reason": "string"},
-    "most_lenient_model": {"model": "string", "action": "string", "reason": "string"},
-    "consensus_recommendation": "Allow | Review | Remove"
+    "strictest_model": {"model": "string", "action": "string"},
+    "most_lenient_model": {"model": "string", "action": "string"},
+    "consensus_recommendation": "Allow | Review | Remove | No Consensus"
   },
   "ai_analysis": {
     "disagreement_explanation": "string — why models disagreed (empty if consensus)",
-    "risk_narrative": "string — CLEAR VIOLATION/SAFE/AMBIGUOUS verdict with reasoning",
+    "risk_narrative": "string — analyst reasoning (finding tag in UI comes from consensus_recommendation)",
     "context_sensitivity": "string — whether human review is needed",
     "contested_category": "string — most disputed category across models"
   }
 }
 ```
 
+Notes:
+- `raw_scores` is computed during normalization then stripped before the JSON response (`result.pop("raw_scores", None)` in `build_response()`).
+- Claude may return an internal `alignment_score` during alignment evaluation; only `aligned` and `alignment_reason` are copied onto result objects. `alignment_score` is never included in the API response.
+
 **Status Codes:**
 - 200 OK — Analysis complete, all fields valid
 - 400 Bad Request — Missing or invalid text input
 - 500 Server Error — Model inference or AI analysis failure (results still returned)
-
----
-
-### POST /batch-analyze
-**Purpose:** Analyze multiple inputs with the same context settings (admin/testing endpoint).
-
-**Request Body:**
-```json
-{
-  "texts": ["string", "string", ...],
-  "platform": "string (same options as /analyze)",
-  "content_type": "string",
-  "strictness": "string",
-  "custom_policy_text": "string (optional, used only when platform='Custom')"
-}
-```
-
-**Response Body:**
-```json
-{
-  "total": "integer — count of inputs",
-  "flagged_count": "integer — count of flagged inputs",
-  "flag_rate": "float 0.0-1.0",
-  "results": [
-    {
-      "text": "string — input text",
-      "analysis": "{ full /analyze response }"
-    },
-    ...
-  ]
-}
-```
 
 ---
 
@@ -301,7 +263,7 @@ remove_threshold = BASE_REMOVE_THRESHOLD (0.70)
 
 **Input to Claude:**
 - Original text being analyzed (for content-aware assessment)
-- All active model results (model name, action, confidence, top_category, alignment_score)
+- All active model results (model name, top_category, confidence, system_action)
 - Platform-specific policy instructions (zero-tolerance categories, deprioritized categories)
 
 **Output from Claude (JSON array):**
@@ -310,7 +272,6 @@ remove_threshold = BASE_REMOVE_THRESHOLD (0.70)
   {
     "model": "Hive Moderation",
     "aligned": true,
-    "alignment_score": 0.92,
     "alignment_reason": "Hive correctly flagged harassment at 0.87 confidence, aligning with Discord's zero-tolerance for harassment/threatening."
   },
   ...
@@ -320,6 +281,7 @@ remove_threshold = BASE_REMOVE_THRESHOLD (0.70)
 **Response handling:**
 - max_tokens: 1200 (increased to accommodate detailed reasons for all models)
 - Robust JSON array extraction handles Claude responses with extra text
+- Only `aligned` and `alignment_reason` are copied onto each API result object (`alignment_score` is not returned)
 - Fallback to keyword-based `evaluate_policy_alignment()` if Claude call fails
 
 ### Keyword-Based Alignment (Fallback)
@@ -497,10 +459,15 @@ cd backend
 pip install -r requirements.txt
 cd ..
 
-# Run Flask dev server
+# Run Flask API (API-only — does not serve the UI)
 py -m flask --app backend/app.py run
 
-# Open browser to http://127.0.0.1:5000
+# In a separate terminal, run the React frontend
+cd frontend
+npm install
+npm run dev
+# Open http://127.0.0.1:5173 (or the port Vite prints). Dev requests use /api,
+# which Vite proxies to https://modeval-api.bynipun.com by default.
 ```
 
 ### Testing an Endpoint
@@ -509,9 +476,7 @@ curl -X POST http://127.0.0.1:5000/analyze \
   -H "Content-Type: application/json" \
   -d '{
     "text": "I hate this",
-    "platform": "Reddit",
-    "content_type": "Original Post",
-    "strictness": "Balanced"
+    "platform": "Reddit"
   }'
 ```
 
@@ -573,7 +538,7 @@ app.js → Cloudflare Edge → Nginx (modeval-api.bynipun.com:443) → Gunicorn 
 
 **Nginx rate limiting zones (/etc/nginx/nginx.conf):**
 - Uses `$http_cf_connecting_ip` for real visitor IP (not Cloudflare's IP)
-- analyze_limit: 10 requests/minute (for /analyze and /batch-analyze)
+- analyze_limit: 10 requests/minute (for /analyze)
 - general_limit: 60 requests/minute (for all other routes)
 
 **Nginx site config (/etc/nginx/sites-available/modeval):**
@@ -582,7 +547,7 @@ app.js → Cloudflare Edge → Nginx (modeval-api.bynipun.com:443) → Gunicorn 
 - proxy_send_timeout: 30s
 - proxy_read_timeout: 30s
 - /analyze: analyze_limit zone, burst=3, returns 429 on violation
-- /batch-analyze: analyze_limit zone, burst=2, returns 429 on violation
+- /analyze: analyze_limit zone, burst=3, returns 429 on violation
 - All other routes: general_limit zone, burst=20
 
 ---
@@ -626,8 +591,8 @@ app.js → Cloudflare Edge → Nginx (modeval-api.bynipun.com:443) → Gunicorn 
 
 ### backend/app.py
 - Creates Flask app instance
-- Registers blueprints (`analyze_bp`, `batch_bp`, `models_bp`)
-- Serves frontend static files from `frontend/` directory
+- Registers blueprints (`analyze_bp`, `models_bp`)
+- API-only — does not serve frontend static files (UI is on Vercel)
 - Provides `/health` endpoint
 - Entry point for both development and production
 
@@ -644,12 +609,6 @@ app.js → Cloudflare Edge → Nginx (modeval-api.bynipun.com:443) → Gunicorn 
 - Calls normalizer, policy engine, comparison engine, explainer
 - Generates structured AI analysis via Claude Haiku (claude-haiku-4-5-20251001) via Anthropic SDK
 - Returns unified response schema
-
-### backend/routes/batch.py
-- `POST /batch-analyze` endpoint handler
-- Loops over multiple inputs, validates each item, then calls `/analyze` logic for each valid row
-- Aggregates results and computes flag rate
-- Used for testing and bulk analysis
 
 ### backend/routes/models.py
 - `GET /models` endpoint handler
@@ -672,11 +631,10 @@ app.js → Cloudflare Edge → Nginx (modeval-api.bynipun.com:443) → Gunicorn 
 
 ### backend/engine/policy_engine.py
 - `get_policy_rules()` — extracts zero-tolerance and deprioritized categories per platform
-- `evaluate_alignment_with_ai()` — AI-powered batched Claude Haiku call assessing alignment for all active models simultaneously; receives original text for content-aware assessment; returns aligned (bool), alignment_score (float), alignment_reason (string) per model; max_tokens=1200 with robust JSON extraction
-- `evaluate_policy_alignment()` — keyword-based fallback alignment scoring if AI call fails
+- `evaluate_alignment_with_ai()` — AI-powered batched Claude Haiku call assessing alignment for all active models simultaneously; receives original text for content-aware assessment; copies `aligned` and `alignment_reason` onto each result (any Claude `alignment_score` is internal only and not returned on API results); max_tokens=1200 with robust JSON extraction
+- `evaluate_policy_alignment()` — keyword-based fallback alignment scoring if AI call fails; computes internal `alignment_score` / `aligned` / `policy_note`, but only `aligned` and `policy_note` (as `alignment_reason`) are written onto API results
 - `get_platform_policy_summary()` — returns policy rules for 5 active platforms (Reddit, Discord, Facebook, Instagram, Custom)
 - Applies custom policy keyword matching
-- `evaluate_policy_alignment()` returns alignment_score, aligned, and policy_note
 
 ### backend/engine/comparison.py
 - `detect_disagreements()` — identifies action/category conflicts (severity_gap detection removed)
@@ -685,7 +643,7 @@ app.js → Cloudflare Edge → Nginx (modeval-api.bynipun.com:443) → Gunicorn 
 
 ### backend/engine/explainer.py
 - `explain_result()` — generates human-readable explanation text for each model result
-- Contextualizes the action in terms of platform, content type, and strictness
+- Contextualizes the action using fixed thresholds and policy notes
 - Called for every result, not just failures
 
 ### backend/models/[model_name].py
@@ -747,7 +705,7 @@ normalize_result() x 8
     ↓
 evaluate_alignment_with_ai() — single batched Claude Haiku call
     ├─→ receives: original text + all active model results + platform policy
-    ├─→ returns: aligned, alignment_score, alignment_reason per model
+    ├─→ applies to results: aligned, alignment_reason (alignment_score not returned in API response)
     └─→ fallback: evaluate_policy_alignment() if Claude call fails
     ↓
 explain_result() x active models
@@ -787,7 +745,7 @@ frontend/app.js
 - **Input Validation** — Max length 500 characters, schema validation on all inputs.
 - **Error Messages** — Never expose API keys or internal paths in error responses.
 - **Cloudflare Proxy** — All traffic proxied through Cloudflare edge. Origin server IP not exposed in public DNS. SSL Full (Strict) mode enforced end-to-end.
-- **Rate Limiting** — Nginx enforces per-IP rate limits using real visitor IP from Cloudflare header. /analyze and /batch-analyze: 10 req/min (burst 3 and 2 respectively). All other routes: 60 req/min (burst 20). Violations return 429.
+- **Rate Limiting** — Nginx enforces per-IP rate limits using real visitor IP from Cloudflare header. /analyze: 10 req/min (burst 3). All other routes: 60 req/min (burst 20). Violations return 429.
 - **Request Size** — client_max_body_size 16k at Nginx level. Oversized POST bodies return 413 before reaching Flask.
 - **Security Headers** — Set on all responses via Nginx: X-Content-Type-Options (nosniff), X-Frame-Options (DENY), Referrer-Policy (strict-origin-when-cross-origin), X-XSS-Protection (1; mode=block).
 - **Proxy Timeouts** — Nginx enforces connect (10s), send (30s), and read (30s) timeouts on all proxied requests.

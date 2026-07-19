@@ -6,7 +6,7 @@ import json
 import logging
 import anthropic
 
-from backend.config import ANTHROPIC_API_KEY, CUSTOM_POLICY_KEYWORDS, PREDEFINED_POLICIES, PLATFORM_MAP
+from backend.config import ANTHROPIC_API_KEY, CUSTOM_POLICY_KEYWORDS, PREDEFINED_POLICIES
 
 
 def summarize_custom_policy(policy_text: str) -> dict:
@@ -42,13 +42,6 @@ def get_policy_rules(policy_key: str, custom_policy_text: str = "") -> dict:
     if policy_key == "custom":
         return summarize_custom_policy(custom_policy_text)
 
-    if policy_key == "generic":
-        return {
-            "zero_tolerance": set(),
-            "deprioritized": set(),
-            "summary": "Generic policy (no alignment enforcement).",
-        }
-
     policy_name = policy_key.capitalize()
     policy = PREDEFINED_POLICIES.get(policy_name, PREDEFINED_POLICIES.get("Reddit", {}))
     return {
@@ -77,12 +70,6 @@ def evaluate_policy_alignment(result: dict, policy_rules: dict, thresholds: dict
 
     alignment_score = max(0.0, min(1.0, 1 - abs(confidence - expected_threshold)))
     aligned = alignment_score >= 0.70
-
-    enforced_action = result["action"]
-    if top_category in policy_rules["zero_tolerance"] and confidence > 0:
-        enforced_action = "Remove"
-    elif top_category in policy_rules["deprioritized"] and confidence < min(0.90, thresholds["remove_threshold"] + 0.20):
-        enforced_action = "Allow" if confidence < thresholds["review_threshold"] else "Review"
 
     return {
         "alignment_score": round(alignment_score, 4),

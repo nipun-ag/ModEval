@@ -4,29 +4,26 @@
 ModEval is a context and policy-aware AI moderation evaluation system. Runs text through 8 independent models (Hive Moderation, Azure Content Safety, Google NLP, OpenAI Moderation, toxic-bert, RoBERTa offensive, Facebook hate speech, Valurank bias), normalizes outputs, applies platform context and strictness rules, scores policy alignment, and surfaces disagreements. Live at [modeval.bynipun.com](https://modeval.bynipun.com).
 
 ## Tech Stack
-- **Backend:** Python 3.12, Flask 3.1, Gunicorn
-- **Models:** OpenAI Moderation API + 4 HuggingFace models (Inference API)
+- **Backend:** Python 3.12, Flask 3.1, Gunicorn (API-only)
+- **Models:** OpenAI Moderation API + 4 HuggingFace models (Inference API) + Hive, Azure, Google NLP
 - **AI Summary:** Claude Haiku (Anthropic)
-- **Frontend:** Plain HTML, CSS, JavaScript (no frameworks)
-- **Deployment:** Hetzner VPS (self-hosted) — see INFRASTRUCTURE.md
+- **Frontend:** React, TypeScript, Vite, Tailwind CSS, shadcn/ui (Alloy Night)
+- **Deployment:** Frontend on Vercel (modeval.bynipun.com); API on Hetzner (modeval-api.bynipun.com) — see INFRASTRUCTURE.md
 
 ## Project Structure
 ```
-backend/app.py                 Flask app, blueprints, static serving
-backend/config.py              Config: API keys, thresholds, modifiers, policies
+backend/app.py                 Flask app, blueprints (API-only; no static UI serving)
+backend/config.py              Config: API keys, thresholds, policies
 backend/routes/analyze.py      POST /analyze route, model orchestration
-backend/routes/batch.py        POST /batch-analyze route
 backend/routes/models.py       GET /models route, credential-presence check
-backend/engine/context_engine.py    Threshold calculation (platform/content/strictness)
+backend/engine/context_engine.py    Fixed threshold calculation (review=0.40, remove=0.70)
 backend/engine/normalizer.py   Raw output → unified schema conversion
 backend/engine/policy_engine.py     Policy rules and alignment scoring
 backend/engine/comparison.py    Disagreement detection, insights
 backend/engine/explainer.py     Per-model result explanation text
 backend/models/[model].py       Individual model API wrappers
-frontend/index.html            Single-page app shell, modals, tabs
-frontend/app.js                All client-side logic, rendering, API calls
-frontend/style.css             CSS variables, layout, animations
-docs/ARCHITECTURE.md           Complete technical reference (this file)
+frontend/                      React/Vite/TypeScript app (Vercel)
+docs/ARCHITECTURE.md           Complete technical reference
 ```
 
 ## Coding Conventions
@@ -161,6 +158,12 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
 3. Update modifier tables after changes
 
 ## Current Project State
+- React/Vite/TypeScript frontend (Alloy Night theme) live on Vercel; Flask API on Hetzner is API-only (no static UI serving)
+- Production frontend calls `https://modeval-api.bynipun.com` directly; local `npm run dev` uses Vite `/api` proxy
+- POST `/batch-analyze` removed (unused by React frontend); `MAX_BATCH_SIZE` and `backend/routes/batch.py` deleted
+- `content_type` / `strictness` request fields removed end-to-end (were no-ops); `/analyze` accepts `text`, `platform`, optional `custom_policy_text` only
+- Dead-path cleanup in `policy_engine.py`: unused `PLATFORM_MAP` import, unreachable `"generic"` branch, unused `enforced_action` locals
+- Response fields intentionally kept for other consumers: `flagged`, `insights.*.action`, `total_count` (even if UI does not render all of them)
 - 8 models live and running in parallel:
   - 3 Enterprise APIs: Hive Moderation, Azure Content Safety, Google NLP
   - 4 HuggingFace models: toxic-bert, RoBERTa offensive, hate-speech, bias-detector
@@ -169,62 +172,23 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
   - Models without configured credentials show "Coming Soon" instead of errors in the decision matrix
   - Consensus, disagreements, and insights calculated only from active models
   - Dynamic model count in topbar reflects configured credentials
-- Decision matrix rendered in two tiers:
-  - Enterprise APIs tier with 3 vendor models
-  - Open Source Models tier with 4 HuggingFace + OpenAI
-  - Disabled models show gray rows at 0.4 opacity
-- Platform options reduced to 5: Reddit, Discord, Facebook, Instagram, Custom (Gaming Platform, Professional, Community/Forum, VR/Metaverse removed)
+- Platform options: Reddit, Discord, Facebook, Instagram, Custom
 - PLATFORM_MAP in config.py updated to match 5 active platforms
-- Content Type and Strictness dropdowns removed from UI entirely; backend defaults to "Original Post" and "Balanced" if not provided
-- AI-powered policy alignment using Claude Haiku (claude-haiku-4-5-20251001): single batched call evaluates all model results against platform policy with original content context, returns alignment_score, aligned (bool), and alignment_reason for each model; flags model failures and acknowledges ambiguous content
+- AI-powered policy alignment using Claude Haiku (claude-haiku-4-5-20251001): single batched call evaluates all model results against platform policy with original content context; copies `aligned` and `alignment_reason` onto each result (alignment_score is computed internally but not returned on result objects)
 - Alignment reasons reference actual content being analyzed, not just category labels
-- Claude prompts clarified: models return confidence scores only; ModEval's threshold system (score <0.40=Allow, 0.40-0.70=Review, >0.70=Remove) assigns actions. AI evaluation assesses confidence appropriateness, not model "decisions."
+- Claude prompts clarified: models return confidence scores only; ModEval's threshold system (score <0.40=Allow, 0.40-0.70=Review, >0.70=Remove) assigns actions
 - Fallback to keyword-based alignment logic if Claude call fails, ensuring analysis always completes
 - Both interpretation calls (alignment + AI summary) use Anthropic SDK — anthropic package added to requirements.txt
 - **Requires ANTHROPIC_API_KEY in Doppler (project: modeval, config: prd) for production** — already configured
-- Dynamic platform policy guidelines box below platform selector showing accurate sourced rules for each platform (Reddit, Discord, Facebook, Instagram based on official documentation) — collapsible by default, expands on header click with smooth max-height transition and rotating chevron icon
-- AI Interpretation disclaimer banner at top of Insights tab (now renamed to AI INTERPRETATION) explaining Claude Haiku's output is probabilistic and intended to assist, not replace, human review — dynamically injected in renderInsights() to survive innerHTML overwrites, SVG info icon, 12px bright text with subtle left border accent for legibility
-- Context explainer tooltip above Platform selector explaining why platform selection exists (hover info icon to reveal)
-- Platform selector simplified to 5 options with modal dropdown showing platform name + description
-- AI analysis with 4 structured analytical fields: disagreement_explanation (what does disagreement reveal?), risk_narrative (direct CLEAR/SAFE/GREY verdict with reasoning), context_sensitivity (human review needed?), contested_category (most disagreed category)
-- Senior T&S analyst persona in AI summary generation using Claude Haiku: flags model failures, explains ambiguity, recommends human review, avoids passive summarization
-- Disagreement detection and banner (scoped to Summary tab only — first child of #lower-panel-summary)
-- Dynamic topbar model count: GET /models endpoint returns active/total from credential-presence check; JS updates #models-active-count pill on page load and does not overwrite it during analysis
-- Batch analysis validates each row independently and excludes error rows from flagged-rate calculations
+- Dynamic platform policy guidelines box below platform selector
+- AI analysis with 4 structured analytical fields: disagreement_explanation, risk_narrative, context_sensitivity, contested_category
+- Finding tag (CLEAR VIOLATION / CLEAR SAFE / AMBIGUOUS) derived from `insights.consensus_recommendation`, not free-text risk_narrative
+- Disagreement detection and banner (action/category mismatch when 2+ distinct values among non-error results)
+- Dynamic topbar model count: GET /models returns active/total from credential-presence check
 - 100 pre-loaded test cases across 10 violation categories
-- Phase 0 UX overhaul complete:
-  - Topbar navigation with 3 tabs: ANALYSIS (active), HOW IT WORKS, MODELS
-  - HOW IT WORKS and MODELS are full-page panels accessed from topbar, not results tabs
-  - Panel padding increased to 48px
-  - Consensus hero card leads results with large action word, AI analysis subtitle, donut chart, and action legend
-  - Results panel has three lower tabs: Summary, Model Breakdown, AI Interpretation — hidden until analysis runs
-  - Summary tab: disagreement banner + consensus hero + donut + legend
-  - Model Breakdown tab: card-per-row layout with section header rows (CATEGORY, CONFIDENCE, ACTION); one card per model; no alignment column
-  - AI Interpretation tab: three-section layout:
-    - Top grid (3 cards): Disagreement Vector left tall card + Most Lenient Model (top right) + Strictest Model (bottom right); Risk Narrative card removed
-    - Alignment matrix: All model alignment verdicts with ALIGNED/MISALIGNED badges and reasons, footer "Alignment assessed by Claude Haiku against [platform] content policy."
-    - Elevated AI executive summary card: Gradient teal/purple border with glow, consensus badge, auto-classified finding tag (CLEAR VIOLATION/SAFE CONTENT/AMBIGUOUS), AI narrative, MODEL CONFIDENCE header above per-model confidence bars with gradient fill
-  - How It Works panel with 7 sections: Normalization, Context Engine (simplified to platform modifier only), AI-powered Policy Alignment Engine, Disagreement Detection, AI Interpretation Layer, Why These Models, Known Limitations
-  - Ambient glow blobs on results panel background
-- Deployed as split architecture: Vercel serves frontend at modeval.bynipun.com, Hetzner VPS serves API at modeval-api.bynipun.com; Cloudflare proxies both; flask-cors enabled scoped to modeval.bynipun.com
-- Fixed threshold model: All platforms use identical base thresholds (review=0.40, remove=0.70) — platform-specific policy judgment delegated entirely to Claude Haiku alignment assessment
-- Platform threshold modifiers completely removed — prior approach (Discord +0.05, Facebook -0.05, Instagram -0.10, etc.) was discarded as it distorted raw model signal before Claude evaluation
-- Content Type and Strictness modifiers removed — these inputs accepted but not used (v1 convenience, non-essential)
-- Severity field completely removed from entire codebase — was a 1-10 scaling of confidence that added little value; decision-making now based purely on action (Allow/Review/Remove) and policy alignment
-  - Removed score_to_severity() function and all severity calculations from normalizer.py
-  - Removed severity_gap detection from comparison.py
-  - Removed gauge visualization from verdict-visuals-card in index.html, skeleton state now shows single circle
-  - Removed all gauge-related CSS classes and severity bar column from breakdown cards
-  - Backend API responses no longer contain severity field
-  - Focused on action-based consensus (donut chart) instead of severity-based visualization
-- Mobile overflow fix in `style.css` (`@media max-width: 900px` + `600px`): `min-width: 0` on flex/grid children, mobile-only universal shrink, `100%` containment (no `100vw`), stacked breakdown fields, fixed `.insights-alignment-reason` mobile selector, `overflow-wrap: anywhere` for long URLs/strings/AI text, methodology table scroll + `table-layout: fixed`, arch-flow wrapping — QA passed at 375/393/360px widths
-- Flask backend security hardening complete:
-  - Timeout enforcement at multiple layers: Cloudflare (via HTTP timeout) → Nginx proxy (30s connect/send/read) → ThreadPoolExecutor (25s on model execution) → Anthropic SDK (25s on API calls) — creates defense-in-depth with no single point of failure
-  - Error sanitization: Full exception details logged server-side via structured logging; clients receive only generic "Service temporarily unavailable" messages in error states (400, 404, 429, 500)
-  - ANTHROPIC_API_KEY centralized in config.py and loaded once at startup instead of repeated os.getenv() calls in request handlers
-  - Global error handlers for 400, 404, 429, 500 return JSON with generic error messages (no stack traces or implementation details exposed)
-  - All print() calls replaced with logging module (warning/info/error levels) — better auditability and structured output
-  - TimeoutError handling in ThreadPoolExecutor.as_completed() returns partial results with sanitized errors instead of crashing
+- Deployed as split architecture: Vercel serves frontend at modeval.bynipun.com, Hetzner VPS serves API at modeval-api.bynipun.com; Cloudflare proxies both; flask-cors scoped to modeval.bynipun.com
+- Fixed threshold model: All platforms use identical base thresholds (review=0.40, remove=0.70)
+- Flask backend security hardening: multi-layer timeouts, sanitized client errors, logging module, global JSON error handlers
 
 ## Known Limitations
 - HuggingFace free tier may rate-limit under high traffic

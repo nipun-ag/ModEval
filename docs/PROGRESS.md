@@ -4,6 +4,20 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-07-19
+
+**chore: remove unused batch endpoint, Flask static UI serving, and no-op request fields**
+
+- Removed dead `enforced_action` locals, unused `PLATFORM_MAP` import, and unreachable `"generic"` branch from `policy_engine.py` (no behavior change for Reddit/Discord/Facebook/Instagram/Custom)
+- Deleted `POST /batch-analyze` (`backend/routes/batch.py`) and its blueprint registration; removed batch-only `MAX_BATCH_SIZE`
+- Flask is now API-only: removed `GET /` and `GET /og-image.png` static handlers (UI served by Vercel)
+- Removed `content_type` / `strictness` from frontend request payload and backend `/analyze` handling (were accepted but unused in Claude prompt construction)
+- Intentionally kept response fields unused by current UI: `flagged`, `insights.*.action`, `total_count`
+- Confirmed `/analyze`, `/models`, `/health` remain the supported surface; docs updated in ARCHITECTURE.md, CLAUDE.md, AGENTS.md
+- Local verification (cleaned code on Flask `:5055`): `GET /health` ok; `GET /models` returns `total_count`; `POST /analyze` without `content_type`/`strictness` returns 8 results with KEEP fields present; `POST /batch-analyze`, `GET /`, `GET /og-image.png` all 404. Live API still serves batch until Hetzner redeploy.
+
+---
+
 ## 2026-06-29
 
 **docs: post-migration cleanup — stale subdomain references and DNS notes**

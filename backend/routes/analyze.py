@@ -251,8 +251,6 @@ def build_response(payload: dict) -> dict:
 
     ai_analysis = generate_ai_analysis(active_results, {
         "platform": platform,
-        "content_type": payload.get("content_type", "Original Post"),
-        "strictness": payload.get("strictness", "Balanced"),
         "text": payload.get("text", ""),
     })
 

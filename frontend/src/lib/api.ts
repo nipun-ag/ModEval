@@ -38,8 +38,6 @@ export function analyzeText(payload: AnalyzeRequest) {
   return request<AnalyzeResponse>("/analyze", {
     method: "POST",
     body: JSON.stringify({
-      content_type: "Original Post",
-      strictness: "Balanced",
       custom_policy_text: "",
       ...payload,
     }),

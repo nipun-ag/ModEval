@@ -11,6 +11,9 @@ export default defineConfig({
     },
   },
   server: {
+    // Pin port so backend CORS allow-list stays stable across local sessions.
+    port: 5173,
+    strictPort: true,
     proxy: {
       "/api": {
         target: "https://modeval-api.bynipun.com",

@@ -169,6 +169,28 @@ After alignment assessment, a second Claude Haiku call generates an analytical i
 
 ---
 
+## Local Development Setup
+
+The production UI is on Vercel; the Flask app is **API-only** and does not serve the React frontend.
+
+```bash
+# Terminal 1 — API (optional for local backend work)
+pip install -r backend/requirements.txt
+py -m flask --app backend/app.py run
+# Health: http://127.0.0.1:5000/health
+
+# Terminal 2 — React frontend
+cd frontend
+npm install
+npm run dev
+# Open the URL Vite prints (typically http://127.0.0.1:5173).
+# In dev, /api is proxied to https://modeval-api.bynipun.com.
+```
+
+Production builds call `https://modeval-api.bynipun.com` directly (`import.meta.env.DEV` is false).
+
+---
+
 ## Future Improvements
 
 **In Progress / Planned:**

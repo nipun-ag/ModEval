@@ -53,8 +53,6 @@ export interface ModelsResponse {
 export interface AnalyzeRequest {
   text: string
   platform: Platform
-  content_type?: string
-  strictness?: string
   custom_policy_text?: string
 }
 
