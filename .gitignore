@@ -1,3 +1,10 @@
 .env
 .env.*
 skills/
+__pycache__/
+*.pyc
+.venv/
+venv/
+.claude/
+.aider*
+*.lnk
