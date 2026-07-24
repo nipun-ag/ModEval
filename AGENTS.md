@@ -189,6 +189,7 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
 - Deployed as split architecture: Vercel serves frontend at modeval.bynipun.com, Hetzner VPS serves API at modeval-api.bynipun.com; Cloudflare proxies both; flask-cors scoped to modeval.bynipun.com
 - Fixed threshold model: All platforms use identical base thresholds (review=0.40, remove=0.70)
 - Flask backend security hardening: multi-layer timeouts, sanitized client errors, logging module, global JSON error handlers
+- How It Works React pipeline diagram: enlarged nodes/lanes/spacing (780×1380 viewBox, single-row 8-lane fan-out); detail drawer side-by-side from 1280px (`FLOW_DRAWER_SIDE_BY_SIDE_MIN`), overlay below
 
 ## Known Limitations
 - HuggingFace free tier may rate-limit under high traffic

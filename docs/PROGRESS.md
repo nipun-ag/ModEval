@@ -4,6 +4,18 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-07-24
+
+**style: enlarge How It Works pipeline diagram scale and spacing**
+
+- Scaled trunk nodes (220×64), titles (15px), subtitles (11px), and 8-lane fan-out boxes (84×54, 11px labels, 10px gaps) inside a wider 780×1380 viewBox; kept single-row fan-out (no 4+4 wrap)
+- Increased vertical stage gaps and connector stroke/pulse dash sizes so lines stay proportional
+- Raised side-by-side drawer breakpoint from 1160 → 1280 (`FLOW_DRAWER_SIDE_BY_SIDE_MIN`) because diagram shell (~780) + pad (~32) + drawer (~448) no longer fits cleanly at 1160; panel max-width raised to 1320 so the column does not center under the drawer before the breakpoint
+- Playwright `setViewportSize` re-check at 768/1024/1160/1280/1440: overlay below 1280, side-by-side at/above with ≥20px shell–drawer clearance; page scrolls for taller diagram; `tsc -b && vite build` passes
+- Follow-up copy/legibility: Why These Models diagram subtitle → `model selection rationale` (drawer copy unchanged); FAN-OUT label moved above the H fan-out lines with a solid dark pill so dashes no longer cut through the text
+
+---
+
 ## 2026-07-19
 
 **chore: remove unused batch endpoint, Flask static UI serving, and no-op request fields**

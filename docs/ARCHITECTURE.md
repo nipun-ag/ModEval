@@ -677,6 +677,13 @@ app.js → Cloudflare Edge → Nginx (modeval-api.bynipun.com:443) → Gunicorn 
 - Animation keyframes: pulse, shimmer, fade, modal-open/close
 - Glassmorphism effects: blur, backdrop-filter
 
+### frontend/src/components/how-it-works/ (React)
+- `PipelineFlowDiagram.tsx` — vertical SVG pipeline (viewBox 780×1380) with 8-lane horizontal fan-out; clickable `data-flow-node` stages
+- `FlowDetailDrawer.tsx` — stage detail portal; side-by-side vs overlay via `FLOW_DRAWER_SIDE_BY_SIDE_MIN` (1280px)
+- `HowItWorksPanel.tsx` — panel shell (max-width 1320) hosting diagram + drawer
+- `flowContent.tsx` — node copy / model lane metadata for the drawer
+- Ambient connector pulse: `.flow-connector` / `.flow-pulse` in `frontend/src/index.css`
+
 ---
 
 ## Data Flow

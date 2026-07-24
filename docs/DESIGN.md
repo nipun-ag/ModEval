@@ -536,6 +536,19 @@ Never use for general reading text. Monospace signals "this is technical data."
 
 ---
 
+## How It Works — Pipeline Flow Diagram (React)
+
+Interactive SVG pipeline in `frontend/src/components/how-it-works/PipelineFlowDiagram.tsx`.
+
+- **Shell:** `max-w-[780px]`, viewBox `0 0 780 1380` — vertical trunk with horizontal 8-lane fan-out at Parallel Inference
+- **Trunk nodes:** ~220×64; title ~15px / subtitle ~11px mono
+- **Fan-out lanes:** ~84×54, 11px labels, 10px gaps; single row (not wrapped)
+- **Connectors:** `.flow-connector` stroke-width 2 with ambient `.flow-pulse` dash animation; respects `prefers-reduced-motion`
+- **Detail drawer:** `FlowDetailDrawer` — side-by-side at `min-width: 1280px` (`FLOW_DRAWER_SIDE_BY_SIDE_MIN`), overlay+scrim below; panel max-width must stay ≥ breakpoint so the diagram column does not center into the drawer
+- **IDs / hooks:** nodes use `data-flow-node`; pulse styles live in `frontend/src/index.css`
+
+---
+
 ## Adding New Components
 
 When adding a new component, follow this checklist:

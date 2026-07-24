@@ -9,8 +9,9 @@ import {
 } from "@/components/how-it-works/flowContent"
 import { cn } from "@/lib/utils"
 
-/** Diagram (~680) + drawer (~448) need ~1128px+; 1160 leaves a small clear gap. */
-export const FLOW_DRAWER_SIDE_BY_SIDE_MIN = 1160
+/** Diagram shell (~780) + pad (~32) + drawer (~448) ≈ 1260; 1280 leaves a clear gap.
+ *  Panel max-width must be ≥ this so the column does not center under the drawer. */
+export const FLOW_DRAWER_SIDE_BY_SIDE_MIN = 1280
 
 type FlowDetailDrawerProps = {
   nodeId: FlowNodeId | null

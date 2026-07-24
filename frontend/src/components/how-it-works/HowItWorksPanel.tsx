@@ -8,7 +8,7 @@ export function HowItWorksPanel() {
   const [activeNode, setActiveNode] = useState<FlowNodeId | null>(null)
 
   return (
-    <div className="mx-auto max-w-[1180px] space-y-6 px-4 py-8 sm:px-8">
+    <div className="mx-auto max-w-[1320px] space-y-6 px-4 py-8 sm:px-8">
       <section>
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
           Methodology & Framework
@@ -21,9 +21,11 @@ export function HowItWorksPanel() {
         </p>
       </section>
 
-      {/* Vertical column stays clear of the fixed right drawer above ~1160px;
-          below that breakpoint the drawer overlays with a scrim. */}
-      <div className="max-w-[680px]">
+      {/* Vertical column stays clear of the fixed right drawer above ~1280px;
+          below that breakpoint the drawer overlays with a scrim.
+          Panel max-width must stay ≥ breakpoint so the column does not center
+          into the drawer before side-by-side mode engages. */}
+      <div className="max-w-[780px]">
         <PipelineFlowDiagram activeId={activeNode} onSelect={setActiveNode} />
         <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
           Vertical trunk · horizontal fan-out at parallel inference · ambient pulse respects
