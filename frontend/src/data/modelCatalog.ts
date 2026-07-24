@@ -16,7 +16,7 @@ export const MODEL_CATALOG: ModelCatalogEntry[] = [
   {
     id: "Hive Moderation",
     name: "Hive Moderation",
-    arch: "REST API",
+    arch: "Proprietary",
     creator: "The Hive AI",
     detects: "Sexual, Violence, Hate, Bullying, Spam",
     trained: "Purpose-built for T&S pipelines",
@@ -58,7 +58,7 @@ export const MODEL_CATALOG: ModelCatalogEntry[] = [
   {
     id: "Google NLP",
     name: "Google NLP",
-    arch: "REST API",
+    arch: "Proprietary",
     creator: "Google Cloud",
     detects: "8 moderation categories including weapons, drugs, and more",
     trained: "Google proprietary dataset",

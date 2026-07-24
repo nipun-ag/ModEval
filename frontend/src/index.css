@@ -161,3 +161,39 @@
   background: var(--primary);
   animation: pulse-dot 1.6s ease-in-out infinite;
 }
+
+/* How It Works — ambient pipeline connector pulse (CSS-only, no JS frame loop) */
+.pipeline-flow .flow-connector {
+  fill: none;
+  stroke: color-mix(in oklch, var(--primary) 45%, transparent);
+  stroke-width: 1.6;
+}
+
+.pipeline-flow .flow-pulse {
+  stroke-dasharray: 5 12;
+  animation: pipeline-flow-pulse 2.8s linear infinite;
+}
+
+.pipeline-flow .flow-fallback {
+  fill: none;
+  stroke: color-mix(in oklch, var(--review) 50%, transparent);
+  stroke-width: 1.4;
+  stroke-dasharray: 5 4;
+}
+
+@keyframes pipeline-flow-pulse {
+  to {
+    stroke-dashoffset: -34;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pipeline-flow .flow-pulse {
+    animation: none;
+    stroke-dasharray: none;
+  }
+
+  .live-dot {
+    animation: none;
+  }
+}
