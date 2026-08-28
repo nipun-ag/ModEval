@@ -437,7 +437,7 @@ Never use for general reading text. Monospace signals "this is technical data."
 - `.equation-var`: variable name (DM Serif Display 16px)
 - `.equation-sigma`: sigma symbol or summation notation (JetBrains Mono 18px)
 - Color-coded: modifiers in amber/green, thresholds in accent blue
-- Used in How It Works Context Engine section to display: threshold_adj = clamp(base + platform_mod + content_mod + strictness_mod, 0.10, 0.90)
+- Used in How It Works Context Engine section to display the fixed threshold model: review=0.40, remove=0.70
 
 ### Methodology Two-Column Layout (.methodology-two-col)
 - Flex row layout with 50/50 split or flexible columns

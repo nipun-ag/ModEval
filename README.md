@@ -6,7 +6,7 @@
 
 ## What Is This
 
-ModEval is a live web tool that evaluates text content using 8 independent AI moderation models simultaneously — four enterprise APIs (Hive Moderation, Azure Content Safety, Google NLP, OpenAI Moderation) alongside four open source models. It normalizes their outputs into a unified format, uses AI-powered policy alignment to score each model's decision against real platform policies, and surfaces disagreements between models.
+ModEval is a live web tool that evaluates text content using 8 independent AI moderation models simultaneously: 3 enterprise APIs (Hive Moderation, Azure Content Safety, Google NLP), OpenAI Moderation, and 4 open source HuggingFace models. It normalizes their outputs into a unified format, uses AI-powered policy alignment to score each model's decision against real platform policies, and surfaces disagreements between models.
 
 The core insight behind it: **no single moderation model should be trusted blindly.** The same piece of content can be classified completely differently depending on which model you use and what platform policy is being applied. ModEval makes those differences visible — and uses an AI interpretation layer to explain what those differences actually mean.
 
@@ -26,7 +26,7 @@ ModEval is both a functional tool and a demonstration of applied AI governance t
 
 ## What It Does
 
-- Runs text through 8 moderation models in parallel — four enterprise APIs and four open source models, each covering a distinct safety dimension
+- Runs text through 8 moderation models in parallel: 3 enterprise APIs, OpenAI Moderation, and 4 open source HuggingFace models, each covering a distinct safety dimension
 - Normalizes all outputs into a unified schema (category, confidence, action)
 - Uses Claude Haiku to assess how well each model's decision aligns with the selected platform's actual content policy
 - Detects and explains disagreements between models (action conflicts and category mismatches)
@@ -39,7 +39,7 @@ ModEval is both a functional tool and a demonstration of applied AI governance t
 
 ## Models Used
 
-ModEval runs 8 models in parallel across two tiers. Enterprise APIs require credentials configured in environment variables. Open source models run via the HuggingFace Inference API and are always available.
+ModEval runs 8 models in parallel across three groups. Enterprise APIs and OpenAI require their own credentials, while the 4 open source models run through the HuggingFace Inference API when `HF_API_KEY` is configured.
 
 ### Enterprise APIs
 
@@ -48,6 +48,11 @@ ModEval runs 8 models in parallel across two tiers. Enterprise APIs require cred
 | Hive Moderation | The Hive AI | Sexual, Violence, Hate, Bullying, Spam |
 | Azure Content Safety | Microsoft | Hate, Violence, Sexual, Self-Harm |
 | Google NLP | Google Cloud | 8-category moderation including weapons and drugs |
+
+### Proprietary API
+
+| Display Name | Provider | Safety Dimension |
+|---|---|---|
 | OpenAI Moderation | OpenAI | Multi-category (harassment, hate, violence, sexual, self-harm) |
 
 ### Open Source Models
@@ -159,12 +164,13 @@ After alignment assessment, a second Claude Haiku call generates an analytical i
 | Layer | Technology |
 |---|---|
 | Backend | Python 3.12, Flask 3.1, Gunicorn |
-| Enterprise APIs | Hive Moderation, Azure Content Safety, Google NLP, OpenAI Moderation |
+| Enterprise APIs | Hive Moderation, Azure Content Safety, Google NLP |
+| Proprietary API | OpenAI Moderation |
 | Open Source Models | HuggingFace Inference API (4 models) |
 | AI Interpretation | Claude Haiku (claude-haiku-4-5-20251001) via Anthropic API |
 | Frontend | React, TypeScript, Vite, Tailwind CSS, shadcn/ui (Alloy Night theme) |
 | Fonts | DM Serif Display, Inter, JetBrains Mono |
-| Deployment | Hetzner VPS (self-hosted) |
+| Deployment | Vercel frontend + Hetzner VPS backend API |
 | Version Control | Git + GitHub |
 
 ---

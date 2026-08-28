@@ -30,12 +30,12 @@ The application is deployed across two providers: Vercel hosts the frontend stat
 
 **Frontend:**
 ```
-User → Cloudflare Edge → Vercel → index.html / app.js / style.css
+User → Cloudflare Edge → Vercel → React/Vite static bundle
 ```
 
 **API:**
 ```
-app.js → Cloudflare Edge → Nginx (modeval-api.bynipun.com:443) → Gunicorn (127.0.0.1:5000) → Flask
+React app → Cloudflare Edge → Nginx (modeval-api.bynipun.com:443) → Gunicorn (127.0.0.1:5000) → Flask
 ```
 
 The Flask backend runs under Gunicorn, managed by systemd, with secrets injected by Doppler. The frontend is a static site served by Vercel. All API calls from the frontend are made to `https://modeval-api.bynipun.com` with CORS enabled.

@@ -126,7 +126,7 @@ Notes:
 - `OPENAI_API_KEY` → OpenAI Moderation
 - `HF_API_KEY` → counts 4 HuggingFace models (toxic-bert, RoBERTa offensive, Hate Speech, Bias Detector)
 
-Called on page load by `frontend/app.js` to update the `#models-active-count` topbar status pill dynamically.
+Called on page load through `frontend/src/lib/api.ts`; `frontend/src/App.tsx` stores the model count label and passes it to `TopBar`.
 
 ---
 
@@ -490,8 +490,9 @@ The application uses a split architecture with frontend on Vercel and API on Het
 **Frontend:**
 - Platform: Vercel (vercel.com)
 - URL: modeval.bynipun.com
-- Files: index.html, app.js, style.css served as static files
-- No API calls to local server — all calls to https://modeval-api.bynipun.com
+- Files: React/Vite static bundle built from `frontend/`
+- Production API calls go directly to `https://modeval-api.bynipun.com`
+- Local `npm run dev` uses a Vite `/api` proxy to the production API by default
 
 **API Backend:**
 - Platform: Hetzner VPS (hetzner.com) — CX23 plan
@@ -505,12 +506,12 @@ The application uses a split architecture with frontend on Vercel and API on Het
 
 **Frontend (static assets):**
 ```
-User → Cloudflare Edge → Vercel → index.html / app.js / style.css
+User → Cloudflare Edge → Vercel → React/Vite static bundle
 ```
 
 **API (from frontend):**
 ```
-app.js → Cloudflare Edge → Nginx (modeval-api.bynipun.com:443) → Gunicorn (127.0.0.1:5000) → Flask
+React app → Cloudflare Edge → Nginx (modeval-api.bynipun.com:443) → Gunicorn (127.0.0.1:5000) → Flask
 ```
 
 ### Infrastructure (API Backend)
@@ -580,10 +581,10 @@ app.js → Cloudflare Edge → Nginx (modeval-api.bynipun.com:443) → Gunicorn 
 | Python | Python | 3.12 | Core language |
 | Model Inference | HuggingFace, Enterprise APIs | (live) | 3 Enterprise APIs + 4 HuggingFace + OpenAI |
 | AI Summary & Alignment | Anthropic API | claude-haiku-4-5-20251001 | Natural language synthesis + policy alignment |
-| Frontend | Vanilla HTML/CSS/JS | (native) | Single-page app, no frameworks |
+| Frontend | React, TypeScript, Vite, Tailwind CSS, shadcn/ui | React 19 / Vite 8 | Single-page app on Vercel |
 | Fonts | Google Fonts | (live) | DM Serif Display, Inter, JetBrains Mono |
 | Version Control | Git | (local) | Repository management |
-| Deployment | Hetzner VPS | CX23 | Continuous deployment via GitHub Actions |
+| Deployment | Vercel + Hetzner VPS | (live) | Frontend on Vercel, backend API on Hetzner via GitHub Actions |
 
 ---
 
@@ -653,29 +654,22 @@ app.js → Cloudflare Edge → Nginx (modeval-api.bynipun.com:443) → Gunicorn 
 - Handles API authentication, retries, timeout
 - May raise exceptions (caught by route handler)
 
-### frontend/index.html
-- Single-page app shell
-- Defines modal overlay for platform dropdown (5 options: Reddit, Discord, Facebook, Instagram, Custom)
-- Platform policy guidelines box (#platform-policy-box) below platform selector
-- Context explainer tooltip above platform selector (hover info icon to reveal why platform selection matters)
-- Example pills for 100 pre-loaded test cases
-- Tab navigation: Analysis, How It Works, Models
-- Empty divs for JavaScript to populate
+### frontend/src/App.tsx
+- React application root
+- Owns active panel, selected platform, input text, custom policy text, loading state, result state, active result tab, model count label, and health status
+- Fetches `GET /models` and `GET /health` on load
+- Sends `POST /analyze` through `frontend/src/lib/api.ts`
+- Renders `TopBar`, `InputPanel`, `ResultsPanel`, `HowItWorksPanel`, and `ModelsPanel`
 
-### frontend/app.js
-- All client-side logic: state, rendering, API calls
-- Handles form submissions, loading states, error display
-- Renders breakdown cards (`renderBreakdownCard()`), disagreement banner, insight cards
-- Manages modal open/close, tab switching
-- Fetches test case library from embedded array
-- On page load: fetches `GET /models` and updates `#models-active-count` pill text
+### frontend/src/lib/api.ts
+- Central frontend API client
+- Production API base: `https://modeval-api.bynipun.com`
+- Local dev API base: `/api`, rewritten by the Vite dev proxy
+- Exposes `fetchModels()`, `fetchHealth()`, and `analyzeText()`
 
-### frontend/style.css
-- CSS variables for colors, sizes, animations
-- Layout: grid-based topbar + 38/62 split panels
-- Responsive: single column below 900px
-- Animation keyframes: pulse, shimmer, fade, modal-open/close
-- Glassmorphism effects: blur, backdrop-filter
+### frontend/src/index.css
+- Tailwind CSS v4 entrypoint and design tokens
+- Holds layout, animation, and component-level styling used by the React frontend
 
 ### frontend/src/components/how-it-works/ (React)
 - `PipelineFlowDiagram.tsx` — vertical SVG pipeline (viewBox 780×1380) with 8-lane horizontal fan-out; clickable `data-flow-node` stages
@@ -731,12 +725,12 @@ generate_ai_analysis() — Claude Haiku (claude-haiku-4-5-20251001)
     ↓
 JSON Response
     ↓
-frontend/app.js
-    ├─→ render decision matrix
-    ├─→ render insight cards (bento grid)
-    ├─→ render disagreement banner
-    ├─→ render AI summary
-    ├─→ render alignment assessment (Insights tab)
+frontend/src/lib/api.ts
+    ↓
+frontend/src/App.tsx
+    ├─→ update result state
+    ├─→ render ResultsPanel
+    ├─→ render Summary, Breakdown, and Insights tabs
     └─→ display to user
 ```
 
@@ -748,7 +742,7 @@ frontend/app.js
 - **API Keys in Environment** — Never hardcoded, never logged, loaded from environment/`.env` only.
 - **No Session State** — Stateless architecture, each request is independent.
 - **HTTPS Only** — Enforced by Nginx, certificate managed by Certbot/Let's Encrypt.
-- **CORS** — Not needed. Frontend static files and API are served from the same Flask/Gunicorn instance on Hetzner, so all requests are same-origin.
+- **CORS** — Enabled for the split architecture. Production frontend runs on Vercel at `modeval.bynipun.com`, while the API runs on Hetzner at `modeval-api.bynipun.com`.
 - **Input Validation** — Max length 500 characters, schema validation on all inputs.
 - **Error Messages** — Never expose API keys or internal paths in error responses.
 - **Cloudflare Proxy** — All traffic proxied through Cloudflare edge. Origin server IP not exposed in public DNS. SSL Full (Strict) mode enforced end-to-end.
@@ -769,79 +763,41 @@ frontend/app.js
 
 ---
 
-## Phase 0 Frontend Components
+## React Frontend Components
 
 ### Navigation Structure
-The topbar (.topbar-nav) has three items:
-- ANALYSIS -- shows .workspace (38/62 split panels)
-- HOW IT WORKS -- shows #how-it-works-panel
-- MODELS -- shows #models-panel
+`TopBar.tsx` controls three panels through React state:
+- `analysis`
+- `how-it-works`
+- `models`
 
-Each click hides all other panels and shows the target.
-Switching is handled by showPanel() and setActiveNav() 
-in frontend/app.js.
+`App.tsx` renders the active panel directly. There is no legacy `frontend/app.js` navigation layer.
 
-### Full-Page Panels
-All panels are direct children of .app-shell:
-- .workspace -- the main analysis grid (default visible)
-- #how-it-works-panel -- methodology content with 7 sections:
-  - Section 1: Hero area ("STAGE 01") + Architecture Flow (icon circles with connectors showing Input → Normalize → Score → Align → Decide)
-  - Section 2: Unified Output Normalization (two-col text + code-window with macOS chrome)
-  - Section 3: Context Engine (simplified to platform modifier only; equation block showing threshold formula)
-  - Section 4: AI-powered Policy Alignment Engine (explains Claude Haiku batched alignment call)
-  - Section 5: Disagreement Detection
-  - Section 6: AI Interpretation Layer
-  - Section 7: Why These Models + Known Limitations
-- #models-panel -- model cards content (5 enterprise + 4 HuggingFace + OpenAI)
+### Analysis Panel
+The analysis panel is a React grid with:
+- `InputPanel.tsx` for text input, platform selection, custom policy text, example prompts, and submission
+- `ResultsPanel.tsx` for empty, loading, error, and results states
+- Summary, Breakdown, and Insights tabs rendered as React components
 
-### Results Panel Lower Tabs
-After analysis runs, three lower tabs appear inside 
-.results-content:
+### How It Works Panel
+The methodology view is React-based:
+- `HowItWorksPanel.tsx` hosts the panel shell
+- `PipelineFlowDiagram.tsx` renders the pipeline diagram
+- `FlowDetailDrawer.tsx` renders stage detail
+- `flowContent.tsx` stores node copy and model lane metadata
 
-- results-lower-tabs: hidden until results load, 
-  shown by JS after showPanelState("results")
-- lower-panel-summary: disagreement banner (first child) + consensus hero + donut +
-  legend (default active tab)
-- lower-panel-breakdown: card-per-row breakdown layout, one card per model,
-  section header rows with column labels (CATEGORY, CONFIDENCE, ACTION)
-- lower-panel-insights (AI Interpretation tab): three-section asymmetric layout:
-  - Top grid (2 columns): Disagreement Vector tall card (left) + right column with Most Lenient (top) and Strictest Model (bottom)
-  - Alignment matrix: all 8 model alignment verdicts with ALIGNED/MISALIGNED badges and reasons; footer shows "Alignment assessed by Claude Haiku against [platform] content policy."
-  - AI Executive Summary: gradient border card with consensus badge, finding tag (CLEAR VIOLATION/CLEAR SAFE/AMBIGUOUS), AI narrative, per-model confidence bars with MODEL CONFIDENCE header
+The diagram reflects the fixed-threshold model: review=0.40 and remove=0.70. Platform selection affects Claude Haiku policy alignment, not threshold modifiers.
 
-Tab switching handled by click handlers on 
-.lower-tab elements in frontend/app.js.
+### Models Panel
+`ModelsPanel.tsx` renders model cards for the active model set:
+- 3 enterprise APIs: Hive Moderation, Azure Content Safety, Google NLP
+- 1 proprietary model: OpenAI Moderation
+- 4 HuggingFace models: toxic-bert, RoBERTa offensive, Facebook hate speech, Valurank bias
 
-### Verdict Hero Card (.consensus-hero)
-Populated by JS after results load:
-- Eyebrow: "AGGREGATED CONSENSUS"
-- Large action word: ALLOW/REVIEW/REMOVE in 
-  DM Serif Display 64px, colored by action
-- AI summary subtitle (first 2 sentences)
-- Verdict visuals row (donut chart showing model votes)
-- Border-left colored by action (green/amber/red)
-
-### Verdict Visuals Row (.verdict-visuals-row)
-Two-column grid inside .consensus-hero:
-- Donut chart: SVG 120px showing model vote 
-  distribution. IDs: donut-remove, donut-review, 
-  donut-allow, donut-fraction, donut-action-label.
-  Uses stroke-dasharray/dashoffset technique.
-
-### Component IDs Referenced in app.js
-These IDs must never be renamed:
-- nav-analysis, nav-how-it-works, nav-models (topbar nav items)
-- how-it-works-panel, models-panel (full-page panels)
-- results-lower-tabs, lower-tab-summary, 
-  lower-tab-breakdown, lower-tab-insights (lower tabs)
-- lower-panel-summary, lower-panel-breakdown, 
-  lower-panel-insights (lower panels)
-- donut-remove, donut-review, donut-allow, 
-  donut-fraction, donut-action-label (donut chart)
-- hero-action, hero-subtitle (consensus hero)
-- models-active-count (topbar status pill — updated dynamically by /models fetch)
-- platform-policy-box (dynamic policy guidelines below platform selector)
-- alignment-assessment-container (Insights tab alignment verdicts section)
+### API Client Boundary
+All frontend network calls go through `frontend/src/lib/api.ts`.
+- Production: direct calls to `https://modeval-api.bynipun.com`
+- Local dev: `/api` proxy configured in `frontend/vite.config.ts`
 
 
 

@@ -1,7 +1,9 @@
 # ModEval — AI Codebase Assistant Guide
 
+**Last verified:** 2026-08-02 — tech stack, file structure, and conventions checked against actual code.
+
 ## What This App Is
-ModEval is a context and policy-aware AI moderation evaluation system. Runs text through 8 independent models (Hive Moderation, Azure Content Safety, Google NLP, OpenAI Moderation, toxic-bert, RoBERTa offensive, Facebook hate speech, Valurank bias), normalizes outputs, applies platform context and strictness rules, scores policy alignment, and surfaces disagreements. Live at [modeval.bynipun.com](https://modeval.bynipun.com).
+ModEval is a context and policy-aware AI moderation evaluation system. Runs text through 8 independent models (Hive Moderation, Azure Content Safety, Google NLP, OpenAI Moderation, toxic-bert, RoBERTa offensive, Facebook hate speech, Valurank bias), normalizes outputs, uses fixed thresholds, scores policy alignment against platform policy with Claude Haiku, and surfaces disagreements. Live at [modeval.bynipun.com](https://modeval.bynipun.com).
 
 ## Tech Stack
 - **Backend:** Python 3.12, Flask 3.1, Gunicorn (API-only)
@@ -30,7 +32,7 @@ docs/ARCHITECTURE.md           Complete technical reference
 - Python: PEP8, snake_case, type hints where practical
 - Flask routes: one file per route group in `routes/`
 - Engine modules: one file per concern in `engine/`
-- Frontend: vanilla JS, no frameworks, HTML/CSS/JS separation
+- Frontend: React functional components, TypeScript, Tailwind utility classes, shadcn/ui primitives — one component per file, named exports
 - Error handling: always on API calls and model inference
 - **Privacy:** Never log or store submitted content
 - **API Keys:** Environment variables only, never hardcoded
@@ -40,17 +42,12 @@ docs/ARCHITECTURE.md           Complete technical reference
 - **Model IDs** in `config.py` — exact HuggingFace/OpenAI model identifiers
 - **Fixed thresholds** (review=0.40, remove=0.70) in `context_engine.py` — do not add modifier logic here; platform policy judgment belongs in `policy_engine.py`
 - **Normalizer schema** fields — frontend depends on exact names
-- **CSS variable names** in `style.css` — JS references some
+- **Design tokens and Tailwind utility conventions** in `frontend/src/index.css`
 - **Font imports** — DM Serif Display, Inter, JetBrains Mono (branding)
-- **Donut chart SVG IDs** — donut-remove, donut-review, donut-allow, donut-fraction, donut-action-label
-- **Lower tabs IDs** — results-lower-tabs, lower-tab-summary, lower-tab-breakdown, lower-tab-insights
-- **Lower panel IDs** — lower-panel-summary, lower-panel-breakdown, lower-panel-insights
-- **Topbar nav IDs** — nav-analysis, nav-how-it-works, nav-models
-- **Panel IDs** — how-it-works-panel, models-panel
-- **Topbar status pill ID** — models-active-count (updated dynamically by /models fetch on page load)
-- **Platform policy box ID** — platform-policy-box (dynamic policy guidelines below platform selector)
-- **Alignment assessment container ID** — alignment-assessment-container (Insights tab alignment verdicts section)
-All these are referenced in app.js and must not be renamed or removed.
+- **API client boundary** in `frontend/src/lib/api.ts`
+- **Top-level React state ownership** in `frontend/src/App.tsx`
+- **Core React component contracts**: `TopBar`, `InputPanel`, `ResultsPanel`, `HowItWorksPanel`, and `ModelsPanel`
+- **Normalizer schema fields** consumed by `frontend/src/types/api.ts`
 
 ## Where to Find Things
 - **Technical architecture, APIs, models** → `docs/ARCHITECTURE.md`
@@ -60,59 +57,22 @@ All these are referenced in app.js and must not be renamed or removed.
 - **deployment details** → `docs/INFRASTRUCTURE.md`
 
 
-## Self-Updating Meta Instruction
+## Project Documentation
 
-Trigger this automatically when:
-- A feature is fully working and tested
-- A bug is fixed and confirmed
-- You are about to switch to a different task
-- The user says "done", "ship it", "looks good", "push it", "that works", or any similar phrase
-Do not wait for explicit wrap-up instructions.
-
-### After Every Session -- Required Steps
-
-**Step 1 -- Update AGENTS.md AND CLAUDE.md (always both)**
-- Update "Current Project State" bullet points
-- These two files must always be identical
-- Never update one without the other
-
-**Step 2 -- Add entry to PROGRESS.md**
-- Add new dated entry at the TOP of the file
-- Format: ## YYYY-MM-DD
-- Include: what changed, why, any tradeoffs made
-
-**Step 3 -- Update DESIGN.md if ANY of these changed:**
-- New UI components added or removed
-- Existing component behavior changed
-- CSS classes added or removed
-- Layout structure changed
-- Navigation structure changed
-- Animation or interaction behavior changed
-
-**Step 4 -- Update docs/ARCHITECTURE.md if ANY of these changed:**
-- Backend routes or API endpoints
-- Engine modules or scoring logic
-- Frontend HTML structure (panels, tabs, IDs)
-- New component IDs referenced in app.js
-- Data flow changes
-- Note: frontend structural changes DO count here
-
-**Step 5 -- Commit and push**
-Run: git add . && git commit -m "[type]: description" && git push origin main
+Update project documentation when the corresponding implementation changes. Do not update, commit, or push automatically based on conversational phrases; follow the runtime and workspace approval rules.
 
 ### What Each File Covers
-- AGENTS.md / CLAUDE.md -- current state, conventions, what not to touch, task patterns
+- AGENTS.md -- current state, conventions, what not to touch, task patterns
 - PROGRESS.md -- dated changelog of all changes
 - DESIGN.md -- visual design, components, typography, spacing, animations
 - docs/ARCHITECTURE.md -- API endpoints, data flow, engine logic, frontend structure, component IDs
 - README.md -- NEVER update with session notes, public-facing only
 
-### Verification Checklist Before Committing
-- [ ] AGENTS.md and CLAUDE.md are identical
+### Verification Checklist Before a Commit
 - [ ] PROGRESS.md has a new dated entry at the top
 - [ ] DESIGN.md updated if any UI/CSS changes made
 - [ ] ARCHITECTURE.md updated if any structural changes
-- [ ] All new HTML IDs added to "What NOT to Touch" in both AGENTS.md and CLAUDE.md
+- [ ] All new HTML IDs added to "What NOT to Touch" in AGENTS.md
 - [ ] git status shows no untracked important files
 
 ## Commit Format
@@ -158,6 +118,7 @@ Run: git add . && git commit -m "[type]: description" && git push origin main
 3. Update modifier tables after changes
 
 ## Current Project State
+- Social preview metadata is configured in `frontend/index.html` with the Vercel Blob banner `modeval_banner.png` for Open Graph and Twitter cards.
 - React/Vite/TypeScript frontend (Alloy Night theme) live on Vercel; Flask API on Hetzner is API-only (no static UI serving)
 - Production frontend calls `https://modeval-api.bynipun.com` directly; local `npm run dev` uses Vite `/api` proxy
 - POST `/batch-analyze` removed (unused by React frontend); `MAX_BATCH_SIZE` and `backend/routes/batch.py` deleted

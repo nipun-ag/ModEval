@@ -4,6 +4,16 @@ All dated entries document features, fixes, and documentation updates. Format: `
 
 ---
 
+## 2026-08-15
+
+**feat: add social preview banner metadata**
+
+- Added Open Graph and Twitter card metadata to the React/Vite HTML shell.
+- Wired the new ModEval Vercel Blob banner as the canonical social preview image.
+- Verified the banner URL returns a public PNG and confirmed `npm run build` passes.
+
+---
+
 ## 2026-07-24
 
 **style: enlarge How It Works pipeline diagram scale and spacing**
